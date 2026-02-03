@@ -1,0 +1,2064 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Component Guide</title>
+    <style>
+      /* Theming */
+      :root {
+        /* base surfaces */
+        --palette-color-background: oklch(97% 0.01 95);
+        --palette-color-surface: oklch(96% 0.01 95);
+        --palette-color-muted: oklch(92% 0.01 95);
+
+        /* text */
+        --palette-color-text: oklch(32% 0.01 95);
+        --palette-color-text-muted: oklch(55% 0.005 95);
+
+        /* borders & lines */
+        --palette-color-border: oklch(78% 0.005 95);
+        --palette-color-border-muted: oklch(85% 0.005 95);
+
+        /* accents (same hue/chroma as dark, lighter tone) */
+        --palette-color-accent: oklch(78% 0.15 270);
+        --palette-color-accent-strong: oklch(72% 0.28 275);
+
+        /* semantic */
+        --palette-color-primary: oklch(64% 0.1 155);
+        --palette-color-secondary: oklch(64% 0.1 335);
+
+        --palette-color-danger: oklch(62% 0.05 30);
+        --palette-color-warning: oklch(72% 0.05 100);
+        --palette-color-success: oklch(62% 0.05 160);
+        --palette-color-info: oklch(62% 0.05 260);
+
+        /* shadows */
+        --palette-color-shadow: oklch(82% 0.01 95);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          /* core surfaces */
+          --palette-color-background: oklch(11% 0.015 260);
+          /* deep graphite */
+          --palette-color-surface: oklch(16% 0.015 260);
+          /* elevated surface */
+          --palette-color-muted: oklch(22% 0.01 260);
+          /* subtle hover surface */
+
+          /* text */
+          --palette-color-text: oklch(0.94 0.01 260);
+          /* off-white */
+          --palette-color-text-muted: oklch(0.72 0.01 260);
+          /* understated gray */
+
+          /* accents restrained like vercel's */
+          --palette-color-accent: oklch(0.78 0.09 265);
+          /* cool violet accent */
+          --palette-color-accent-strong: oklch(0.72 0.14 270);
+          /* stronger, still tasteful */
+
+          /* borders */
+          --palette-color-border: oklch(0.4 0.005 260);
+          --palette-color-border-muted: oklch(0.3 0.005 260);
+
+          /* semantic colors – balanced, not too saturated */
+          --palette-color-primary: oklch(0.8 0.08 240);
+          --palette-color-secondary: oklch(0.8 0.08 330);
+
+          --palette-color-danger: oklch(0.7 0.05 25);
+          --palette-color-warning: oklch(0.72 0.05 90);
+          --palette-color-success: oklch(0.72 0.06 150);
+          --palette-color-info: oklch(0.75 0.06 260);
+
+          /* shadows — subtle and natural */
+          --palette-color-shadow: oklch(0.28 0.01 260);
+        }
+      }
+
+      /* Palette aliases for convenience (map to the palette variables above) */
+      :root {
+        --text: var(--palette-color-text);
+        --text-muted: var(--palette-color-text-muted);
+        --surface: var(--palette-color-surface);
+        --surface-hover: var(--palette-color-muted);
+        --surface-active: var(--palette-color-muted);
+        --surface-muted: var(--palette-color-muted);
+        --accent: var(--palette-color-accent);
+        --accent-strong: var(--palette-color-accent-strong);
+        --primary: var(--palette-color-primary);
+        --secondary: var(--palette-color-secondary);
+        --destructive: var(--palette-color-danger);
+        --warn: var(--palette-color-warning);
+        --info: var(--palette-color-info);
+        --border: var(--palette-color-border);
+        --muted-foreground: var(--palette-color-text-muted);
+        --foreground: var(--palette-color-text);
+        --success: var(--palette-color-success);
+        --warning: var(--palette-color-warning);
+        --shadow: var(--palette-color-shadow);
+      }
+
+      /* === Base Styles (Tailwind Preflight + Custom CSS) === */
+      /* === Preflight === */
+      /*
+  1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
+  2. Remove default margins and padding
+  3. Reset all borders.
+*/
+
+      *,
+      ::after,
+      ::before,
+      ::backdrop,
+      ::file-selector-button {
+        box-sizing: border-box; /* 1 */
+        margin: 0; /* 2 */
+        padding: 0; /* 2 */
+        border: 0 solid; /* 3 */
+      }
+
+      /*
+  1. Use a consistent sensible line-height in all browsers.
+  2. Prevent adjustments of font size after orientation changes in iOS.
+  3. Use a more readable tab size.
+  4. Use the user's configured `sans` font-family by default.
+  5. Use the user's configured `sans` font-feature-settings by default.
+  6. Use the user's configured `sans` font-variation-settings by default.
+  7. Disable tap highlights on iOS.
+*/
+
+      html,
+      :host {
+        line-height: 1.5; /* 1 */
+        -webkit-text-size-adjust: 100%; /* 2 */
+        tab-size: 4; /* 3 */
+        font-family: --theme(
+          --default-font-family,
+          ui-sans-serif,
+          system-ui,
+          sans-serif,
+          "Apple Color Emoji",
+          "Segoe UI Emoji",
+          "Segoe UI Symbol",
+          "Noto Color Emoji"
+        ); /* 4 */
+        font-feature-settings: --theme(
+          --default-font-feature-settings,
+          normal
+        ); /* 5 */
+        font-variation-settings: --theme(
+          --default-font-variation-settings,
+          normal
+        ); /* 6 */
+        -webkit-tap-highlight-color: transparent; /* 7 */
+      }
+
+      /*
+  1. Add the correct height in Firefox.
+  2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)
+  3. Reset the default border style to a 1px solid border.
+*/
+
+      hr {
+        height: 0; /* 1 */
+        color: inherit; /* 2 */
+        border-top-width: 1px; /* 3 */
+      }
+
+      /*
+  Add the correct text decoration in Chrome, Edge, and Safari.
+*/
+
+      abbr:where([title]) {
+        -webkit-text-decoration: underline dotted;
+        text-decoration: underline dotted;
+      }
+
+      /*
+  Remove the default font size and weight for headings.
+*/
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-size: inherit;
+        font-weight: inherit;
+      }
+
+      /*
+  Reset links to optimize for opt-in styling instead of opt-out.
+*/
+
+      a {
+        color: inherit;
+        -webkit-text-decoration: inherit;
+        text-decoration: inherit;
+      }
+
+      /*
+  Add the correct font weight in Edge and Safari.
+*/
+
+      b,
+      strong {
+        font-weight: bolder;
+      }
+
+      /*
+  1. Use the user's configured `mono` font-family by default.
+  2. Use the user's configured `mono` font-feature-settings by default.
+  3. Use the user's configured `mono` font-variation-settings by default.
+  4. Correct the odd `em` font sizing in all browsers.
+*/
+
+      code,
+      kbd,
+      samp,
+      pre {
+        font-family: --theme(
+          --default-mono-font-family,
+          ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          Monaco,
+          Consolas,
+          "Liberation Mono",
+          "Courier New",
+          monospace
+        ); /* 1 */
+        font-feature-settings: --theme(
+          --default-mono-font-feature-settings,
+          normal
+        ); /* 2 */
+        font-variation-settings: --theme(
+          --default-mono-font-variation-settings,
+          normal
+        ); /* 3 */
+        font-size: 1em; /* 4 */
+      }
+
+      /*
+  Add the correct font size in all browsers.
+*/
+
+      small {
+        font-size: 80%;
+      }
+
+      /*
+  Prevent `sub` and `sup` elements from affecting the line height in all browsers.
+*/
+
+      sub,
+      sup {
+        font-size: 75%;
+        line-height: 0;
+        position: relative;
+        vertical-align: baseline;
+      }
+
+      sub {
+        bottom: -0.25em;
+      }
+
+      sup {
+        top: -0.5em;
+      }
+
+      /*
+  1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
+  2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
+  3. Remove gaps between table borders by default.
+*/
+
+      table {
+        text-indent: 0; /* 1 */
+        border-color: inherit; /* 2 */
+        border-collapse: collapse; /* 3 */
+      }
+
+      /*
+  Use the modern Firefox focus style for all focusable elements.
+*/
+
+      :-moz-focusring {
+        outline: auto;
+      }
+
+      /*
+  Add the correct vertical alignment in Chrome and Firefox.
+*/
+
+      progress {
+        vertical-align: baseline;
+      }
+
+      /*
+  Add the correct display in Chrome and Safari.
+*/
+
+      summary {
+        display: list-item;
+      }
+
+      /*
+  Make lists unstyled by default.
+*/
+
+      ol,
+      ul,
+      menu {
+        list-style: none;
+      }
+
+      /*
+  1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)
+  2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)
+      This can trigger a poorly considered lint error in some tools but is included by design.
+*/
+
+      img,
+      svg,
+      video,
+      canvas,
+      audio,
+      iframe,
+      embed,
+      object {
+        display: block; /* 1 */
+        vertical-align: middle; /* 2 */
+      }
+
+      /*
+  Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
+*/
+
+      img,
+      video {
+        max-width: 100%;
+        height: auto;
+      }
+
+      /*
+  1. Inherit font styles in all browsers.
+  2. Remove border radius in all browsers.
+  3. Remove background color in all browsers.
+  4. Ensure consistent opacity for disabled states in all browsers.
+*/
+
+      button,
+      input,
+      select,
+      optgroup,
+      textarea,
+      ::file-selector-button {
+        font: inherit; /* 1 */
+        font-feature-settings: inherit; /* 1 */
+        font-variation-settings: inherit; /* 1 */
+        letter-spacing: inherit; /* 1 */
+        color: inherit; /* 1 */
+        border-radius: 0; /* 2 */
+        background-color: transparent; /* 3 */
+        opacity: 1; /* 4 */
+      }
+
+      /*
+  Restore default font weight.
+*/
+
+      :where(select:is([multiple], [size])) optgroup {
+        font-weight: bolder;
+      }
+
+      /*
+  Restore indentation.
+*/
+
+      :where(select:is([multiple], [size])) optgroup option {
+        padding-inline-start: 20px;
+      }
+
+      /*
+  Restore space after button.
+*/
+
+      ::file-selector-button {
+        margin-inline-end: 4px;
+      }
+
+      /*
+  Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
+*/
+
+      ::placeholder {
+        opacity: 1;
+      }
+
+      /*
+  Set the default placeholder color to a semi-transparent version of the current text color in browsers that do not
+  crash when using `color-mix(…)` with `currentcolor`. (https://github.com/tailwindlabs/tailwindcss/issues/17194)
+*/
+
+      @supports (not (-webkit-appearance: -apple-pay-button)) /* Not Safari */
+        or (contain-intrinsic-size: 1px) /* Safari 17+ */ {
+        ::placeholder {
+          color: color-mix(in oklab, currentcolor 50%, transparent);
+        }
+      }
+
+      /*
+  Prevent resizing textareas horizontally by default.
+*/
+
+      textarea {
+        resize: vertical;
+      }
+
+      /*
+  Remove the inner padding in Chrome and Safari on macOS.
+*/
+
+      ::-webkit-search-decoration {
+        -webkit-appearance: none;
+      }
+
+      /*
+  1. Ensure date/time inputs have the same height when empty in iOS Safari.
+  2. Ensure text alignment can be changed on date/time inputs in iOS Safari.
+*/
+
+      ::-webkit-date-and-time-value {
+        min-height: 1lh; /* 1 */
+        text-align: inherit; /* 2 */
+      }
+
+      /*
+  Prevent height from changing on date/time inputs in macOS Safari when the input is set to `display: block`.
+*/
+
+      ::-webkit-datetime-edit {
+        display: inline-flex;
+      }
+
+      /*
+  Remove excess padding from pseudo-elements in date/time inputs to ensure consistent height across browsers.
+*/
+
+      ::-webkit-datetime-edit-fields-wrapper {
+        padding: 0;
+      }
+
+      ::-webkit-datetime-edit,
+      ::-webkit-datetime-edit-year-field,
+      ::-webkit-datetime-edit-month-field,
+      ::-webkit-datetime-edit-day-field,
+      ::-webkit-datetime-edit-hour-field,
+      ::-webkit-datetime-edit-minute-field,
+      ::-webkit-datetime-edit-second-field,
+      ::-webkit-datetime-edit-millisecond-field,
+      ::-webkit-datetime-edit-meridiem-field {
+        padding-block: 0;
+      }
+
+      /*
+  Center dropdown marker shown on inputs with paired `<datalist>`s in Chrome. (https://github.com/tailwindlabs/tailwindcss/issues/18499)
+*/
+
+      ::-webkit-calendar-picker-indicator {
+        line-height: 1;
+      }
+
+      /*
+  Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
+*/
+
+      :-moz-ui-invalid {
+        box-shadow: none;
+      }
+
+      /*
+  Correct the inability to style the border radius in iOS Safari.
+*/
+
+      button,
+      input:where([type="button"], [type="reset"], [type="submit"]),
+      ::file-selector-button {
+        appearance: button;
+      }
+
+      /*
+  Correct the cursor style of increment and decrement buttons in Safari.
+*/
+
+      ::-webkit-inner-spin-button,
+      ::-webkit-outer-spin-button {
+        height: auto;
+      }
+
+      /*
+  Make elements with the HTML hidden attribute stay hidden by default.
+*/
+
+      [hidden]:where(:not([hidden="until-found"])) {
+        display: none !important;
+      }
+
+      :root {
+        --accessibility-contrast: 100%;
+      }
+
+      @media (prefers-contrast: less) {
+        :root {
+          --accessibility-contrast: 90%;
+        }
+      }
+
+      @media (prefers-contrast: more) {
+        :root {
+          --accessibility-contrast: 110%;
+        }
+      }
+
+      * {
+        filter: contrast(var(--accessibility-contrast));
+      }
+
+      body {
+        width: 100vw;
+        min-height: 100vh;
+        color: var(--palette-color-text);
+        background: var(--palette-color-background);
+        transition:
+          color 0.5s,
+          background-color 0.5s;
+        line-height: 1.6;
+        font-family:
+          Inter,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          Oxygen,
+          Ubuntu,
+          Cantarell,
+          "Fira Sans",
+          "Droid Sans",
+          "Helvetica Neue",
+          sans-serif;
+        font-size: 15px;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        @apply bg-background;
+      }
+
+      * {
+        filter: contrast(var(--accessibility-contrast));
+      }
+
+      /* === Components === */
+
+      /* Activatable */
+      .activatable {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-muted);
+        background-color: transparent;
+        border-radius: 0.375rem;
+        border: 1px solid transparent;
+        transition: all 150ms ease-in-out;
+      }
+
+      .activatable:hover {
+        background-color: var(--surface-hover);
+        color: var(--text);
+      }
+
+      .activatable:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      .activatable[data-active="true"] {
+        background-color: var(--surface-active);
+        color: var(--accent-strong);
+        border-color: var(--accent-strong);
+        transform: scale(0.95);
+      }
+
+      /* Badge */
+      .badge {
+        display: inline-flex;
+        padding: 0.25rem 0.5rem;
+        color: var(--text);
+      }
+
+      .badge[data-variant="default"] {
+        background-color: transparent;
+      }
+
+      .badge[data-variant="primary"] {
+        background-color: var(--primary);
+      }
+
+      .badge[data-variant="secondary"] {
+        background-color: var(--secondary);
+      }
+
+      .badge[data-variant="info"] {
+        background-color: var(--info);
+      }
+
+      .badge[data-variant="warn"] {
+        background-color: var(--warn);
+      }
+
+      .badge[data-variant="destructive"] {
+        background-color: var(--destructive);
+      }
+
+      /* Box */
+      .box {
+        padding: 0.5rem;
+      }
+
+      .box[data-align="start"] {
+        align-self: flex-start;
+      }
+
+      .box[data-align="end"] {
+        align-self: flex-end;
+      }
+
+      .box[data-align="center"] {
+        align-self: center;
+      }
+
+      .box[data-justify="start"] {
+        /* No specific styles for start */
+      }
+
+      .flex-row > .box[data-justify="end"] {
+        margin-left: auto;
+      }
+
+      .flex-col > .box[data-justify="end"] {
+        margin-top: auto;
+      }
+
+      .flex-row > .box[data-justify="center"] {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .flex-col > .box[data-justify="center"] {
+        margin-top: auto;
+        margin-bottom: auto;
+      }
+
+      /* Button */
+      .button {
+        display: inline-flex;
+        align-items: center;
+        transition: all 200ms ease-in-out;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        border-radius: 0.375rem;
+        border: 1px solid var(--border);
+        background-color: var(--primary);
+        color: var(--text);
+        cursor: pointer;
+      }
+
+      .button:hover {
+        background-color: var(--accent);
+        border-color: var(--accent-strong);
+      }
+
+      .button:active {
+        transform: scale(1.05);
+        background-color: var(--accent);
+        border-color: var(--accent-strong);
+      }
+
+      .button[data-variant="glass"] {
+        background-color: transparent;
+        backdrop-filter: blur(12px);
+      }
+
+      .button[data-variant="primary"] {
+        background-color: var(--primary);
+      }
+
+      .button[data-size="sm"] {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+      }
+
+      .button[data-size="md"] {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+      }
+
+      .button[data-size="lg"] {
+        padding: 0.75rem 1.5rem;
+        font-size: 1.125rem;
+      }
+
+      .button[data-size="xl"] {
+        padding: 1rem 2rem;
+        font-size: 1.25rem;
+      }
+
+      /* Card */
+      .card {
+        background-color: var(--surface);
+        color: var(--text);
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        border-radius: 0.75rem;
+        border: 1px solid var(--border);
+        padding: 1.5rem 0.75rem;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      }
+
+      .card[data-border-accent="primary"]:hover {
+        border-color: var(--primary);
+      }
+
+      .card[data-border-accent="secondary"]:hover {
+        border-color: var(--secondary);
+      }
+
+      .card[data-transition="all"] {
+        transition: all;
+      }
+
+      .card[data-transition="colors"] {
+        transition: background-color, border-color, color;
+      }
+
+      .card[data-transition="opacity"] {
+        transition: opacity;
+      }
+
+      .card[data-transition="shadow"] {
+        transition: box-shadow;
+      }
+
+      .card[data-transition="transform"] {
+        transition: transform;
+      }
+
+      /* CardAction */
+      .card-action {
+        grid-column: 2;
+        grid-row: 1 / 3;
+        align-self: start;
+        justify-self: end;
+      }
+
+      /* CardContent */
+      .card-content {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+        flex-grow: 1;
+      }
+
+      /* CardDescription */
+      .card-description {
+        color: var(--muted-foreground);
+        font-size: 0.875rem;
+      }
+
+      /* CardFooter */
+      .card-footer {
+        display: flex;
+        align-items: center;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+      }
+
+      .card-footer.has-border-t {
+        padding-top: 1.5rem;
+      }
+
+      /* CardHeader */
+      .card-header {
+        container-type: inline-size;
+        display: grid;
+        grid-auto-rows: min-content;
+        grid-template-rows: auto auto;
+        align-items: start;
+        gap: 0.5rem;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+      }
+
+      .card-header.has-card-action {
+        grid-template-columns: 1fr auto;
+      }
+
+      .card-header.has-border-b {
+        padding-bottom: 1.5rem;
+      }
+
+      /* CardTitle */
+      .card-title {
+        line-height: 1;
+        font-weight: 600;
+      }
+
+      /* Screen */
+      .screen {
+        pointer-events: none;
+        z-index: 10000;
+        position: fixed;
+        height: 100vh;
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        background-color: transparent;
+      }
+
+      .screen * {
+        pointer-events: auto;
+      }
+
+      /* Skeleton */
+      .skeleton {
+        animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        background-color: var(--surface-muted);
+        border-radius: 0.375rem;
+      }
+
+      @keyframes skeleton-pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      /* Stack */
+      .stack {
+        display: flex;
+      }
+
+      .stack[data-orientation="horizontal"] {
+        flex-direction: row;
+      }
+
+      .stack[data-orientation="horizontal"][data-order="reversed"] {
+        flex-direction: row-reverse;
+      }
+
+      .stack[data-orientation="vertical"] {
+        flex-direction: column;
+      }
+
+      .stack[data-orientation="vertical"][data-order="reversed"] {
+        flex-direction: column-reverse;
+      }
+
+      /* Terminal */
+      .terminal {
+        /* Base styles handled by parent */
+      }
+
+      /* TerminalHeader */
+      .terminal-header {
+        display: flex;
+        flex-direction: row;
+        gap: 0.5rem;
+        padding: 0.75rem 0.5rem;
+        background-color: var(--surface);
+        border-top-left-radius: 0.375rem;
+        border-top-right-radius: 0.375rem;
+      }
+
+      .terminal-header::before,
+      .terminal-header::after {
+        content: "";
+        width: 1rem;
+        aspect-ratio: 1;
+        border-radius: 50%;
+      }
+
+      .terminal-header::before {
+        background-color: var(--accent);
+      }
+
+      .terminal-header::after {
+        background-color: var(--primary);
+      }
+
+      /* TerminalInput */
+      .terminal-input {
+        display: inline-flex;
+        flex-direction: row;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      /* TerminalInterface */
+      .terminal-interface {
+        padding: 0.25rem 0.5rem;
+        background-color: color-mix(in oklab, var(--surface) 70%, transparent);
+        font-family: monospace;
+      }
+
+      /* TerminalLine */
+      .terminal-line {
+        display: inline-flex;
+        flex-direction: row;
+        word-break: break-word;
+      }
+
+      /* TerminalOutput */
+      .terminal-output {
+        display: inline-flex;
+        flex-direction: row;
+        font-family: monospace;
+        color: var(--text);
+      }
+
+      /* TerminalPrompt */
+      .terminal-prompt {
+        display: inline-flex;
+        flex-direction: row;
+        user-select: none;
+        white-space: nowrap;
+      }
+
+      /* Text */
+      .text {
+        font-size: 1rem;
+        font-weight: 400;
+        color: var(--foreground);
+      }
+
+      .text[data-variant="default"] {
+        /* No additional styles */
+      }
+
+      .text[data-variant="subtle"] {
+        color: var(--muted-foreground);
+      }
+
+      .text[data-variant="muted"] {
+        color: var(--muted-foreground);
+        opacity: 0.8;
+      }
+
+      .text[data-variant="destructive"] {
+        color: var(--destructive);
+      }
+
+      .text[data-variant="success"] {
+        color: var(--success);
+      }
+
+      .text[data-variant="warning"] {
+        color: var(--warning);
+      }
+
+      .text[data-size="xs"] {
+        font-size: 0.75rem;
+      }
+
+      .text[data-size="sm"] {
+        font-size: 0.875rem;
+      }
+
+      .text[data-size="base"] {
+        font-size: 1rem;
+      }
+
+      .text[data-size="lg"] {
+        font-size: 1.125rem;
+      }
+
+      .text[data-size="xl"] {
+        font-size: 1.25rem;
+      }
+
+      .text[data-size="2xl"] {
+        font-size: 1.5rem;
+      }
+
+      .text[data-size="3xl"] {
+        font-size: 1.875rem;
+      }
+
+      .text[data-size="4xl"] {
+        font-size: 2.25rem;
+      }
+
+      .text[data-size="5xl"] {
+        font-size: 3rem;
+      }
+
+      .text[data-size="6xl"] {
+        font-size: 3.75rem;
+      }
+
+      .text[data-size="7xl"] {
+        font-size: 4.5rem;
+      }
+
+      .text[data-weight="normal"] {
+        font-weight: 400;
+      }
+
+      .text[data-weight="medium"] {
+        font-weight: 500;
+      }
+
+      .text[data-weight="semibold"] {
+        font-weight: 600;
+      }
+
+      .text[data-weight="bold"] {
+        font-weight: 700;
+      }
+
+      .text[data-align="left"] {
+        text-align: left;
+      }
+
+      .text[data-align="center"] {
+        text-align: center;
+      }
+
+      .text[data-align="right"] {
+        text-align: right;
+      }
+
+      .text[data-align="justify"] {
+        text-align: justify;
+      }
+
+      .text[data-leading="none"] {
+        line-height: 1;
+      }
+
+      .text[data-leading="tight"] {
+        line-height: 1.25;
+      }
+
+      .text[data-leading="normal"] {
+        line-height: 1.5;
+      }
+
+      .text[data-leading="relaxed"] {
+        line-height: 1.625;
+      }
+
+      .text[data-leading="loose"] {
+        line-height: 2;
+      }
+
+      .text[data-tracking="tighter"] {
+        letter-spacing: -0.05em;
+      }
+
+      .text[data-tracking="tight"] {
+        letter-spacing: -0.025em;
+      }
+
+      .text[data-tracking="normal"] {
+        letter-spacing: 0;
+      }
+
+      .text[data-tracking="wide"] {
+        letter-spacing: 0.025em;
+      }
+
+      .text[data-tracking="wider"] {
+        letter-spacing: 0.05em;
+      }
+
+      .text[data-transform="normal"] {
+        /* No transform */
+      }
+
+      .text[data-transform="uppercase"] {
+        text-transform: uppercase;
+      }
+
+      .text[data-transform="lowercase"] {
+        text-transform: lowercase;
+      }
+
+      .text[data-transform="capitalize"] {
+        text-transform: capitalize;
+      }
+
+      .text[data-wrap="normal"] {
+        /* No wrap styles */
+      }
+
+      .text[data-wrap="nowrap"] {
+        white-space: nowrap;
+      }
+
+      .text[data-wrap="balance"] {
+        text-wrap: balance;
+      }
+
+      .text[data-wrap="pretty"] {
+        text-wrap: pretty;
+      }
+
+      .text[data-decoration="none"] {
+        /* No decoration */
+      }
+
+      .text[data-decoration="underline"] {
+        text-decoration: underline;
+      }
+
+      .text[data-decoration="line-through"] {
+        text-decoration: line-through;
+      }
+
+      .text[data-interactivity="normal"] {
+        /* Normal selection */
+      }
+
+      .text[data-interactivity="none"] {
+        user-select: none;
+      }
+    </style>
+    <style>
+      body {
+        padding: 2rem;
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 3px solid var(--accent);
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--text);
+      }
+
+      .emoji {
+        font-size: 1.2em;
+        margin-right: 0.5rem;
+      }
+
+      .subtitle {
+        color: var(--text-muted);
+        font-size: 1.25rem;
+      }
+
+      .section {
+        margin-bottom: 4rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .section:last-child {
+        border-bottom: none;
+      }
+
+      h2 {
+        font-size: 1.75rem;
+        margin-bottom: 0.5rem;
+        color: var(--text);
+      }
+
+      .simple-description {
+        font-size: 1.125rem;
+        color: var(--text-muted);
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+        max-width: 700px;
+      }
+
+      .what-it-does {
+        background-color: var(--surface);
+        border-left: 4px solid var(--accent);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-radius: 0.375rem;
+      }
+
+      .what-it-does-title {
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+      }
+
+      .what-it-does-text {
+        color: var(--text);
+        font-size: 1.0625rem;
+      }
+
+      .demo-area {
+        background-color: var(--surface-muted);
+        border: 2px dashed var(--border);
+        padding: 2rem;
+        border-radius: 0.375rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+      }
+
+      .demo-title {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+      }
+
+      .demo-row {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .demo-flex {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .variant-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .example-label {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        font-family: monospace;
+        background-color: var(--surface);
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+      }
+
+      .feature-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: 1.0625rem;
+        line-height: 1.8;
+      }
+
+      .feature-list li {
+        padding-left: 2rem;
+        margin-bottom: 0.75rem;
+        color: var(--text);
+        position: relative;
+      }
+
+      .feature-list li:before {
+        content: "✨";
+        position: absolute;
+        left: 0;
+      }
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .card-example {
+        background-color: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 0.375rem;
+      }
+
+      .card-example-header {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .card-example-title {
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 0.25rem;
+      }
+
+      .card-example-desc {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+      }
+
+      .card-example-content {
+        padding: 1rem;
+        color: var(--text);
+      }
+
+      .card-example-footer {
+        padding: 1rem;
+        border-top: 1px solid var(--border);
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      nav {
+        background-color: var(--surface);
+        border: 2px solid var(--border);
+        border-radius: 0.375rem;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      nav h3 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        color: var(--text);
+        font-size: 1.125rem;
+      }
+
+      nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 0.5rem;
+      }
+
+      nav li {
+        margin: 0;
+      }
+
+      nav a {
+        display: block;
+        padding: 0.5rem;
+        color: var(--accent);
+        text-decoration: none;
+        border-radius: 0.25rem;
+        transition: all 200ms ease-in-out;
+        font-weight: 500;
+      }
+
+      nav a:hover {
+        background-color: var(--surface-muted);
+        color: var(--accent-strong);
+      }
+
+      .fun-fact {
+        background-color: var(--surface);
+        border: 2px solid var(--secondary);
+        border-radius: 0.375rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .fun-fact-emoji {
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+      }
+
+      .fun-fact-title {
+        font-weight: 600;
+        color: var(--secondary);
+        margin-bottom: 0.5rem;
+      }
+
+      .fun-fact-text {
+        color: var(--text);
+        font-size: 1.0625rem;
+      }
+
+      .big-text {
+        font-size: 1.25rem;
+        line-height: 1.6;
+      }
+
+      .code-simple {
+        background-color: var(--surface-muted);
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.25rem;
+        font-family: monospace;
+        font-size: 0.875rem;
+        color: var(--text);
+        display: inline-block;
+      }
+
+      .with-icon {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 1.875rem;
+        }
+
+        h2 {
+          font-size: 1.375rem;
+        }
+
+        nav ul {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1 class="with-icon">
+          <span class="emoji">🧩</span>
+          Component Guide
+        </h1>
+        <p class="subtitle">
+          Learn about the building blocks of our design system
+        </p>
+      </header>
+
+      <!-- Quick Navigation -->
+      <nav>
+        <h3>📌 Quick Links</h3>
+        <ul>
+          <li><a href="#text">📝 Text</a></li>
+          <li><a href="#button">🔘 Button</a></li>
+          <li><a href="#badge">🏷️ Badge</a></li>
+          <li><a href="#box">📦 Box</a></li>
+          <li><a href="#stack">📚 Stack</a></li>
+          <li><a href="#card">🎴 Card</a></li>
+          <li><a href="#skeleton">💀 Skeleton</a></li>
+          <li><a href="#activatable">🎛️ Activatable</a></li>
+          <li><a href="#terminal">⌨️ Terminal</a></li>
+        </ul>
+      </nav>
+
+      <!-- Text Component -->
+      <section class="section" id="text">
+        <h2 class="with-icon">
+          <span class="emoji">📝</span>
+          Text
+        </h2>
+        <p class="simple-description">
+          This is for showing words on your screen. You can make the words big
+          or small, bold or thin, and change their colors!
+        </p>
+
+        <div class="what-it-does">
+          <div class="what-it-does-title">💡 What It Does:</div>
+          <div class="what-it-does-text big-text">
+            It's like having different ways to write things - some text is
+            really big and important, some is small and quiet, some is red to
+            warn you, and some is green to make you happy!
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <div class="demo-title">Try different text sizes:</div>
+          <div
+            class="demo-flex"
+            style="flex-direction: column; gap: 0.5rem; align-items: flex-start"
+          >
+            <div class="text" data-size="xs">😊 Extra Small</div>
+            <div class="text" data-size="sm">😊 Small</div>
+            <div class="text" data-size="base">😊 Normal</div>
+            <div class="text" data-size="lg">😊 Large</div>
+            <div class="text" data-size="xl">😊 Extra Large</div>
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <div class="demo-title">Different moods for text:</div>
+          <div
+            class="demo-flex"
+            style="flex-direction: column; gap: 0.5rem; align-items: flex-start"
+          >
+            <div class="text" data-variant="default">😊 Happy (default)</div>
+            <div class="text" data-variant="subtle">😐 Shy (subtle)</div>
+            <div class="text" data-variant="success">✅ Good! (success)</div>
+            <div class="text" data-variant="destructive">
+              ❌ Bad! (destructive)
+            </div>
+            <div class="text" data-variant="warning">⚠️ Careful! (warning)</div>
+          </div>
+        </div>
+
+        <ul class="feature-list">
+          <li>Make words BIG or small</li>
+          <li>Make words BOLD or thin</li>
+          <li>Change word colors (happy, sad, warning)</li>
+          <li>Add decorations like underlines</li>
+        </ul>
+      </section>
+
+      <!-- Button Component -->
+      <section class="section" id="button">
+        <h2 class="with-icon">
+          <span class="emoji">🔘</span>
+          Button
+        </h2>
+        <p class="simple-description">
+          Buttons are things you click on! They respond when you touch them and
+          do things like save, submit, or delete.
+        </p>
+
+        <div class="what-it-does">
+          <div class="what-it-does-title">💡 What It Does:</div>
+          <div class="what-it-does-text big-text">
+            It's a clickable thing on the screen. When you click it, something
+            happens! Some buttons are big for important things, some are small
+            for less important things.
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <div class="demo-title">Different button sizes:</div>
+          <div class="demo-row">
+            <button class="button" data-size="sm">Small</button>
+            <button class="button" data-size="md">Medium</button>
+            <button class="button" data-size="lg">Large</button>
+            <button class="button" data-size="xl">Extra Large</button>
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <div class="demo-title">Different button looks:</div>
+          <div class="demo-row">
+            <button class="button" data-variant="primary">Main Button</button>
+            <button class="button" data-variant="glass">
+              Fancy Glass Button
+            </button>
+          </div>
+        </div>
+
+        <ul class="feature-list">
+          <li>Click it to do things</li>
+          <li>Come in different sizes</li>
+          <li>Have different styles (normal, fancy glass)</li>
+          <li>Change color when you hover over them</li>
+        </ul>
+      </section>
+
+      <!-- Badge Component -->
+      <section class="section" id="badge">
+        <h2 class="with-icon">
+          <span class="emoji">🏷️</span>
+          Badge
+        </h2>
+        <p class="simple-description">
+          Tiny labels that show you information. Like a sticker that says "New",
+          "Hot", or "Sale"!
+        </p>
+
+        <div class="what-it-does">
+          <div class="what-it-does-title">💡 What It Does:</div>
+          <div class="what-it-does-text big-text">
+            It's a small colored label you can stick on things. Each color means
+            something different - red for problems, green for good news, blue
+            for information!
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <div class="demo-title">All the badge colors:</div>
+          <div class="demo-flex">
+            <div class="variant-box">
+              <span class="badge" data-variant="default">Default</span>
+            </div>
+            <div class="variant-box">
+              <span class="badge" data-variant="primary">Primary</span>
+            </div>
+            <div class="variant-box">
+              <span class="badge" data-variant="secondary">Secondary</span>
+            </div>
+            <div class="variant-box">
+              <span class="badge" data-variant="info">Info</span>
+            </div>
+            <div class="variant-box">
+              <span class="badge" data-variant="warn">Warning</span>
+            </div>
+            <div class="variant-box">
+              <span class="badge" data-variant="destructive">Problem!</span>
+            </div>
+          </div>
+        </div>
+
+        <ul class="feature-list">
+          <li>Small colored stickers for labels</li>
+          <li>Says things like "New", "Hot", or "Sale"</li>
+          <li>Different colors mean different things</li>
+          <li>Just for showing info, not for clicking</li>
+        </ul>
+      </section>
+
+      <!-- Box Component -->
+      <section class="section" id="box">
+        <h2 class="with-icon">
+          <span class="emoji">📦</span>
+          Box
+        </h2>
+        <p class="simple-description">
+          A helper for arranging things where you want them. It's like telling
+          blocks to line up perfectly!
+        </p>
+
+        <div class="what-it-does">
+          <div class="what-it-does-title">💡 What It Does:</div>
+          <div class="what-it-does-text big-text">
+            It positions things in a line (like the top, middle, or bottom).
+            Think of it like having items in a row, and you decide if each one
+            sits at the top, middle, or bottom of the row!
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <div class="demo-title">Boxes in a row at different heights:</div>
+          <div
+            style="
+              display: flex;
+              gap: 1rem;
+              height: 120px;
+              align-items: stretch;
+            "
+          >
+            <div
+              class="box"
+              data-align="start"
+              style="
+                background: var(--primary);
+                color: white;
+                padding: 1rem;
+                border-radius: 0.375rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              Top
+            </div>
+            <div
+              class="box"
+              data-align="center"
+              style="
+                background: var(--secondary);
+                color: white;
+                padding: 1rem;
+                border-radius: 0.375rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              Middle
+            </div>
+            <div
+              class="box"
+              data-align="end"
+              style="
+                background: var(--accent);
+                color: white;
+                padding: 1rem;
+                border-radius: 0.375rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              Bottom
+            </div>
+          </div>
+        </div>
+
+        <ul class="feature-list">
+          <li>Makes things line up perfectly</li>
+          <li>Put things at the top, middle, or bottom</li>
+          <li>Helps arrange layouts</li>
+          <li>Super useful for making things pretty</li>
+        </ul>
+      </section>
+
+      <!-- Stack Component -->
+      <section class="section" id="stack">
+        <h2 class="with-icon">
+          <span class="emoji">📚</span>
+          Stack
+        </h2>
+        <p class="simple-description">
+          A way to stack things on top of each other or next to each other. Like
+          stacking blocks!
+        </p>
+
+        <div class="what-it-does">
+          <div class="what-it-does-title">💡 What It Does:</div>
+          <div class="what-it-does-text big-text">
+            It's like a pile of blocks. You can stack them up and down
+            (vertical) or left to right (horizontal). It automatically spaces
+            them all the same!
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <div class="demo-title">Stack going DOWN (vertical):</div>
+          <div
+            class="stack"
+            data-orientation="vertical"
+            style="gap: 0.5rem; margin-bottom: 1rem"
+          >
+            <div
+              style="
+                background: var(--primary);
+                color: white;
+                padding: 1rem;
+                border-radius: 0.375rem;
+                text-align: center;
+              "
+            >
+              Block 1
+            </div>
+            <div
+              style="
+                background: var(--secondary);
+                color: white;
+                padding: 1rem;
+                border-radius: 0.375rem;
+                text-align: center;
+              "
+            >
+              Block 2
+            </div>
+            <div
+              style="
+                background: var(--accent);
+                color: white;
+                padding: 1rem;
+                border-radius: 0.375rem;
+                text-align: center;
+              "
+            >
+              Block 3
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <div class="demo-title">Stack going RIGHT (horizontal):</div>
+          <div
+            class="stack"
+            data-orientation="horizontal"
+            style="gap: 0.5rem; margin-bottom: 1rem"
+          >
+            <div
+              style="
+                background: var(--primary);
+                color: white;
+                padding: 1rem;
+                border-radius: 0.375rem;
+                text-align: center;
+                flex: 1;
+              "
+            >
+              Left
+            </div>
+            <div
+              style="
+                background: var(--secondary);
+                color: white;
+                padding: 1rem;
+                border-radius: 0.375rem;
+                text-align: center;
+                flex: 1;
+              "
+            >
+              Middle
+            </div>
+            <div
+              style="
+                background: var(--accent);
+                color: white;
+                padding: 1rem;
+                border-radius: 0.375rem;
+                text-align: center;
+                flex: 1;
+              "
+            >
+              Right
+            </div>
+          </div>
+        </div>
+
+        <ul class="feature-list">
+          <li>Stack things up and down</li>
+          <li>Or arrange them left to right</li>
+          <li>Automatic spacing</li>
+          <li>Easy to flip them around!</li>
+        </ul>
+      </section>
+
+      <!-- Card Component -->
+      <section class="section" id="card">
+        <h2 class="with-icon">
+          <span class="emoji">🎴</span>
+          Card
+        </h2>
+        <p class="simple-description">
+          A card is like a poster or a note. It has a title, description,
+          content area, and maybe some buttons at the bottom!
+        </p>
+
+        <div class="what-it-does">
+          <div class="what-it-does-title">💡 What It Does:</div>
+          <div class="what-it-does-text big-text">
+            It's like a real card or poster. The top has the title and
+            description, the middle has the main content, and the bottom has
+            action buttons!
+          </div>
+        </div>
+
+        <div class="demo-area" style="padding: 1rem">
+          <div class="demo-title">A card with all the parts:</div>
+          <div
+            class="card"
+            data-border-accent="primary"
+            data-transition="all"
+            style="max-width: 400px; margin: 0 auto"
+          >
+            <div class="card-header">
+              <div class="card-title">🎉 Example Card</div>
+              <div class="card-description">This is the description part</div>
+            </div>
+            <div class="card-content">
+              <div class="text">
+                This is where the main stuff goes! You can put pictures, text,
+                or anything!
+              </div>
+            </div>
+            <div class="card-footer">
+              <button class="button" data-size="sm">Do Something</button>
+              <button
+                class="button"
+                data-size="sm"
+                data-variant="glass"
+                style="margin-left: 0.5rem"
+              >
+                Or This
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <ul class="feature-list">
+          <li>Title at the top</li>
+          <li>Description for more info</li>
+          <li>Main content in the middle</li>
+          <li>Action buttons at the bottom</li>
+          <li>Pretty borders and shadows</li>
+        </ul>
+      </section>
+
+      <!-- Skeleton Component -->
+      <section class="section" id="skeleton">
+        <h2 class="with-icon">
+          <span class="emoji">💀</span>
+          Skeleton
+        </h2>
+        <p class="simple-description">
+          A placeholder that loads gently. Like a ghost that shows where stuff
+          will appear. Great for "loading..." states!
+        </p>
+
+        <div class="what-it-does">
+          <div class="what-it-does-title">💡 What It Does:</div>
+          <div class="what-it-does-text big-text">
+            When something is loading, instead of a blank screen, you see a
+            ghostly preview. It pulses gently to show "something is coming!"
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <div class="demo-title">Loading skeleton preview:</div>
+          <div style="display: flex; gap: 1rem; margin-bottom: 1rem">
+            <span
+              class="skeleton"
+              style="width: 3rem; height: 3rem; border-radius: 50%"
+            ></span>
+            <div style="flex: 1">
+              <span
+                class="skeleton"
+                style="
+                  display: block;
+                  height: 1rem;
+                  margin-bottom: 0.5rem;
+                  width: 75%;
+                "
+              ></span>
+              <span
+                class="skeleton"
+                style="display: block; height: 0.75rem; width: 50%"
+              ></span>
+            </div>
+          </div>
+          <p
+            class="text"
+            data-size="sm"
+            data-variant="subtle"
+            style="margin: 0"
+          >
+            👆 Watch them pulse!
+          </p>
+        </div>
+
+        <ul class="feature-list">
+          <li>Pulses gently while loading</li>
+          <li>Shows where stuff will go</li>
+          <li>Nicer than a blank screen</li>
+          <li>Makes waiting feel faster!</li>
+        </ul>
+      </section>
+
+      <!-- Activatable Component -->
+      <section class="section" id="activatable">
+        <h2 class="with-icon">
+          <span class="emoji">🎛️</span>
+          Activatable
+        </h2>
+        <p class="simple-description">
+          A toggle switch or on/off button. Click it once to turn it ON, click
+          again to turn it OFF!
+        </p>
+
+        <div class="what-it-does">
+          <div class="what-it-does-title">💡 What It Does:</div>
+          <div class="what-it-does-text big-text">
+            It's like a light switch! Click it to turn it ON (it lights up),
+            click again to turn it OFF (it dims). Super useful for yes/no
+            questions or toggling things!
+          </div>
+        </div>
+
+        <div class="demo-area">
+          <div class="demo-title">Click these to turn them on and off:</div>
+          <div class="demo-flex">
+            <button class="activatable" role="checkbox">OFF</button>
+            <button class="activatable" role="checkbox" data-active="true">
+              ON ✨
+            </button>
+          </div>
+        </div>
+
+        <ul class="feature-list">
+          <li>Toggle on and off</li>
+          <li>Like a light switch</li>
+          <li>Shows which state it's in</li>
+          <li>Great for options and settings</li>
+        </ul>
+      </section>
+
+      <!-- Terminal Component -->
+      <section class="section" id="terminal">
+        <h2 class="with-icon">
+          <span class="emoji">⌨️</span>
+          Terminal
+        </h2>
+        <p class="simple-description">
+          Like a computer screen that shows commands and results. For showing
+          code, scripts, or system output!
+        </p>
+
+        <div class="what-it-does">
+          <div class="what-it-does-title">💡 What It Does:</div>
+          <div class="what-it-does-text big-text">
+            It looks like old computer terminals. You type a command, press
+            enter, and see the result. Perfect for showing code examples!
+          </div>
+        </div>
+
+        <div class="demo-area" style="text-align: left">
+          <div class="demo-title">Example terminal output:</div>
+          <div
+            class="terminal"
+            style="
+              border: 1px solid var(--border);
+              border-radius: 0.375rem;
+              overflow: hidden;
+              max-width: 500px;
+              margin: 0 auto;
+            "
+          >
+            <div class="terminal-header"></div>
+            <div class="terminal-interface">
+              <div class="terminal-line">
+                <span class="terminal-prompt">$ </span>
+                <div class="terminal-input">npm install my-components</div>
+              </div>
+              <div class="terminal-line">
+                <div class="terminal-output">✅ Installed 42 components!</div>
+              </div>
+              <div class="terminal-line">
+                <span class="terminal-prompt">$ </span>
+                <div class="terminal-input">npm start</div>
+              </div>
+              <div class="terminal-line">
+                <div class="terminal-output">
+                  🚀 Your site is ready at localhost:3000
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ul class="feature-list">
+          <li>Looks like a real computer terminal</li>
+          <li>Shows commands and results</li>
+          <li>Perfect for code examples</li>
+          <li>Cool retro look with colored dots at the top!</li>
+        </ul>
+      </section>
+
+      <!-- Fun Summary -->
+      <section class="section">
+        <h2 class="with-icon">
+          <span class="emoji">🎉</span>
+          That's All!
+        </h2>
+        <div class="fun-fact">
+          <div class="fun-fact-title">
+            <span class="fun-fact-emoji">✨</span>
+            Remember:
+          </div>
+          <div class="fun-fact-text big-text">
+            These components are like LEGO blocks! You use them to build
+            beautiful websites. Mix and match them, make them bigger or smaller,
+            change their colors - make something awesome!
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
