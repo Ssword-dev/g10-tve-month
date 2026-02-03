@@ -1,0 +1,1113 @@
+/* Theming */
+:root {
+  /* base surfaces */
+  --palette-color-background: oklch(97% 0.01 95);
+  --palette-color-surface: oklch(96% 0.01 95);
+  --palette-color-muted: oklch(92% 0.01 95);
+
+  /* text */
+  --palette-color-text: oklch(32% 0.01 95);
+  --palette-color-text-muted: oklch(55% 0.005 95);
+
+  /* borders & lines */
+  --palette-color-border: oklch(78% 0.005 95);
+  --palette-color-border-muted: oklch(85% 0.005 95);
+
+  /* accents (same hue/chroma as dark, lighter tone) */
+  --palette-color-accent: oklch(78% 0.15 270);
+  --palette-color-accent-strong: oklch(72% 0.28 275);
+
+  /* semantic */
+  --palette-color-primary: oklch(64% 0.1 155);
+  --palette-color-secondary: oklch(64% 0.1 335);
+
+  --palette-color-danger: oklch(62% 0.05 30);
+  --palette-color-warning: oklch(72% 0.05 100);
+  --palette-color-success: oklch(62% 0.05 160);
+  --palette-color-info: oklch(62% 0.05 260);
+
+  /* shadows */
+  --palette-color-shadow: oklch(82% 0.01 95);
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+	  /* core surfaces */
+	  --palette-color-background: oklch(11% 0.015 260);
+	  /* deep graphite */
+	  --palette-color-surface: oklch(16% 0.015 260);
+	  /* elevated surface */
+	  --palette-color-muted: oklch(22% 0.01 260);
+	  /* subtle hover surface */
+
+	  /* text */
+	  --palette-color-text: oklch(0.94 0.01 260);
+	  /* off-white */
+	  --palette-color-text-muted: oklch(0.72 0.01 260);
+	  /* understated gray */
+
+	  /* accents restrained like vercel's */
+	  --palette-color-accent: oklch(0.78 0.09 265);
+	  /* cool violet accent */
+	  --palette-color-accent-strong: oklch(0.72 0.14 270);
+	  /* stronger, still tasteful */
+
+	  /* borders */
+	  --palette-color-border: oklch(0.4 0.005 260);
+	  --palette-color-border-muted: oklch(0.3 0.005 260);
+
+	  /* semantic colors – balanced, not too saturated */
+	  --palette-color-primary: oklch(0.8 0.08 240);
+	  --palette-color-secondary: oklch(0.8 0.08 330);
+
+	  --palette-color-danger: oklch(0.7 0.05 25);
+	  --palette-color-warning: oklch(0.72 0.05 90);
+	  --palette-color-success: oklch(0.72 0.06 150);
+	  --palette-color-info: oklch(0.75 0.06 260);
+
+	  /* shadows — subtle and natural */
+	  --palette-color-shadow: oklch(0.28 0.01 260);
+	}
+}
+
+/* Palette aliases for convenience (map to the palette variables above) */
+:root {
+	--text: var(--palette-color-text);
+	--text-muted: var(--palette-color-text-muted);
+	--surface: var(--palette-color-surface);
+	--surface-hover: var(--palette-color-muted);
+	--surface-active: var(--palette-color-muted);
+	--surface-muted: var(--palette-color-muted);
+	--accent: var(--palette-color-accent);
+	--accent-strong: var(--palette-color-accent-strong);
+	--primary: var(--palette-color-primary);
+	--secondary: var(--palette-color-secondary);
+	--destructive: var(--palette-color-danger);
+	--warn: var(--palette-color-warning);
+	--info: var(--palette-color-info);
+	--border: var(--palette-color-border);
+	--muted-foreground: var(--palette-color-text-muted);
+	--foreground: var(--palette-color-text);
+	--success: var(--palette-color-success);
+	--warning: var(--palette-color-warning);
+	--shadow: var(--palette-color-shadow);
+}
+
+/* === Base Styles (Tailwind Preflight + Custom CSS) === */
+/* === Preflight === */
+/*
+  1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
+  2. Remove default margins and padding
+  3. Reset all borders.
+*/
+
+*,
+::after,
+::before,
+::backdrop,
+::file-selector-button {
+  box-sizing: border-box; /* 1 */
+  margin: 0; /* 2 */
+  padding: 0; /* 2 */
+  border: 0 solid; /* 3 */
+}
+
+/*
+  1. Use a consistent sensible line-height in all browsers.
+  2. Prevent adjustments of font size after orientation changes in iOS.
+  3. Use a more readable tab size.
+  4. Use the user's configured `sans` font-family by default.
+  5. Use the user's configured `sans` font-feature-settings by default.
+  6. Use the user's configured `sans` font-variation-settings by default.
+  7. Disable tap highlights on iOS.
+*/
+
+html,
+:host {
+  line-height: 1.5; /* 1 */
+  -webkit-text-size-adjust: 100%; /* 2 */
+  tab-size: 4; /* 3 */
+  font-family: --theme(
+    --default-font-family,
+    ui-sans-serif,
+    system-ui,
+    sans-serif,
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+    'Noto Color Emoji'
+  ); /* 4 */
+  font-feature-settings: --theme(--default-font-feature-settings, normal); /* 5 */
+  font-variation-settings: --theme(--default-font-variation-settings, normal); /* 6 */
+  -webkit-tap-highlight-color: transparent; /* 7 */
+}
+
+/*
+  1. Add the correct height in Firefox.
+  2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)
+  3. Reset the default border style to a 1px solid border.
+*/
+
+hr {
+  height: 0; /* 1 */
+  color: inherit; /* 2 */
+  border-top-width: 1px; /* 3 */
+}
+
+/*
+  Add the correct text decoration in Chrome, Edge, and Safari.
+*/
+
+abbr:where([title]) {
+  -webkit-text-decoration: underline dotted;
+  text-decoration: underline dotted;
+}
+
+/*
+  Remove the default font size and weight for headings.
+*/
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+/*
+  Reset links to optimize for opt-in styling instead of opt-out.
+*/
+
+a {
+  color: inherit;
+  -webkit-text-decoration: inherit;
+  text-decoration: inherit;
+}
+
+/*
+  Add the correct font weight in Edge and Safari.
+*/
+
+b,
+strong {
+  font-weight: bolder;
+}
+
+/*
+  1. Use the user's configured `mono` font-family by default.
+  2. Use the user's configured `mono` font-feature-settings by default.
+  3. Use the user's configured `mono` font-variation-settings by default.
+  4. Correct the odd `em` font sizing in all browsers.
+*/
+
+code,
+kbd,
+samp,
+pre {
+  font-family: --theme(
+    --default-mono-font-family,
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    'Liberation Mono',
+    'Courier New',
+    monospace
+  ); /* 1 */
+  font-feature-settings: --theme(--default-mono-font-feature-settings, normal); /* 2 */
+  font-variation-settings: --theme(--default-mono-font-variation-settings, normal); /* 3 */
+  font-size: 1em; /* 4 */
+}
+
+/*
+  Add the correct font size in all browsers.
+*/
+
+small {
+  font-size: 80%;
+}
+
+/*
+  Prevent `sub` and `sup` elements from affecting the line height in all browsers.
+*/
+
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+/*
+  1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
+  2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
+  3. Remove gaps between table borders by default.
+*/
+
+table {
+  text-indent: 0; /* 1 */
+  border-color: inherit; /* 2 */
+  border-collapse: collapse; /* 3 */
+}
+
+/*
+  Use the modern Firefox focus style for all focusable elements.
+*/
+
+:-moz-focusring {
+  outline: auto;
+}
+
+/*
+  Add the correct vertical alignment in Chrome and Firefox.
+*/
+
+progress {
+  vertical-align: baseline;
+}
+
+/*
+  Add the correct display in Chrome and Safari.
+*/
+
+summary {
+  display: list-item;
+}
+
+/*
+  Make lists unstyled by default.
+*/
+
+ol,
+ul,
+menu {
+  list-style: none;
+}
+
+/*
+  1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)
+  2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)
+      This can trigger a poorly considered lint error in some tools but is included by design.
+*/
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+  display: block; /* 1 */
+  vertical-align: middle; /* 2 */
+}
+
+/*
+  Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
+*/
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+/*
+  1. Inherit font styles in all browsers.
+  2. Remove border radius in all browsers.
+  3. Remove background color in all browsers.
+  4. Ensure consistent opacity for disabled states in all browsers.
+*/
+
+button,
+input,
+select,
+optgroup,
+textarea,
+::file-selector-button {
+  font: inherit; /* 1 */
+  font-feature-settings: inherit; /* 1 */
+  font-variation-settings: inherit; /* 1 */
+  letter-spacing: inherit; /* 1 */
+  color: inherit; /* 1 */
+  border-radius: 0; /* 2 */
+  background-color: transparent; /* 3 */
+  opacity: 1; /* 4 */
+}
+
+/*
+  Restore default font weight.
+*/
+
+:where(select:is([multiple], [size])) optgroup {
+  font-weight: bolder;
+}
+
+/*
+  Restore indentation.
+*/
+
+:where(select:is([multiple], [size])) optgroup option {
+  padding-inline-start: 20px;
+}
+
+/*
+  Restore space after button.
+*/
+
+::file-selector-button {
+  margin-inline-end: 4px;
+}
+
+/*
+  Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
+*/
+
+::placeholder {
+  opacity: 1;
+}
+
+/*
+  Set the default placeholder color to a semi-transparent version of the current text color in browsers that do not
+  crash when using `color-mix(…)` with `currentcolor`. (https://github.com/tailwindlabs/tailwindcss/issues/17194)
+*/
+
+@supports (not (-webkit-appearance: -apple-pay-button)) /* Not Safari */ or
+  (contain-intrinsic-size: 1px) /* Safari 17+ */ {
+  ::placeholder {
+    color: color-mix(in oklab, currentcolor 50%, transparent);
+  }
+}
+
+/*
+  Prevent resizing textareas horizontally by default.
+*/
+
+textarea {
+  resize: vertical;
+}
+
+/*
+  Remove the inner padding in Chrome and Safari on macOS.
+*/
+
+::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/*
+  1. Ensure date/time inputs have the same height when empty in iOS Safari.
+  2. Ensure text alignment can be changed on date/time inputs in iOS Safari.
+*/
+
+::-webkit-date-and-time-value {
+  min-height: 1lh; /* 1 */
+  text-align: inherit; /* 2 */
+}
+
+/*
+  Prevent height from changing on date/time inputs in macOS Safari when the input is set to `display: block`.
+*/
+
+::-webkit-datetime-edit {
+  display: inline-flex;
+}
+
+/*
+  Remove excess padding from pseudo-elements in date/time inputs to ensure consistent height across browsers.
+*/
+
+::-webkit-datetime-edit-fields-wrapper {
+  padding: 0;
+}
+
+::-webkit-datetime-edit,
+::-webkit-datetime-edit-year-field,
+::-webkit-datetime-edit-month-field,
+::-webkit-datetime-edit-day-field,
+::-webkit-datetime-edit-hour-field,
+::-webkit-datetime-edit-minute-field,
+::-webkit-datetime-edit-second-field,
+::-webkit-datetime-edit-millisecond-field,
+::-webkit-datetime-edit-meridiem-field {
+  padding-block: 0;
+}
+
+/*
+  Center dropdown marker shown on inputs with paired `<datalist>`s in Chrome. (https://github.com/tailwindlabs/tailwindcss/issues/18499)
+*/
+
+::-webkit-calendar-picker-indicator {
+  line-height: 1;
+}
+
+/*
+  Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
+*/
+
+:-moz-ui-invalid {
+  box-shadow: none;
+}
+
+/*
+  Correct the inability to style the border radius in iOS Safari.
+*/
+
+button,
+input:where([type='button'], [type='reset'], [type='submit']),
+::file-selector-button {
+  appearance: button;
+}
+
+/*
+  Correct the cursor style of increment and decrement buttons in Safari.
+*/
+
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/*
+  Make elements with the HTML hidden attribute stay hidden by default.
+*/
+
+[hidden]:where(:not([hidden='until-found'])) {
+  display: none !important;
+}
+
+
+:root {
+  --accessibility-contrast: 100%;
+}
+
+@media (prefers-contrast: less) {
+  :root {
+    --accessibility-contrast: 90%;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --accessibility-contrast: 110%;
+  }
+}
+
+* {
+  filter: contrast(var(--accessibility-contrast));
+}
+
+body {
+    width: 100vw;
+    min-height: 100vh;
+    color: var(--palette-color-text);
+    background: var(--palette-color-background);
+    transition:
+      color 0.5s,
+      background-color 0.5s;
+    line-height: 1.6;
+    font-family:
+      Inter,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      Oxygen,
+      Ubuntu,
+      Cantarell,
+      "Fira Sans",
+      "Droid Sans",
+      "Helvetica Neue",
+      sans-serif;
+    font-size: 15px;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    @apply bg-background;
+}
+
+* {
+    filter: contrast(var(--accessibility-contrast));
+}
+
+/* === Components === */
+
+/* Activatable */
+.activatable {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.5rem;
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: var(--text-muted);
+	background-color: transparent;
+	border-radius: 0.375rem;
+	border: 1px solid transparent;
+	transition: all 150ms ease-in-out;
+}
+
+.activatable:hover {
+    background-color: var(--surface-hover);
+    color: var(--text);
+}
+
+.activatable:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 2px;
+}
+
+.activatable[data-active="true"] {
+	background-color: var(--surface-active);
+	color: var(--accent-strong);
+	border-color: var(--accent-strong);
+	transform: scale(0.95);
+}
+
+/* Badge */
+.badge {
+	display: inline-flex;
+	padding: 0.25rem 0.5rem;
+	color: var(--text);
+}
+
+.badge[data-variant="default"] {
+	background-color: transparent;
+}
+
+.badge[data-variant="primary"] { background-color: var(--primary); }
+
+.badge[data-variant="secondary"] { background-color: var(--secondary); }
+
+.badge[data-variant="info"] { background-color: var(--info); }
+
+.badge[data-variant="warn"] { background-color: var(--warn); }
+
+.badge[data-variant="destructive"] { background-color: var(--destructive); }
+
+/* Box */
+.box {
+	padding: 0.5rem;
+}
+
+.box[data-align="start"] {
+	align-self: flex-start;
+}
+
+.box[data-align="end"] {
+	align-self: flex-end;
+}
+
+.box[data-align="center"] {
+	align-self: center;
+}
+
+.box[data-justify="start"] {
+	/* No specific styles for start */
+}
+
+.flex-row > .box[data-justify="end"] {
+	margin-left: auto;
+}
+
+.flex-col > .box[data-justify="end"] {
+	margin-top: auto;
+}
+
+.flex-row > .box[data-justify="center"] {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.flex-col > .box[data-justify="center"] {
+	margin-top: auto;
+	margin-bottom: auto;
+}
+
+/* Button */
+.button {
+	display: inline-flex;
+	align-items: center;
+	transition: all 200ms ease-in-out;
+	padding: 0.5rem 1rem;
+	font-size: 1rem;
+	border-radius: 0.375rem;
+	border: 1px solid var(--border);
+	background-color: var(--primary);
+	color: var(--text);
+	cursor: pointer;
+}
+
+.button:hover {
+	background-color: var(--accent);
+	border-color: var(--accent-strong);
+}
+
+.button:active {
+	transform: scale(1.05);
+	background-color: var(--accent);
+	border-color: var(--accent-strong);
+}
+
+.button[data-variant="glass"] {
+	background-color: transparent;
+	backdrop-filter: blur(12px);
+}
+
+.button[data-variant="primary"] { background-color: var(--primary); }
+
+.button[data-size="sm"] {
+	padding: 0.375rem 0.75rem;
+	font-size: 0.875rem;
+}
+
+.button[data-size="md"] {
+	padding: 0.5rem 1rem;
+	font-size: 1rem;
+}
+
+.button[data-size="lg"] {
+	padding: 0.75rem 1.5rem;
+	font-size: 1.125rem;
+}
+
+.button[data-size="xl"] {
+	padding: 1rem 2rem;
+	font-size: 1.25rem;
+}
+
+/* Card */
+.card {
+	background-color: var(--surface);
+	color: var(--text);
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	border-radius: 0.75rem;
+	border: 1px solid var(--border);
+	padding: 1.5rem 0.75rem;
+	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.card[data-border-accent="primary"]:hover {
+	border-color: var(--primary);
+}
+
+.card[data-border-accent="secondary"]:hover {
+	border-color: var(--secondary);
+}
+
+.card[data-transition="all"] {
+	transition: all;
+}
+
+.card[data-transition="colors"] {
+	transition: background-color, border-color, color;
+}
+
+.card[data-transition="opacity"] {
+	transition: opacity;
+}
+
+.card[data-transition="shadow"] {
+	transition: box-shadow;
+}
+
+.card[data-transition="transform"] {
+	transition: transform;
+}
+
+/* CardAction */
+.card-action {
+	grid-column: 2;
+	grid-row: 1 / 3;
+	align-self: start;
+	justify-self: end;
+}
+
+/* CardContent */
+.card-content {
+	padding-left: 1.5rem;
+	padding-right: 1.5rem;
+	flex-grow: 1;
+}
+
+/* CardDescription */
+.card-description {
+	color: var(--muted-foreground);
+	font-size: 0.875rem;
+}
+
+/* CardFooter */
+.card-footer {
+	display: flex;
+	align-items: center;
+	padding-left: 1.5rem;
+	padding-right: 1.5rem;
+}
+
+.card-footer.has-border-t {
+	padding-top: 1.5rem;
+}
+
+/* CardHeader */
+.card-header {
+	container-type: inline-size;
+	display: grid;
+	grid-auto-rows: min-content;
+	grid-template-rows: auto auto;
+	align-items: start;
+	gap: 0.5rem;
+	padding-left: 1.5rem;
+	padding-right: 1.5rem;
+}
+
+.card-header.has-card-action {
+	grid-template-columns: 1fr auto;
+}
+
+.card-header.has-border-b {
+	padding-bottom: 1.5rem;
+}
+
+/* CardTitle */
+.card-title {
+	line-height: 1;
+	font-weight: 600;
+}
+
+/* Screen */
+.screen {
+	pointer-events: none;
+	z-index: 10000;
+	position: fixed;
+	height: 100vh;
+	width: 100vw;
+	margin: 0;
+	padding: 0;
+	background-color: transparent;
+}
+
+.screen * {
+	pointer-events: auto;
+}
+
+/* Skeleton */
+.skeleton {
+	animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+	background-color: var(--surface-muted);
+	border-radius: 0.375rem;
+}
+
+@keyframes skeleton-pulse {
+	0%, 100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.5;
+	}
+}
+
+/* Stack */
+.stack {
+	display: flex;
+}
+
+.stack[data-orientation="horizontal"] {
+	flex-direction: row;
+}
+
+.stack[data-orientation="horizontal"][data-order="reversed"] {
+	flex-direction: row-reverse;
+}
+
+.stack[data-orientation="vertical"] {
+	flex-direction: column;
+}
+
+.stack[data-orientation="vertical"][data-order="reversed"] {
+	flex-direction: column-reverse;
+}
+
+/* Terminal */
+.terminal {
+	/* Base styles handled by parent */
+}
+
+/* TerminalHeader */
+.terminal-header {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5rem;
+	padding: 0.75rem 0.5rem;
+	background-color: var(--surface);
+	border-top-left-radius: 0.375rem;
+	border-top-right-radius: 0.375rem;
+}
+
+.terminal-header::before,
+.terminal-header::after {
+	content: '';
+	width: 1rem;
+	aspect-ratio: 1;
+	border-radius: 50%;
+}
+
+.terminal-header::before {
+	background-color: var(--accent);
+}
+
+.terminal-header::after {
+	background-color: var(--primary);
+}
+
+/* TerminalInput */
+.terminal-input {
+	display: inline-flex;
+	flex-direction: row;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
+
+/* TerminalInterface */
+.terminal-interface {
+	padding: 0.25rem 0.5rem;
+	background-color: color-mix(in oklab, var(--surface) 70%, transparent);
+	font-family: monospace;
+}
+
+/* TerminalLine */
+.terminal-line {
+	display: inline-flex;
+	flex-direction: row;
+	word-break: break-word;
+}
+
+/* TerminalOutput */
+.terminal-output {
+	display: inline-flex;
+	flex-direction: row;
+	font-family: monospace;
+	color: var(--text);
+}
+
+/* TerminalPrompt */
+.terminal-prompt {
+	display: inline-flex;
+	flex-direction: row;
+	user-select: none;
+	white-space: nowrap;
+}
+
+/* Text */
+.text {
+	font-size: 1rem;
+	font-weight: 400;
+	color: var(--foreground);
+}
+
+.text[data-variant="default"] {
+	/* No additional styles */
+}
+
+.text[data-variant="subtle"] {
+	color: var(--muted-foreground);
+}
+
+.text[data-variant="muted"] {
+	color: var(--muted-foreground);
+	opacity: 0.8;
+}
+
+.text[data-variant="destructive"] {
+	color: var(--destructive);
+}
+
+.text[data-variant="success"] {
+	color: var(--success);
+}
+
+.text[data-variant="warning"] {
+	color: var(--warning);
+}
+
+.text[data-size="xs"] {
+	font-size: 0.75rem;
+}
+
+.text[data-size="sm"] {
+	font-size: 0.875rem;
+}
+
+.text[data-size="base"] {
+	font-size: 1rem;
+}
+
+.text[data-size="lg"] {
+	font-size: 1.125rem;
+}
+
+.text[data-size="xl"] {
+	font-size: 1.25rem;
+}
+
+.text[data-size="2xl"] {
+	font-size: 1.5rem;
+}
+
+.text[data-size="3xl"] {
+	font-size: 1.875rem;
+}
+
+.text[data-size="4xl"] {
+	font-size: 2.25rem;
+}
+
+.text[data-size="5xl"] {
+	font-size: 3rem;
+}
+
+.text[data-size="6xl"] {
+	font-size: 3.75rem;
+}
+
+.text[data-size="7xl"] {
+	font-size: 4.5rem;
+}
+
+.text[data-weight="normal"] {
+	font-weight: 400;
+}
+
+.text[data-weight="medium"] {
+	font-weight: 500;
+}
+
+.text[data-weight="semibold"] {
+	font-weight: 600;
+}
+
+.text[data-weight="bold"] {
+	font-weight: 700;
+}
+
+.text[data-align="left"] {
+	text-align: left;
+}
+
+.text[data-align="center"] {
+	text-align: center;
+}
+
+.text[data-align="right"] {
+	text-align: right;
+}
+
+.text[data-align="justify"] {
+	text-align: justify;
+}
+
+.text[data-leading="none"] {
+	line-height: 1;
+}
+
+.text[data-leading="tight"] {
+	line-height: 1.25;
+}
+
+.text[data-leading="normal"] {
+	line-height: 1.5;
+}
+
+.text[data-leading="relaxed"] {
+	line-height: 1.625;
+}
+
+.text[data-leading="loose"] {
+	line-height: 2;
+}
+
+.text[data-tracking="tighter"] {
+	letter-spacing: -0.05em;
+}
+
+.text[data-tracking="tight"] {
+	letter-spacing: -0.025em;
+}
+
+.text[data-tracking="normal"] {
+	letter-spacing: 0;
+}
+
+.text[data-tracking="wide"] {
+	letter-spacing: 0.025em;
+}
+
+.text[data-tracking="wider"] {
+	letter-spacing: 0.05em;
+}
+
+.text[data-transform="normal"] {
+	/* No transform */
+}
+
+.text[data-transform="uppercase"] {
+	text-transform: uppercase;
+}
+
+.text[data-transform="lowercase"] {
+	text-transform: lowercase;
+}
+
+.text[data-transform="capitalize"] {
+	text-transform: capitalize;
+}
+
+.text[data-wrap="normal"] {
+	/* No wrap styles */
+}
+
+.text[data-wrap="nowrap"] {
+	white-space: nowrap;
+}
+
+.text[data-wrap="balance"] {
+	text-wrap: balance;
+}
+
+.text[data-wrap="pretty"] {
+	text-wrap: pretty;
+}
+
+.text[data-decoration="none"] {
+	/* No decoration */
+}
+
+.text[data-decoration="underline"] {
+	text-decoration: underline;
+}
+
+.text[data-decoration="line-through"] {
+	text-decoration: line-through;
+}
+
+.text[data-interactivity="normal"] {
+	/* Normal selection */
+}
+
+.text[data-interactivity="none"] {
+	user-select: none;
+}
