@@ -3,6 +3,8 @@
 
 // api/getEmployeeByNumber.php
 // Fetch employee details by employee number, including their courses.
+// The courses are stored as a sequence table linked by achiever_employee_number
+// to the employees_table.employee_number.
 
 return function ($employee_number) {
     global $db;
