@@ -14,7 +14,7 @@ it('returns employee data and courses for a known employee', function () {
     $fn = require __DIR__ . '/../../src/api/getEmployeeByEmployeeNumber.php';
 
     // call with employee number 10001 which is populated by dummy data + compatibility step
-    $result = $fn(10001);
+    $result = $fn(10001)->data;
 
     expect(is_array($result))->toBeTrue();
     expect($result['employee_number'])->toBe(10001);
