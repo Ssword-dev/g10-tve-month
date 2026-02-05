@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>search demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- link to your provided css -->
+  <link rel="stylesheet" href="../static/components.css" />
+</head>
+
+<body>
+  <main class="stack" data-orientation="vertical">
+    <!-- page header -->
+    <section class="card">
+      <header class="card-header has-border-b">
+        <h1 class="card-title text" data-size="3xl" data-weight="bold">
+          search interface
+        </h1>
+        <p class="card-description">
+          type to filter results using the component system
+        </p>
+      </header>
+
+      <!-- search input -->
+      <div class="card-content">
+        <div class="field">
+          <label class="field-label">search</label>
+          <div class="input-group">
+            <input
+              id="searchInput"
+              class="input"
+              type="text"
+              placeholder="search items..."
+              autocomplete="off"
+            />
+            <button id="searchButton" class="button" data-size="sm">
+              search
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- results -->
+    <section class="card" id="resultsCard">
+      <header class="card-header has-border-b">
+        <h2 class="card-title text" data-size="xl">
+          results
+        </h2>
+        <p class="card-description" id="resultsMeta">
+          enter a search term to see results
+        </p>
+      </header>
+
+      <div class="card-content stack" data-orientation="vertical" id="resultsBox">
+        <!-- results injected here -->
+        <p class="text" data-variant="muted">
+          no results yet
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- simple search logic -->
+  <script>
+    // sample data set
+    const items = [
+      'apple',
+      'banana',
+      'coffee',
+      'dark chocolate',
+      'green tea',
+      'hazelnut',
+      'olive oil',
+      'sunflower seeds',
+      'whole grain bread'
+    ]
+
+    const searchInput = document.getElementById('searchInput')
+    const searchButton = document.getElementById('searchButton')
+    const resultsBox = document.getElementById('resultsBox')
+    const resultsMeta = document.getElementById('resultsMeta')
+
+    function renderResults(results) {
+      resultsBox.innerHTML = ''
+
+      if (results.length === 0) {
+        resultsBox.innerHTML = `
+          <p class="text" data-variant="muted">
+            no matching results
+          </p>
+        `
+        return
+      }
+
+      results.forEach(item => {
+        const row = document.createElement('div')
+        row.className = 'box'
+        row.innerHTML = `
+          <span class="text">${item}</span>
+        `
+        resultsBox.appendChild(row)
+      })
+    }
+
+    function performSearch() {
+      const query = searchInput.value.trim().toLowerCase()
+
+      if (!query) {
+        resultsMeta.textContent = 'enter a search term to see results'
+        renderResults([])
+        return
+      }
+
+      const filtered = items.filter(item =>
+        item.toLowerCase().includes(query)
+      )
+
+      resultsMeta.textContent = `${filtered.length} result(s) found`
+      renderResults(filtered)
+    }
+
+    searchButton.addEventListener('click', performSearch)
+    searchInput.addEventListener('keydown', event => {
+      if (event.key === 'Enter') {
+        performSearch()
+      }
+    })
+  </script>
+</body>
+</html>

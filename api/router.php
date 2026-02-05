@@ -1,5 +1,7 @@
 <?php
 
+use Core\ApiCallResult;
+
 $qp = $_GET;
 $bp = $_POST;
 
@@ -11,4 +13,5 @@ $fn = require($f);
 
 $result = $fn($qp, $bp);
 
-if ($result->)
+header('Content-Type: application/json');
+echo json_encode($result);

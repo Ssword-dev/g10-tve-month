@@ -1128,3 +1128,370 @@ body {
 .text[data-interactivity="none"] {
 	user-select: none;
 }
+
+/* Input */
+.input {
+	display: flex;
+	width: 100%;
+	border-radius: 0.375rem;
+	border: 1px solid var(--border);
+	background-color: var(--surface);
+	padding: 0.5rem 0.75rem;
+	font-size: 1rem;
+	color: var(--text);
+	transition: border-color 200ms ease-in-out, box-shadow 200ms ease-in-out;
+}
+
+.input:focus-visible {
+	outline: none;
+	border-color: var(--accent);
+	box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 20%, transparent);
+}
+
+.input:disabled {
+	background-color: var(--surface-muted);
+	color: var(--text-muted);
+	cursor: not-allowed;
+	opacity: 0.5;
+}
+
+.input[aria-invalid="true"] {
+	border-color: var(--destructive);
+}
+
+.input[aria-invalid="true"]:focus-visible {
+	box-shadow: 0 0 0 3px color-mix(in oklab, var(--destructive) 20%, transparent);
+}
+
+.input::placeholder {
+	color: var(--text-muted);
+}
+
+.input[type="file"] {
+	padding: 0.5rem;
+}
+
+/* Field */
+.field {
+	display: flex;
+	flex-direction: column;
+	gap: 0.375rem;
+	width: 100%;
+}
+
+.field[data-disabled="true"] .input,
+.field[data-disabled="true"] .field-label {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.field[data-invalid="true"] .input {
+	border-color: var(--destructive);
+}
+
+.field[data-invalid="true"] .input:focus-visible {
+	box-shadow: 0 0 0 3px color-mix(in oklab, var(--destructive) 20%, transparent);
+}
+
+/* FieldLabel */
+.field-label {
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: var(--text);
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+.field-label[data-required="true"]::after {
+	content: '*';
+	color: var(--destructive);
+}
+
+/* FieldDescription */
+.field-description {
+	font-size: 0.8125rem;
+	color: var(--text-muted);
+	line-height: 1.4;
+}
+
+.field[data-invalid="true"] .field-description {
+	color: var(--destructive);
+}
+
+/* FieldError */
+.field-error {
+	font-size: 0.8125rem;
+	color: var(--destructive);
+	line-height: 1.4;
+}
+
+/* FieldGroup */
+.field-group {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	width: 100%;
+}
+
+.field-group[data-layout="horizontal"] {
+	flex-direction: row;
+	align-items: flex-start;
+	gap: 1.5rem;
+}
+
+.field-group[data-layout="grid"] {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 1.5rem;
+}
+
+/* Textarea */
+.textarea {
+	display: flex;
+	width: 100%;
+	border-radius: 0.375rem;
+	border: 1px solid var(--border);
+	background-color: var(--surface);
+	padding: 0.5rem 0.75rem;
+	font-size: 1rem;
+	font-family: inherit;
+	color: var(--text);
+	resize: vertical;
+	transition: border-color 200ms ease-in-out, box-shadow 200ms ease-in-out;
+	line-height: 1.5;
+	min-height: 100px;
+}
+
+.textarea:focus-visible {
+	outline: none;
+	border-color: var(--accent);
+	box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 20%, transparent);
+}
+
+.textarea:disabled {
+	background-color: var(--surface-muted);
+	color: var(--text-muted);
+	cursor: not-allowed;
+	opacity: 0.5;
+}
+
+.textarea[aria-invalid="true"] {
+	border-color: var(--destructive);
+}
+
+.textarea[aria-invalid="true"]:focus-visible {
+	box-shadow: 0 0 0 3px color-mix(in oklab, var(--destructive) 20%, transparent);
+}
+
+.textarea::placeholder {
+	color: var(--text-muted);
+}
+
+/* Label */
+.label {
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: var(--text);
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	cursor: pointer;
+}
+
+.label[data-disabled="true"] {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* Checkbox */
+.checkbox {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1rem;
+	height: 1rem;
+	border-radius: 0.25rem;
+	border: 1px solid var(--border);
+	background-color: var(--surface);
+	cursor: pointer;
+	transition: all 200ms ease-in-out;
+	flex-shrink: 0;
+}
+
+.checkbox:focus-visible {
+	outline: none;
+	border-color: var(--accent);
+	box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 20%, transparent);
+}
+
+.checkbox:checked {
+	background-color: var(--accent);
+	border-color: var(--accent);
+	color: var(--text);
+}
+
+.checkbox:disabled {
+	background-color: var(--surface-muted);
+	border-color: var(--border-muted);
+	cursor: not-allowed;
+	opacity: 0.5;
+}
+
+/* Radio */
+.radio {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1rem;
+	height: 1rem;
+	border-radius: 50%;
+	border: 1px solid var(--border);
+	background-color: var(--surface);
+	cursor: pointer;
+	transition: all 200ms ease-in-out;
+	flex-shrink: 0;
+}
+
+.radio:focus-visible {
+	outline: none;
+	border-color: var(--accent);
+	box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 20%, transparent);
+}
+
+.radio:checked {
+	border-color: var(--accent);
+	background: radial-gradient(circle, var(--accent) 40%, transparent 40%);
+}
+
+.radio:disabled {
+	background-color: var(--surface-muted);
+	border-color: var(--border-muted);
+	cursor: not-allowed;
+	opacity: 0.5;
+}
+
+/* Select */
+.select {
+	display: flex;
+	width: 100%;
+	border-radius: 0.375rem;
+	border: 1px solid var(--border);
+	background-color: var(--surface);
+	padding: 0.5rem 0.75rem;
+	font-size: 1rem;
+	color: var(--text);
+	transition: border-color 200ms ease-in-out, box-shadow 200ms ease-in-out;
+	appearance: none;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 0.75rem center;
+	padding-right: 2rem;
+}
+
+.select:focus-visible {
+	outline: none;
+	border-color: var(--accent);
+	box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 20%, transparent);
+}
+
+.select:disabled {
+	background-color: var(--surface-muted);
+	color: var(--text-muted);
+	cursor: not-allowed;
+	opacity: 0.5;
+}
+
+.select[aria-invalid="true"] {
+	border-color: var(--destructive);
+}
+
+.select[aria-invalid="true"]:focus-visible {
+	box-shadow: 0 0 0 3px color-mix(in oklab, var(--destructive) 20%, transparent);
+}
+
+/* Form */
+.form {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	width: 100%;
+}
+
+.form-footer {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--border);
+	justify-content: flex-end;
+}
+
+/* InputGroup */
+.input-group {
+	display: flex;
+	align-items: center;
+	border-radius: 0.375rem;
+	border: 1px solid var(--border);
+	background-color: var(--surface);
+	transition: border-color 200ms ease-in-out, box-shadow 200ms ease-in-out;
+	overflow: hidden;
+}
+
+.input-group:focus-within {
+	border-color: var(--accent);
+	box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 20%, transparent);
+}
+
+.input-group .input {
+	border: none;
+	padding: 0.5rem 0.75rem;
+	box-shadow: none;
+}
+
+.input-group .input:focus-visible {
+	outline: none;
+	box-shadow: none;
+}
+
+.input-group-prefix,
+.input-group-suffix {
+	display: flex;
+	align-items: center;
+	padding: 0.5rem 0.75rem;
+	color: var(--text-muted);
+	font-size: 0.875rem;
+	white-space: nowrap;
+	flex-shrink: 0;
+}
+
+.input-group-prefix {
+	border-right: 1px solid var(--border-muted);
+}
+
+.input-group-suffix {
+	border-left: 1px solid var(--border-muted);
+}
+
+/* Helper text */
+.helper-text {
+	font-size: 0.8125rem;
+	color: var(--text-muted);
+	margin-top: 0.25rem;
+}
+
+.helper-text[data-variant="error"] {
+	color: var(--destructive);
+}
+
+.helper-text[data-variant="success"] {
+	color: var(--success);
+}
+
+.helper-text[data-variant="warning"] {
+	color: var(--warning);
+}
+
+.helper-text[data-variant="info"] {
+	color: var(--info);
+}
