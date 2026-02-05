@@ -44,4 +44,8 @@ final class ApiCallResult {
     public function proposeBody(mixed $body): void {
         $this->body = $body;
     }
+
+    public function proposedBody() {
+        return $this->body;
+    }
 }

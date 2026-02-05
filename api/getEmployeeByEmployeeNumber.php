@@ -6,8 +6,11 @@ use Core\ApiCallResult;
 // The courses are stored as a sequence table linked by achiever_employee_number
 // to the employees_table.employee_number.
 
-return function ($employee_number) {
+return function ($queryParams = [], $bodyParams = []) {
     global $db;
+    
+    // Default to getting parameters from $queryParams, fallback to $bodyParams
+    $employee_number = $queryParams['employee_number'] ?? $bodyParams['employee_number'] ?? null;
 
     // Validate that employee number is numeric.
     if (!is_numeric($employee_number)) {
