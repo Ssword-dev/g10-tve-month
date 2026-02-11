@@ -1,0 +1,206 @@
+@source "../**/*";
+@import "tailwindcss";
+
+:root {
+  --accessibility-contrast: 100%;
+}
+
+:root {
+  /* =========================
+     Warm Earth Neutrals (Brown-led)
+     ========================= */
+  --palette-color-background: oklch(98.442% 0.02281 93.341);   /* warm parchment */
+  --palette-color-surface:    oklch(95% 0.020 85);   /* card surface */
+  --palette-color-muted:      oklch(90% 0.025 85);   /* hover / subtle fill */
+
+  /* =========================
+     Text (coffee brown)
+     ========================= */
+  --palette-color-text:        oklch(28% 0.030 75);  /* deep brown */
+  --palette-color-text-muted:  oklch(48% 0.025 80);  /* soft taupe */
+
+  /* =========================
+     Borders & dividers
+     ========================= */
+  --palette-color-border:        oklch(78% 0.020 85);
+  --palette-color-border-muted:  oklch(84% 0.015 85);
+
+  /* =========================
+     Accent (golden yellow)
+     ========================= */
+  --palette-color-accent:         oklch(75% 0.14 95); /* warm yellow */
+  --palette-color-accent-strong:  oklch(68% 0.18 90); /* golden amber */
+
+  /* =========================
+     Semantic colors
+     ========================= */
+  --palette-color-primary:   oklch(62% 0.14 150); /* leafy green */
+  --palette-color-secondary: oklch(66% 0.16 45);  /* soft orange */
+
+  --palette-color-danger:    oklch(58% 0.18 30);  /* burnt orange-red */
+  --palette-color-warning:   oklch(72% 0.18 95);  /* sunflower yellow */
+  --palette-color-success:   oklch(60% 0.16 155); /* healthy green */
+  --palette-color-info:      oklch(64% 0.10 120); /* olive-teal */
+
+  /* =========================
+     Shadows
+     ========================= */
+  --palette-color-shadow: oklch(70% 0.030 80);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* -------------------------
+       Neutral scale (cool graphite)
+       ------------------------- */
+    --palette-color-background: oklch(10% 0.012 260);
+    --palette-color-surface:    oklch(14% 0.014 260);
+    --palette-color-muted:      oklch(20% 0.014 260);
+
+    /* -------------------------
+       Text
+       ------------------------- */
+    --palette-color-text:        oklch(96% 0.008 260);
+    --palette-color-text-muted:  oklch(72% 0.010 260);
+
+    /* -------------------------
+       Borders & dividers
+       ------------------------- */
+    --palette-color-border:        oklch(34% 0.010 260);
+    --palette-color-border-muted:  oklch(26% 0.010 260);
+
+    /* -------------------------
+       Brand accent (same hue as light)
+       ------------------------- */
+    --palette-color-accent:         oklch(78% 0.12 270);
+    --palette-color-accent-strong:  oklch(70% 0.18 270);
+
+    /* -------------------------
+       Semantic colors
+       ------------------------- */
+    --palette-color-primary:   oklch(78% 0.10 155);
+    --palette-color-secondary: oklch(78% 0.10 330);
+
+    --palette-color-danger:    oklch(70% 0.14 25);
+    --palette-color-warning:   oklch(76% 0.14 95);
+    --palette-color-success:   oklch(72% 0.14 160);
+    --palette-color-info:      oklch(74% 0.14 250);
+
+    /* -------------------------
+       Shadows
+       ------------------------- */
+    --palette-color-shadow: oklch(0% 0 0 / 0.35);
+  }
+}
+
+@media (prefers-contrast: less) {
+  :root {
+    --accessibility-contrast: 90%;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --accessibility-contrast: 110%;
+  }
+}
+
+* {
+  filter: contrast(var(--accessibility-contrast));
+}
+
+@layer base {
+  body {
+    width: 100vw;
+    min-height: 100vh;
+    color: var(--palette-color-text);
+    background: var(--palette-color-background);
+    transition:
+      color 0.5s,
+      background-color 0.5s;
+    line-height: 1.6;
+    font-family:
+      Inter,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      Oxygen,
+      Ubuntu,
+      Cantarell,
+      "Fira Sans",
+      "Droid Sans",
+      "Helvetica Neue",
+      sans-serif;
+    font-size: 15px;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    @apply bg-background;
+  }
+
+  * {
+    filter: contrast(var(--accessibility-contrast));
+  }
+}
+
+/* 
+  Force the app itself to render only in the whole screen.
+  This is to prevent scrollbars from appearing when the content overflows.
+  The app should handle its own scrolling via scrollable containers,
+  not the entire page.
+*/
+#app {
+  height: 100vh;
+  width: 100%;
+}
+
+/*
+  Defines utility classes for the entire app to use,
+  these are theme variables, which are variables the tailwind v4
+  theme system can understand and use in generating utility classes.
+  This alone allows use of theming at ease.
+*/
+@theme inline {
+  --color-background: var(--palette-color-background);
+  --color-surface: var(--palette-color-surface);
+  --color-muted: var(--palette-color-muted);
+  --color-text: var(--palette-color-text);
+  --color-text-muted: var(--palette-color-text-muted);
+  --color-accent: var(--palette-color-accent);
+  --color-accent-strong: var(--palette-color-accent-strong);
+  --color-border: var(--palette-color-border);
+  --color-border-muted: var(--palette-color-border-muted);
+  --color-primary: var(--palette-color-primary);
+  --color-secondary: var(--palette-color-secondary);
+  --color-danger: var(--palette-color-danger);
+  --color-warning: var(--palette-color-warning);
+  --color-success: var(--palette-color-success);
+  --color-info: var(--palette-color-info);
+  --color-shadow: var(--palette-color-shadow);
+}
+
+/*
+  Utility class to hide scrollbars across all browsers.
+  This is used on the html and body elements to prevent scrollbars from appearing
+  when content overflows, as the app should handle its own scrolling via scrollable containers.
+*/
+@utility no-scrollbar {
+  & {
+    scrollbar-width: none;
+  }
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+
+/*
+  Make sure the html and body elements have no scrollbars.
+*/
+html,
+body {
+  @apply no-scrollbar;
+}
+

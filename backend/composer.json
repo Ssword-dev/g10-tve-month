@@ -1,0 +1,26 @@
+{
+    "name": "ssword-dev/tve-month",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ssword-dev",
+            "email": "ssword.dev@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "require": {
+        "pestphp/pest": "^4.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Core\\": "core"
+        },
+        "files": ["./helpers/config.php", "./helpers/db.php", "./helpers/respond.php"]
+    }
+}
