@@ -1,29 +1,38 @@
 <?php
 session_start();
-include "db.php";
+require_once 'db.php'; // database connection
 
-if(isset($_POST['login'])){
-    $username = $_POST['username'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $employee_number = trim($_POST['employee_number']);
     $password = $_POST['password'];
 
-    $sql = "SELECT * FROM users WHERE username=?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $username);
+    if (empty($employee_number) || empty($password)) {
+        die("Please enter both Employee Number and Password.");
+    }
+
+    // Use prepared statements to prevent SQL injection
+    $stmt = $conn->prepare("SELECT password_hash FROM admin_users_table WHERE employee_number = ?");
+    $stmt->bind_param("i", $employee_number);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    if($result->num_rows == 1){
+    if ($result->num_rows === 1) {
         $row = $result->fetch_assoc();
+        $hash = $row['password_hash'];
 
-        // Check password
-        if(password_verify($password, $row['password'])){
-            $_SESSION['user'] = $username;
+        if (password_verify($password, $hash)) {
+            // Login success
+            $_SESSION['employee_number'] = $employee_number;
             header("Location: dashboard.php");
+            exit();
         } else {
-            echo "❌ Wrong password";
+            echo "<p class='error'>Incorrect password.</p>";
         }
     } else {
-        echo "❌ User not found";
+        echo "<p class='error'>Employee number not found or not an admin.</p>";
     }
+
+    $stmt->close();
 }
+$conn->close();
 ?>
