@@ -1,13 +1,4 @@
-import { useMemo, useState } from "react";
-import {
-  Bell,
-  ChartColumnIncreasing,
-  GraduationCap,
-  LayoutDashboard,
-  Search,
-  Settings,
-  Users,
-} from "lucide-react";
+import { Bell, GraduationCap, LayoutDashboard, Search, Settings, Users } from "lucide-react";
 
 import Badge from "../components/Badge";
 import Button from "../components/Button";
@@ -43,8 +34,13 @@ type Employee = {
   place_of_birth: string;
 };
 
-const pages = ["Overview", "Employees", "Settings"] as const;
+const adminMenu = [
+  { label: "Overview", icon: LayoutDashboard, active: true },
+  { label: "Employees", icon: Users, active: false },
+  { label: "Settings", icon: Settings, active: false },
+];
 
+// Hardcoded for now, shaped strictly from employees_table schema.
 const employees: Employee[] = [
   {
     first_name: "Juan",
@@ -158,146 +154,12 @@ const employees: Employee[] = [
   },
 ];
 
-const monthlySummary = [
-  { label: "Newly Joined This Month", value: 2 },
-  { label: "Promotions This Quarter", value: 3 },
-  { label: "Avg Salary Grade", value: 14 },
-  { label: "Teacher Roles", value: 4 },
+const statCards = [
+  { title: "Employees", value: "15" },
+  { title: "Permanent", value: "15" },
+  { title: "Teacher Positions", value: "11" },
+  { title: "Principal Positions", value: "3" },
 ];
-
-function OverviewContent() {
-  return (
-    <section className="space-y-4">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        {monthlySummary.map((stat) => (
-          <Card key={stat.label} className="gap-0 border-border py-0">
-            <CardContent className="space-y-2 px-5 py-5">
-              <Text size="sm" className="text-text-muted">
-                {stat.label}
-              </Text>
-              <Text size="3xl" weight="semibold">
-                {stat.value}
-              </Text>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <Card className="gap-0 border-border py-0">
-        <CardHeader className="px-5 py-4">
-          <CardTitle asChild>
-            <h3>Employee Composition</h3>
-          </CardTitle>
-          <CardDescription className="text-text-muted">
-            Quick analysis summary based on current employee records.
-          </CardDescription>
-        </CardHeader>
-        <Separator />
-        <CardContent className="grid grid-cols-1 gap-3 px-5 py-4 md:grid-cols-3">
-          <div className="rounded-lg bg-background p-4">
-            <Text size="xs" className="text-text-muted">
-              Permanent
-            </Text>
-            <Text size="2xl" weight="semibold">
-              100%
-            </Text>
-          </div>
-          <div className="rounded-lg bg-background p-4">
-            <Text size="xs" className="text-text-muted">
-              Principal Positions
-            </Text>
-            <Text size="2xl" weight="semibold">
-              1 / 5
-            </Text>
-          </div>
-          <div className="rounded-lg bg-background p-4">
-            <Text size="xs" className="text-text-muted">
-              Mean Salary
-            </Text>
-            <Text size="2xl" weight="semibold">
-              ₱37,400
-            </Text>
-          </div>
-        </CardContent>
-      </Card>
-    </section>
-  );
-}
-
-function EmployeesContent({ data }: { data: Employee[] }) {
-  return (
-    <Card className="gap-0 border-border py-0">
-      <CardHeader className="px-5 py-4">
-        <CardTitle asChild>
-          <h3>Employees</h3>
-        </CardTitle>
-        <CardDescription className="text-text-muted">
-          Scroll inside the container below for large tables.
-        </CardDescription>
-      </CardHeader>
-      <Separator />
-      <CardContent className="px-5 py-4">
-        <div className="h-[62vh] max-h-[680px] w-full overflow-auto rounded-lg border border-border-muted">
-          <table className="min-w-[1480px] text-left text-sm">
-            <thead className="bg-surface sticky top-0 z-10">
-              <tr className="border-border-muted border-b text-text-muted">
-                <th className="py-2 pr-4 font-medium">Employee #</th>
-                <th className="py-2 pr-4 font-medium">Full Name</th>
-                <th className="py-2 pr-4 font-medium">Email</th>
-                <th className="py-2 pr-4 font-medium">Designation</th>
-                <th className="py-2 pr-4 font-medium">Status</th>
-                <th className="py-2 pr-4 font-medium">Date Joined</th>
-                <th className="py-2 pr-4 font-medium">Promotion</th>
-                <th className="py-2 pr-4 font-medium">Contact</th>
-                <th className="py-2 pr-4 font-medium">Salary</th>
-                <th className="py-2 pr-4 font-medium">Civil Status</th>
-                <th className="py-2 pr-4 font-medium">Birth</th>
-                <th className="py-2 pr-4 font-medium">Address</th>
-                <th className="py-2 pr-4 font-medium">Plantilla</th>
-                <th className="py-2 pr-4 font-medium">BP #</th>
-                <th className="py-2 pr-4 font-medium">TIN</th>
-                <th className="py-2 font-medium">Place of Birth</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((employee) => (
-                <tr
-                  key={employee.employee_number}
-                  className="border-border-muted border-b align-top last:border-b-0"
-                >
-                  <td className="py-3 pr-4">{employee.employee_number}</td>
-                  <td className="py-3 pr-4">
-                    <Text weight="medium" className="leading-tight">
-                      {employee.last_name}, {employee.first_name} {employee.middle_name}
-                    </Text>
-                  </td>
-                  <td className="py-3 pr-4">{employee.deped_email}</td>
-                  <td className="py-3 pr-4">{employee.designation}</td>
-                  <td className="py-3 pr-4">
-                    <Badge className="rounded-full bg-success/20 px-2.5 py-1 text-xs text-success">
-                      {employee.employment_status}
-                    </Badge>
-                  </td>
-                  <td className="py-3 pr-4">{employee.date_joined}</td>
-                  <td className="py-3 pr-4">{employee.date_of_latest_promotion}</td>
-                  <td className="py-3 pr-4">{employee.contact_number}</td>
-                  <td className="py-3 pr-4">SG {employee.salary_grade} • ₱{employee.salary}</td>
-                  <td className="py-3 pr-4">{employee.civil_status}</td>
-                  <td className="py-3 pr-4">{employee.date_of_birth}</td>
-                  <td className="py-3 pr-4">{employee.address}</td>
-                  <td className="py-3 pr-4">{employee.plantilla_number}</td>
-                  <td className="py-3 pr-4">{employee.bp_number}</td>
-                  <td className="py-3 pr-4">{employee.tin}</td>
-                  <td className="py-3">{employee.place_of_birth}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
 
 export default function AdminDashboard() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -305,7 +167,7 @@ export default function AdminDashboard() {
   const filteredEmployees = useMemo(() => employees, []);
 
   return (
-    <div className="grid min-h-screen grid-cols-1 overflow-x-hidden bg-background text-text lg:grid-cols-[250px_1fr]">
+    <div className="grid min-h-screen grid-cols-1 bg-background text-text lg:grid-cols-[250px_1fr]">
       <aside className="border-border-muted bg-surface/90 p-6 lg:border-r">
         <div className="mb-8 flex items-center gap-3">
           <div className="rounded-xl bg-accent/35 p-2">
@@ -322,38 +184,26 @@ export default function AdminDashboard() {
         </div>
 
         <nav className="space-y-2">
-          {pages.map((label, index) => {
-            const icon =
-              label === "Overview"
-                ? LayoutDashboard
-                : label === "Employees"
-                  ? Users
-                  : Settings;
-            const Icon = icon;
-            const active = index === activeIndex;
-
-            return (
-              <Button
-                key={label}
-                variant="glass"
-                className={
-                  active
-                    ? "w-full justify-start gap-3 bg-accent text-text hover:bg-accent-strong"
-                    : "w-full justify-start gap-3 bg-transparent text-text-muted hover:bg-muted hover:text-text"
-                }
-                onClick={() => setActiveIndex(index)}
-              >
-                <Icon className="size-4" />
-                <Text size="sm" weight="medium" className="text-inherit">
-                  {label}
-                </Text>
-              </Button>
-            );
-          })}
+          {adminMenu.map((item) => (
+            <Button
+              key={item.label}
+              variant="glass"
+              className={
+                item.active
+                  ? "w-full justify-start gap-3 bg-accent text-text hover:bg-accent-strong"
+                  : "w-full justify-start gap-3 bg-transparent text-text-muted hover:bg-muted hover:text-text"
+              }
+            >
+              <item.icon className="size-4" />
+              <Text size="sm" weight="medium" className="text-inherit">
+                {item.label}
+              </Text>
+            </Button>
+          ))}
         </nav>
       </aside>
 
-      <main className="min-w-0 space-y-6 overflow-x-hidden p-4 md:p-8">
+      <main className="space-y-6 p-4 md:p-8">
         <Card className="gap-0 border-border py-0">
           <CardHeader className="px-4 py-4 md:px-6 md:py-5">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -362,11 +212,7 @@ export default function AdminDashboard() {
                   <h2 className="text-2xl">Employees Dashboard</h2>
                 </CardTitle>
                 <CardDescription className="text-text-muted">
-                  {activeIndex === 0
-                    ? "Overview analytics and summary statistics."
-                    : activeIndex === 1
-                      ? "Employees table view from employees_table fields only."
-                      : "Dashboard settings (placeholder)."}
+                  Showing employee records from `employees_table` fields only.
                 </CardDescription>
               </div>
 
@@ -383,26 +229,85 @@ export default function AdminDashboard() {
           </CardHeader>
         </Card>
 
-        {activeIndex === 0 && <OverviewContent />}
+        <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {statCards.map((stat) => (
+            <Card key={stat.title} className="gap-0 border-border py-0">
+              <CardContent className="space-y-1 px-5 py-5">
+                <Text size="sm" className="text-text-muted">
+                  {stat.title}
+                </Text>
+                <Text size="3xl" weight="semibold" className="leading-tight">
+                  {stat.value}
+                </Text>
+              </CardContent>
+            </Card>
+          ))}
+        </section>
 
-        {activeIndex === 1 && <EmployeesContent data={filteredEmployees} />}
-
-        {activeIndex === 2 && (
-          <Card className="gap-0 border-border py-0">
-            <CardHeader className="px-5 py-4">
-              <CardTitle asChild>
-                <h3>Settings</h3>
-              </CardTitle>
-            </CardHeader>
-            <Separator />
-            <CardContent className="px-5 py-4">
-              <div className="flex items-center gap-2 rounded-lg bg-background p-4">
-                <ChartColumnIncreasing className="size-4 text-text-muted" />
-                <Text className="text-text-muted">Settings section placeholder.</Text>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        <Card className="gap-0 border-border py-0">
+          <CardHeader className="px-5 py-4">
+            <CardTitle asChild>
+              <h3>Employees</h3>
+            </CardTitle>
+          </CardHeader>
+          <Separator />
+          <CardContent className="px-5 py-3">
+            <div className="overflow-x-auto">
+              <table className="min-w-[1450px] text-left text-sm">
+                <thead>
+                  <tr className="border-border-muted border-b text-text-muted">
+                    <th className="py-2 pr-4 font-medium">Employee #</th>
+                    <th className="py-2 pr-4 font-medium">Full Name</th>
+                    <th className="py-2 pr-4 font-medium">Email</th>
+                    <th className="py-2 pr-4 font-medium">Designation</th>
+                    <th className="py-2 pr-4 font-medium">Status</th>
+                    <th className="py-2 pr-4 font-medium">Date Joined</th>
+                    <th className="py-2 pr-4 font-medium">Promotion</th>
+                    <th className="py-2 pr-4 font-medium">Contact</th>
+                    <th className="py-2 pr-4 font-medium">Salary</th>
+                    <th className="py-2 pr-4 font-medium">Civil Status</th>
+                    <th className="py-2 pr-4 font-medium">Birth</th>
+                    <th className="py-2 pr-4 font-medium">Address</th>
+                    <th className="py-2 pr-4 font-medium">Plantilla</th>
+                    <th className="py-2 pr-4 font-medium">BP #</th>
+                    <th className="py-2 pr-4 font-medium">TIN</th>
+                    <th className="py-2 font-medium">Place of Birth</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {employees.map((employee) => (
+                    <tr key={employee.employee_number} className="border-border-muted border-b align-top last:border-b-0">
+                      <td className="py-3 pr-4">{employee.employee_number}</td>
+                      <td className="py-3 pr-4">
+                        <Text weight="medium" className="leading-tight">
+                          {employee.last_name}, {employee.first_name} {employee.middle_name}
+                        </Text>
+                      </td>
+                      <td className="py-3 pr-4">{employee.deped_email}</td>
+                      <td className="py-3 pr-4">{employee.designation}</td>
+                      <td className="py-3 pr-4">
+                        <Badge className="rounded-full bg-success/20 px-2.5 py-1 text-xs text-success">
+                          {employee.employment_status}
+                        </Badge>
+                      </td>
+                      <td className="py-3 pr-4">{employee.date_joined}</td>
+                      <td className="py-3 pr-4">{employee.date_of_latest_promotion}</td>
+                      <td className="py-3 pr-4">{employee.contact_number}</td>
+                      <td className="py-3 pr-4">SG {employee.salary_grade} • ₱{employee.salary}</td>
+                      <td className="py-3 pr-4">{employee.civil_status}</td>
+                      <td className="py-3 pr-4">{employee.date_of_birth}</td>
+                      <td className="py-3 pr-4">{employee.address}</td>
+                      <td className="py-3 pr-4">{employee.plantilla_number}</td>
+                      <td className="py-3 pr-4">{employee.bp_number}</td>
+                      <td className="py-3 pr-4">{employee.tin}</td>
+                      <td className="py-3">{employee.place_of_birth}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
       </main>
     </div>
   );
