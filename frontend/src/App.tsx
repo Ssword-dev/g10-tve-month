@@ -5,6 +5,7 @@ import Loading from "./Loading";
 
 const LoginPage = React.lazy(() => import("./pages/Login"));
 const SignupPage = React.lazy(() => import("./pages/Signup"));
+const AdminDashboardPage = React.lazy(() => import("./pages/AdminDashboard"));
 
 function App() {
   return (
@@ -29,7 +30,14 @@ function App() {
           }
         />
 
-        <Route path="/dashboard/admin"></Route>
+        <Route
+          path="/dashboard/admin"
+          element={
+            <React.Suspense fallback={<Loading />}>
+              <AdminDashboardPage />
+            </React.Suspense>
+          }
+        />
       </Routes>
     </Router>
   );
