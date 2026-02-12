@@ -162,6 +162,10 @@ const statCards = [
 ];
 
 export default function AdminDashboard() {
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const filteredEmployees = useMemo(() => employees, []);
+
   return (
     <div className="grid min-h-screen grid-cols-1 bg-background text-text lg:grid-cols-[250px_1fr]">
       <aside className="border-border-muted bg-surface/90 p-6 lg:border-r">
