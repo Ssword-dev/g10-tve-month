@@ -14,6 +14,10 @@ import {
 } from "react";
 import CardAction from "@/components/CardAction";
 import Label from "@/components/Label";
+import Tooltip from "@/components/Tooltip";
+import TooltipTrigger from "@/components/TooltipTrigger";
+import TooltipContent from "@/components/TooltipContent";
+import TooltipProvider from "@/components/TooltipProvider";
 
 type Employee = {
   first_name: string;
@@ -152,9 +156,83 @@ const employees: Employee[] = [
   },
 ];
 
+function EmployeeDetailsTooltip({ employee }: { employee: Employee }) {
+  return (
+    <div className="w-[360px] space-y-3 text-xs leading-relaxed">
+      <section className="space-y-1.5">
+        <Text size="xs" weight="semibold" className="text-accent">
+          Personal Info
+        </Text>
+        <div className="space-y-1">
+          <p>
+            <span className="font-semibold">Full Name:</span>{" "}
+            {employee.last_name}, {employee.first_name} {employee.middle_name}
+          </p>
+          <p>
+            <span className="font-semibold">DepEd Email:</span>{" "}
+            {employee.deped_email}
+          </p>
+          <p>
+            <span className="font-semibold">Date of Birth / Civil Status:</span>{" "}
+            {employee.date_of_birth} / {employee.civil_status}
+          </p>
+          <p>
+            <span className="font-semibold">Address:</span> {employee.address}
+          </p>
+          <p>
+            <span className="font-semibold">TIN / Place of Birth:</span>{" "}
+            {employee.tin} / {employee.place_of_birth}
+          </p>
+        </div>
+      </section>
+
+      <section className="space-y-1.5 border-t border-border pt-2">
+        <Text size="xs" weight="semibold" className="text-accent">
+          Employment Info
+        </Text>
+        <div className="space-y-1">
+          <p>
+            <span className="font-semibold">Designation:</span>{" "}
+            {employee.designation}
+          </p>
+          <p>
+            <span className="font-semibold">Employment Status:</span>{" "}
+            {employee.employment_status}
+          </p>
+          <p>
+            <span className="font-semibold">Contact Number:</span>{" "}
+            {employee.contact_number}
+          </p>
+          <p>
+            <span className="font-semibold">Plantilla # / BP #:</span>{" "}
+            {employee.plantilla_number} / {employee.bp_number}
+          </p>
+          <p>
+            <span className="font-semibold">
+              Date Joined / Latest Promotion / Original Appointment:
+            </span>{" "}
+            {employee.date_joined} / {employee.date_of_latest_promotion} /{" "}
+            {employee.date_of_original_appointment}
+          </p>
+        </div>
+      </section>
+
+      <section className="space-y-1.5 border-t border-border pt-2">
+        <Text size="xs" weight="semibold" className="text-accent">
+          Payroll Info
+        </Text>
+        <p>
+          <span className="font-semibold">Salary Grade + Salary:</span> SG{" "}
+          {employee.salary_grade} + ₱{employee.salary}
+        </p>
+      </section>
+    </div>
+  );
+}
+
 function EmployeeDashboard() {
   return (
-    <main className="min-w-0 space-y-6 p-4 md:p-8">
+    <main className="flex flex-col min-w-0 space-y-6 p-4 md:p-8">
       <Card className="gap-0 border-border p-0">
         <CardHeader className="flex flex-row items-center justify-between px-4 py-2">
           <CardTitle>
@@ -170,298 +248,6 @@ function EmployeeDashboard() {
                   className="pl-8"
                   placeholder="Search by name or filters."
                 />
-                <Button className="px-3 py-2" aria-label="notifications">
-                  <Search className="size-4" />
-                </Button>
-              </Label>
-            </div>
-          </CardAction>
-        </CardHeader>
-      </Card>
-
-      <Card className="gap-0 border-border py-0 w-full">
-        <CardContent className="px-5 py-3">
-          <div className="overflow-x-scroll">
-            <table className="min-w-362.5 text-left text-sm">
-              <thead>
-                <tr className="border-border-muted border-b text-text-muted">
-                  <th className="py-2 pr-4 font-medium">Employee #</th>
-                  <th className="py-2 pr-4 font-medium">Full Name</th>
-                  <th className="py-2 pr-4 font-medium">Email</th>
-                  <th className="py-2 pr-4 font-medium">Designation</th>
-                  <th className="py-2 pr-4 font-medium">Status</th>
-                  <th className="py-2 pr-4 font-medium">Date Joined</th>
-                  <th className="py-2 pr-4 font-medium">Promotion</th>
-                  <th className="py-2 pr-4 font-medium">Contact</th>
-                  <th className="py-2 pr-4 font-medium">Salary</th>
-                  <th className="py-2 pr-4 font-medium">Civil Status</th>
-                  <th className="py-2 pr-4 font-medium">Birth</th>
-                  <th className="py-2 pr-4 font-medium">Address</th>
-                  <th className="py-2 pr-4 font-medium">Plantilla</th>
-                  <th className="py-2 pr-4 font-medium">BP #</th>
-                  <th className="py-2 pr-4 font-medium">TIN</th>
-                  <th className="py-2 font-medium">Place of Birth</th>
-                </tr>
-              </thead>
-              <tbody>
-                {employees.map((employee) => (
-                  <tr
-                    key={employee.employee_number}
-                    className="border-border-muted border-b align-top last:border-b-0"
-                  >
-                    <td className="py-3 pr-4">{employee.employee_number}</td>
-                    <td className="py-3 pr-4">
-                      <Text weight="medium" className="leading-tight">
-                        {employee.last_name}, {employee.first_name}{" "}
-                        {employee.middle_name}
-                      </Text>
-                    </td>
-                    <td className="py-3 pr-4">{employee.deped_email}</td>
-                    <td className="py-3 pr-4">{employee.designation}</td>
-                    <td className="py-3 pr-4">
-                      <Badge className="rounded-full bg-success/20 px-2.5 py-1 text-xs text-success">
-                        {employee.employment_status}
-                      </Badge>
-                    </td>
-                    <td className="py-3 pr-4">{employee.date_joined}</td>
-                    <td className="py-3 pr-4">
-                      {employee.date_of_latest_promotion}
-                    </td>
-                    <td className="py-3 pr-4">{employee.contact_number}</td>
-                    <td className="py-3 pr-4">
-                      SG {employee.salary_grade} • ₱{employee.salary}
-                    </td>
-                    <td className="py-3 pr-4">{employee.civil_status}</td>
-                    <td className="py-3 pr-4">{employee.date_of_birth}</td>
-                    <td className="py-3 pr-4">{employee.address}</td>
-                    <td className="py-3 pr-4">{employee.plantilla_number}</td>
-                    <td className="py-3 pr-4">{employee.bp_number}</td>
-                    <td className="py-3 pr-4">{employee.tin}</td>
-                    <td className="py-3">{employee.place_of_birth}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
-    </main>
-  );
-}
-
-function StatCard({ title, value }: { title: string; value: number }) {
-  return (
-    <Card className="border-border">
-      <CardContent className="flex flex-col space-y-1 px-5 py-5">
-        <Text size="3xl" weight="bold">
-          {value}
-        </Text>
-        <Text size="2xl" weight="semibold" className="text-text-muted">
-          {title}
-        </Text>
-      </CardContent>
-    </Card>
-  );
-}
-
-function ActivityCard({
-  title,
-  employees,
-}: {
-  title: string;
-  employees: Employee[];
-}) {
-  return (
-    <Card className="border-border">
-      <CardHeader>
-        <CardTitle>
-          <Text weight="semibold">{title}</Text>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        {employees.map((e) => (
-          <div
-            key={e.employee_number}
-            className="flex items-center justify-between text-sm"
-          >
-            <div className="flex flex-row items-center gap-1">
-              <Text weight="medium">
-                {e.last_name}, {e.first_name}
-              </Text>
-              <Text size="xs" className="text-text-muted">
-                ({e.designation})
-              </Text>
-            </div>
-            <Text size="xs" className="text-text-muted">
-              {title === "Recently Promoted"
-                ? e.date_of_latest_promotion
-                : e.date_joined}
-            </Text>
-          </div>
-        ))}
-      </CardContent>
-    </Card>
-  );
-}
-
-function OverviewDashboard() {
-  const totalEmployees = employees.length;
-
-  const permanentCount = employees.filter(
-    (e) => e.employment_status === "Permanent",
-  ).length;
-
-  const teacherCount = employees.filter((e) =>
-    e.designation.toLowerCase().includes("teacher"),
-  ).length;
-
-  const principalCount = employees.filter((e) =>
-    e.designation.toLowerCase().includes("principal"),
-  ).length;
-
-  const averageSalaryGrade = Math.round(
-    employees.reduce((acc, e) => acc + e.salary_grade, 0) / employees.length,
-  );
-
-  const recentlyPromoted = [...employees]
-    .sort(
-      (a, b) =>
-        new Date(b.date_of_latest_promotion).getTime() -
-        new Date(a.date_of_latest_promotion).getTime(),
-    )
-    .slice(0, 3);
-
-  const recentlyJoined = [...employees]
-    .sort(
-      (a, b) =>
-        new Date(b.date_joined).getTime() - new Date(a.date_joined).getTime(),
-    )
-    .slice(0, 3);
-
-  const designationDistribution = employees.reduce<Record<string, number>>(
-    (acc, e) => {
-      acc[e.designation] = (acc[e.designation] || 0) + 1;
-      return acc;
-    },
-    {},
-  );
-
-  return (
-    <main className="min-w-0 space-y-8 p-4 md:p-8">
-      {/* KPI SECTION */}
-      <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
-        <StatCard title="Total Employees" value={totalEmployees} />
-        <StatCard title="Permanent" value={permanentCount} />
-        <StatCard title="Teachers" value={teacherCount} />
-        <StatCard title="Principals" value={principalCount} />
-        <StatCard title="Avg Salary Grade" value={averageSalaryGrade} />
-      </section>
-
-      {/* ACTIVITY SECTION */}
-      <section className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-        <ActivityCard title="Recently Promoted" employees={recentlyPromoted} />
-        <ActivityCard title="Recently Joined" employees={recentlyJoined} />
-      </section>
-
-      {/* DISTRIBUTION SECTION */}
-      <Card className="border-border">
-        <CardHeader>
-          <CardTitle>
-            <Text weight="semibold">Designation Distribution</Text>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          {Object.entries(designationDistribution).map(([role, count]) => (
-            <div
-              key={role}
-              className="flex items-center justify-between text-sm"
-            >
-              <Text>{role}</Text>
-              <Badge>{count}</Badge>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-    </main>
-  );
-}
-
-export default function AdminDashboard() {
-  const subPages = {
-    overview: {
-      component: OverviewDashboard,
-    },
-    employees: {
-      component: EmployeeDashboard,
-    },
-  };
-
-  const [activeSubPage, setActiveSubPage] = useState("overview");
-
-  // const filteredEmployees = useMemo(() => employees, []);
-
-  return (
-    <div className="grid h-screen w-screen overflow-x-hidden grid-cols-1 bg-background text-text lg:grid-cols-[250px_1fr]">
-      <aside className="border-border-muted bg-surface/90 p-6 lg:border-r">
-        <div className="mb-8 flex items-center gap-3">
-          <div className="rounded-xl bg-accent/35 p-2">
-            <GraduationCap className="size-5 text-accent-strong" />
-          </div>
-          <div>
-            <Text size="lg" weight="semibold">
-              Dashboard
-            </Text>
-          </div>
-        </div>
-
-        <nav className="space-y-2">
-          {Object.entries(subPages).map(
-            ([
-              name,
-              // item
-            ]) => (
-              <Button
-                key={name}
-                variant="glass"
-                className={
-                  activeSubPage === name
-                    ? "w-full justify-start gap-3 bg-accent text-text hover:bg-accent-strong"
-                    : "w-full justify-start gap-3 bg-transparent text-text-muted hover:bg-muted hover:text-text"
-                }
-                onClick={() => setActiveSubPage(name)}
-              >
-                {/* <item.icon className="size-4" /> */}
-                <Text size="sm" weight="medium" className="text-inherit">
-                  {name}
-                </Text>
-              </Button>
-            ),
-          )}
-        </nav>
-      </aside>
-      {(() => {
-        const Comp = subPages[activeSubPage as keyof typeof subPages].component;
-        return <Comp />;
-      })()}
-    </div>
-  );
-}
-
-function EmployeeDashboard() {
-  return (
-    <main className="min-w-0 space-y-6 p-4 md:p-8">
-      <Card className="gap-0 border-border p-0">
-        <CardHeader className="flex flex-row items-center justify-between px-4 py-2">
-          <CardTitle>
-            <Text size="2xl" weight="bold" className="px-2 py-1 leading-none">
-              Employees
-            </Text>
-          </CardTitle>
-          <CardAction>
-            <div className="flex flex-wrap items-center gap-2 md:gap-3">
-              <Label className="relative w-full min-w-56 md:w-72">
-                <Search className="text-text-muted absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
-                <Input className="pl-8" placeholder="Search by name or filters." />
                 <Button className="px-3 py-2" aria-label="search employees">
                   <Search className="size-4" />
                 </Button>
@@ -471,10 +257,10 @@ function EmployeeDashboard() {
         </CardHeader>
       </Card>
 
-      <Card className="w-full gap-0 border-border py-0">
+      <Card className="flex-1 w-full gap-0 border-border py-0 mb-6">
         <CardContent className="px-5 py-3">
-          <div className="overflow-x-scroll">
-            <table className="min-w-362.5 text-left text-sm">
+          <div className="overflow-x-scroll h-full">
+            <table className="min-w-362.5 h-full text-left text-sm">
               <thead>
                 <tr className="border-border-muted border-b text-text-muted">
                   <th className="py-2 pr-4 font-medium">Employee #</th>
@@ -486,13 +272,6 @@ function EmployeeDashboard() {
                   <th className="py-2 pr-4 font-medium">Promotion</th>
                   <th className="py-2 pr-4 font-medium">Contact</th>
                   <th className="py-2 pr-4 font-medium">Salary</th>
-                  <th className="py-2 pr-4 font-medium">Civil Status</th>
-                  <th className="py-2 pr-4 font-medium">Birth</th>
-                  <th className="py-2 pr-4 font-medium">Address</th>
-                  <th className="py-2 pr-4 font-medium">Plantilla</th>
-                  <th className="py-2 pr-4 font-medium">BP #</th>
-                  <th className="py-2 pr-4 font-medium">TIN</th>
-                  <th className="py-2 font-medium">Place of Birth</th>
                 </tr>
               </thead>
               <tbody>
@@ -520,7 +299,8 @@ function EmployeeDashboard() {
                     </td>
                     <td className="py-3 pr-4">
                       <Text weight="medium" className="leading-tight">
-                        {employee.last_name}, {employee.first_name} {employee.middle_name}
+                        {employee.last_name}, {employee.first_name}{" "}
+                        {employee.middle_name}
                       </Text>
                     </td>
                     <td className="py-3 pr-4">{employee.deped_email}</td>
@@ -531,18 +311,13 @@ function EmployeeDashboard() {
                       </Badge>
                     </td>
                     <td className="py-3 pr-4">{employee.date_joined}</td>
-                    <td className="py-3 pr-4">{employee.date_of_latest_promotion}</td>
+                    <td className="py-3 pr-4">
+                      {employee.date_of_latest_promotion}
+                    </td>
                     <td className="py-3 pr-4">{employee.contact_number}</td>
                     <td className="py-3 pr-4">
                       SG {employee.salary_grade} • ₱{employee.salary}
                     </td>
-                    <td className="py-3 pr-4">{employee.civil_status}</td>
-                    <td className="py-3 pr-4">{employee.date_of_birth}</td>
-                    <td className="py-3 pr-4">{employee.address}</td>
-                    <td className="py-3 pr-4">{employee.plantilla_number}</td>
-                    <td className="py-3 pr-4">{employee.bp_number}</td>
-                    <td className="py-3 pr-4">{employee.tin}</td>
-                    <td className="py-3">{employee.place_of_birth}</td>
                   </tr>
                 ))}
               </tbody>
@@ -653,6 +428,28 @@ function OverviewDashboard() {
 
   return (
     <main className="min-w-0 space-y-8 p-4 md:p-8">
+      <Card className="gap-0 border-border p-0">
+        <CardHeader className="flex flex-row items-center justify-between px-4 py-2">
+          <CardTitle>
+            <Text size="2xl" weight="bold" className="px-2 py-1 leading-none">
+              Overview
+            </Text>
+          </CardTitle>
+          <CardAction>
+            {/* optional actions for overview, e.g., refresh, filter, or export */}
+            <div className="flex items-center gap-2">
+              <Button
+                className="px-3 py-2"
+                aria-label="refresh overview"
+                onClick={() => window.location.reload()}
+              >
+                Refresh
+              </Button>
+            </div>
+          </CardAction>
+        </CardHeader>
+      </Card>
+
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
         <StatCard title="Total Employees" value={totalEmployees} />
         <StatCard title="Permanent" value={permanentCount} />
@@ -688,7 +485,7 @@ function OverviewDashboard() {
   );
 }
 
-export default function AdminDashboard() {
+export default function Dashboard() {
   const subPages = {
     overview: {
       component: OverviewDashboard,
@@ -736,7 +533,8 @@ export default function AdminDashboard() {
         </aside>
 
         {(() => {
-          const Comp = subPages[activeSubPage as keyof typeof subPages].component;
+          const Comp =
+            subPages[activeSubPage as keyof typeof subPages].component;
           return <Comp />;
         })()}
       </div>

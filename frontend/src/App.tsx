@@ -5,7 +5,7 @@ import Loading from "./Loading";
 
 const LoginPage = React.lazy(() => import("./pages/Login"));
 const SignupPage = React.lazy(() => import("./pages/Signup"));
-const AdminDashboardPage = React.lazy(() => import("./pages/AdminDashboard"));
+const DashboardPage = React.lazy(() => import("./pages/Dashboard"));
 
 function App() {
   return (
@@ -34,7 +34,7 @@ function App() {
           path="/dashboard/admin"
           element={
             <React.Suspense fallback={<Loading />}>
-              <AdminDashboardPage />
+              <DashboardPage />
             </React.Suspense>
           }
         />
