@@ -17,6 +17,7 @@ import FieldGroup from "@/components/FieldGroup";
 import FieldDescription from "@/components/FieldDescription";
 import { Plus } from "lucide-react";
 import Pagination from "@/components/Pagination";
+import PaginationOffsetButton from "@/components/PaginationOffsetButton";
 
 const employeeFormSchema = z.object({
   // name fields
@@ -171,14 +172,14 @@ export default function SignupPage() {
   return (
     <>
       <main className="w-screen h-screen flex flex-col items-center justify-center">
-        <div className="flex flex-col gap-6">
-          <Card className="overflow-hidden p-0">
+        <div className="flex flex-col justify-center items-center gap-6 w-4/5">
+          <Card className="overflow-hidden p-0 w-4/5">
             <CardContent className="p-0">
               <form
                 className="grid md:grid-cols-2 gap-8 p-6 md:p-8"
                 onSubmit={handleSubmit(signup)}
               >
-                <Pagination className="h-full w-full">
+                <Pagination className="h-full w-full px-4">
                   <FieldGroup className="mt-4">
                     <Controller
                       control={control}
@@ -216,6 +217,13 @@ export default function SignupPage() {
                         </Field>
                       )}
                     />
+
+                    <PaginationOffsetButton
+                      className="w-full h-3/20 min-h-10 max-h-15"
+                      offset={1}
+                    >
+                      Next
+                    </PaginationOffsetButton>
                   </FieldGroup>
                 </Pagination>
                 <FieldGroup>
