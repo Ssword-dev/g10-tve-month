@@ -34,6 +34,12 @@ function respond(
                 'message' => $message
             ]);
             break;
+
+        case 'success':
+            echo json_encode([
+                'type' => $type
+            ]);
+            break;
     }
 
     if ($terminate) {

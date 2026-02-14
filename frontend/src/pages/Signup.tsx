@@ -1,10 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type ChangeEvent,
-} from "react";
+import { useCallback, useRef, useState } from "react";
 import Input from "@/components/Input";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -104,7 +98,7 @@ interface AvatarUploadInputProps {
 
 function AvatarUploadInput({ onUpload }: AvatarUploadInputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [file, setFile] = useState<File | null>(null);
+  // const [file, setFile] = useState<File | null>(null);
   const [previewURL, setPreview] = useState<string | null>(null);
   const onChange = useCallback(
     (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,7 +108,7 @@ function AvatarUploadInput({ onUpload }: AvatarUploadInputProps) {
         return; // Do nothing.
       }
 
-      setFile(file);
+      // setFile(file);
       setPreview(URL.createObjectURL(file));
 
       if (onUpload) {

@@ -1,3 +1,17 @@
+# enable rewrite engine
 RewriteEngine On
 
-RewriteRule ^(.*) api/$1
+# --------------------------------------
+# hide .php extension
+# --------------------------------------
+
+# if the requested file or directory exists, serve it directly
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# internally rewrite /foo to /foo.php
+RewriteRule ^([a-zA-Z0-9_/]+)$ $1.php [L]
+
+# optional: redirect explicit .php requests to extensionless URL
+RewriteCond %{THE_REQUEST} \s([^.]+)\.php
+RewriteRule ^ %1 [R=301,L]

@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 // Assets
 import landingPageHeroBannerImageSource from "../assets/landing_page_hero_banner_image.png";
-import landingPageTrustBannerImageSource from "../assets/landing_page_trust_banner_image.png";
+// import landingPageTrustBannerImageSource from "../assets/landing_page_trust_banner_image.png";
 
 /* ---------------------------------------------
  * animation factories
@@ -229,49 +229,49 @@ function PostHeroSection() {
  * how it works
  * --------------------------------------------- */
 
-function HowItWorksSection() {
-  const steps = [
-    {
-      title: "Set up in minutes",
-      text: "Create your school profile and invite staff.",
-    },
-    {
-      title: "Organize everything",
-      text: "Centralize records, roles, and courses.",
-    },
-    {
-      title: "Stay in control",
-      text: "Manage access and track updates effortlessly.",
-    },
-  ];
+// function HowItWorksSection() {
+//   const steps = [
+//     {
+//       title: "Set up in minutes",
+//       text: "Create your school profile and invite staff.",
+//     },
+//     {
+//       title: "Organize everything",
+//       text: "Centralize records, roles, and courses.",
+//     },
+//     {
+//       title: "Stay in control",
+//       text: "Manage access and track updates effortlessly.",
+//     },
+//   ];
 
-  return (
-    <section className="min-h-screen px-6 flex items-center bg-background">
-      <div className="max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <motion.div {...animationPresets.fadeUp()}>
-          <Text size="4xl" className="font-bold">
-            How it works
-          </Text>
-        </motion.div>
+//   return (
+//     <section className="min-h-screen px-6 flex items-center bg-background">
+//       <div className="max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+//         <motion.div {...animationPresets.fadeUp()}>
+//           <Text size="4xl" className="font-bold">
+//             How it works
+//           </Text>
+//         </motion.div>
 
-        <motion.div {...animationPresets.staggerContainer()}>
-          {steps.map((step) => (
-            <motion.div
-              key={step.title}
-              className="mb-6"
-              {...animationPresets.staggerItem({ y: 20 })}
-            >
-              <Text size="lg" weight="bold">
-                {step.title}
-              </Text>
-              <Text className="text-text-muted">{step.text}</Text>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-    </section>
-  );
-}
+//         <motion.div {...animationPresets.staggerContainer()}>
+//           {steps.map((step) => (
+//             <motion.div
+//               key={step.title}
+//               className="mb-6"
+//               {...animationPresets.staggerItem({ y: 20 })}
+//             >
+//               <Text size="lg" weight="bold">
+//                 {step.title}
+//               </Text>
+//               <Text className="text-text-muted">{step.text}</Text>
+//             </motion.div>
+//           ))}
+//         </motion.div>
+//       </div>
+//     </section>
+//   );
+// }
 
 function TrustSection() {
   return (

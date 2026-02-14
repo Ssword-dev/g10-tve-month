@@ -2,13 +2,15 @@ import { GraduationCap, Search } from "lucide-react";
 
 import Badge from "@/components/Badge";
 import Button from "@/components/Button";
-import Card from "../components/Card";
-import CardContent from "../components/CardContent";
+import Card from "@/components/Card";
+import CardContent from "@/components/CardContent";
 import CardHeader from "@/components/CardHeader";
 import CardTitle from "@/components/CardTitle";
 import Input from "@/components/Input";
-import Text from "../components/Text";
-import {
+import Text from "@/components/Text";
+import React, {
+  useCallback,
+  useEffect,
   // useMemo,
   useState,
 } from "react";
@@ -18,6 +20,8 @@ import Tooltip from "@/components/Tooltip";
 import TooltipTrigger from "@/components/TooltipTrigger";
 import TooltipContent from "@/components/TooltipContent";
 import TooltipProvider from "@/components/TooltipProvider";
+import useServerAction from "@/hooks/useServerAction";
+import useServerQuery from "@/hooks/useServerQuery";
 
 type Employee = {
   first_name: string;
@@ -231,8 +235,37 @@ function EmployeeDetailsTooltip({ employee }: { employee: Employee }) {
 }
 
 function EmployeeDashboard() {
+  const [nameSearchTerm, setNameSearchTerm] = useState("");
+  const getAllEmployees = useServerAction<{ name: string }, Employee[]>({
+    name: "getAllEmployees",
+    apiUrl: "/api/getAllEmployeesThatSatisfies",
+  });
+
+  const queryFn = useCallback(
+    (name: string) => getAllEmployees({ name }),
+    [getAllEmployees],
+  );
+
+  const {
+    data: employees,
+    isLoading,
+    refresh,
+    error,
+  } = useServerQuery(queryFn, [nameSearchTerm]);
+
+  const onInputChange = useCallback(
+    (evt: React.ChangeEvent<HTMLInputElement>) => {
+      setNameSearchTerm(evt.target.value);
+    },
+    [],
+  );
+
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
   return (
-    <main className="flex flex-col min-w-0 space-y-6 p-4 md:p-8">
+    <main className="flex flex-col min-w-0 space-y-6 p-4 md:p-8 w-full h-screen">
       <Card className="gap-0 border-border p-0">
         <CardHeader className="flex flex-row items-center justify-between px-4 py-2">
           <CardTitle>
@@ -247,6 +280,7 @@ function EmployeeDashboard() {
                 <Input
                   className="pl-8"
                   placeholder="Search by name or filters."
+                  onChange={onInputChange}
                 />
                 <Button className="px-3 py-2" aria-label="search employees">
                   <Search className="size-4" />
@@ -257,72 +291,98 @@ function EmployeeDashboard() {
         </CardHeader>
       </Card>
 
-      <Card className="flex-1 w-full gap-0 border-border py-0 mb-6">
+      <Card className="h-full w-full gap-0 border-border py-0 mb-6">
         <CardContent className="px-5 py-3">
-          <div className="overflow-x-scroll h-full">
-            <table className="min-w-362.5 h-full text-left text-sm">
-              <thead>
-                <tr className="border-border-muted border-b text-text-muted">
-                  <th className="py-2 pr-4 font-medium">Employee #</th>
-                  <th className="py-2 pr-4 font-medium">Full Name</th>
-                  <th className="py-2 pr-4 font-medium">Email</th>
-                  <th className="py-2 pr-4 font-medium">Designation</th>
-                  <th className="py-2 pr-4 font-medium">Status</th>
-                  <th className="py-2 pr-4 font-medium">Date Joined</th>
-                  <th className="py-2 pr-4 font-medium">Promotion</th>
-                  <th className="py-2 pr-4 font-medium">Contact</th>
-                  <th className="py-2 pr-4 font-medium">Salary</th>
-                </tr>
-              </thead>
-              <tbody>
-                {employees.map((employee) => (
-                  <tr
-                    key={employee.employee_number}
-                    className="border-border-muted border-b align-top last:border-b-0"
-                  >
-                    <td className="py-3 pr-4">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button className="text-primary cursor-help text-left hover:underline">
-                            {employee.employee_number}
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent
-                          side="right"
-                          align="start"
-                          sideOffset={8}
-                          className="max-w-none rounded-lg border border-border bg-surface p-3 text-text shadow-lg"
-                        >
-                          <EmployeeDetailsTooltip employee={employee} />
-                        </TooltipContent>
-                      </Tooltip>
-                    </td>
-                    <td className="py-3 pr-4">
-                      <Text weight="medium" className="leading-tight">
-                        {employee.last_name}, {employee.first_name}{" "}
-                        {employee.middle_name}
-                      </Text>
-                    </td>
-                    <td className="py-3 pr-4">{employee.deped_email}</td>
-                    <td className="py-3 pr-4">{employee.designation}</td>
-                    <td className="py-3 pr-4">
-                      <Badge className="rounded-full bg-success/20 px-2.5 py-1 text-xs text-success">
-                        {employee.employment_status}
-                      </Badge>
-                    </td>
-                    <td className="py-3 pr-4">{employee.date_joined}</td>
-                    <td className="py-3 pr-4">
-                      {employee.date_of_latest_promotion}
-                    </td>
-                    <td className="py-3 pr-4">{employee.contact_number}</td>
-                    <td className="py-3 pr-4">
-                      SG {employee.salary_grade} • ₱{employee.salary}
-                    </td>
+          {isLoading && (
+            <div className="flex h-40 items-center justify-center">
+              <Text className="text-text-muted">Loading employees...</Text>
+            </div>
+          )}
+
+          {!isLoading && error && (
+            <div className="flex flex-col items-center justify-center gap-3 h-40">
+              <Text className="text-danger">Failed to load employees.</Text>
+              <Button onClick={refresh}>Retry</Button>
+            </div>
+          )}
+
+          {!isLoading && !error && employees && (
+            <div className="overflow-x-scroll overflow-y-scroll no-scrollbar min-w-0 h-full">
+              <table className="min-w-362.5 h-full text-left text-sm">
+                <thead>
+                  <tr className="border-border-muted border-b text-text-muted">
+                    <th className="py-2 pr-4 font-medium">Employee #</th>
+                    <th className="py-2 pr-4 font-medium">Full Name</th>
+                    <th className="py-2 pr-4 font-medium">Email</th>
+                    <th className="py-2 pr-4 font-medium">Designation</th>
+                    <th className="py-2 pr-4 font-medium">Status</th>
+                    <th className="py-2 pr-4 font-medium">Date Joined</th>
+                    <th className="py-2 pr-4 font-medium">Promotion</th>
+                    <th className="py-2 pr-4 font-medium">Contact</th>
+                    <th className="py-2 pr-4 font-medium">Salary</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {employees.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={9}
+                        className="py-6 text-center text-text-muted"
+                      >
+                        No employees found.
+                      </td>
+                    </tr>
+                  )}
+
+                  {employees.map((employee) => (
+                    <tr
+                      key={employee.employee_number}
+                      className="border-border-muted border-b align-top last:border-b-0"
+                    >
+                      <td className="py-3 pr-4">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button className="text-primary cursor-help text-left hover:underline">
+                              {employee.employee_number}
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent
+                            side="right"
+                            align="start"
+                            sideOffset={8}
+                            className="max-w-none rounded-lg border border-border bg-surface p-3 text-text shadow-lg"
+                          >
+                            <EmployeeDetailsTooltip employee={employee} />
+                          </TooltipContent>
+                        </Tooltip>
+                      </td>
+                      <td className="py-3 pr-4">
+                        <Text weight="medium" className="leading-tight">
+                          {employee.last_name}, {employee.first_name}{" "}
+                          {employee.middle_name}
+                        </Text>
+                      </td>
+                      <td className="py-3 pr-4">{employee.deped_email}</td>
+                      <td className="py-3 pr-4">{employee.designation}</td>
+                      <td className="py-3 pr-4">
+                        <Badge className="rounded-full bg-success/20 px-2.5 py-1 text-xs text-success">
+                          {employee.employment_status}
+                        </Badge>
+                      </td>
+                      <td className="py-3 pr-4">{employee.date_joined}</td>
+                      <td className="py-3 pr-4">
+                        {employee.date_of_latest_promotion}
+                      </td>
+                      <td className="py-3 pr-4">{employee.contact_number}</td>
+                      <td className="py-3 pr-4">
+                        SG {employee.salary_grade} • ₱{employee.salary}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </CardContent>
       </Card>
     </main>

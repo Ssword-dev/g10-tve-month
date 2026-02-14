@@ -31,7 +31,7 @@ function App() {
         />
 
         <Route
-          path="/dashboard/admin"
+          path="/dashboard"
           element={
             <React.Suspense fallback={<Loading />}>
               <DashboardPage />
