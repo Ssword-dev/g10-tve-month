@@ -46,123 +46,9 @@ type Employee = {
   place_of_birth: string;
 };
 
-// Hardcoded for now, shaped strictly from employees_table schema.
-const employees: Employee[] = [
-  {
-    first_name: "Juan",
-    middle_name: "Santos",
-    last_name: "Dela Cruz",
-    deped_email: "juan.delacruz@deped.gov.ph",
-    employee_number: 10001,
-    designation: "Teacher I",
-    date_joined: "2015-06-01",
-    date_of_latest_promotion: "2020-03-15",
-    contact_number: "09171234567",
-    plantilla_number: "PLANT001",
-    date_of_original_appointment: "2015-06-01",
-    bp_number: "BP001",
-    address: "123 Padre Faura St., Manila",
-    civil_status: "Single",
-    date_of_birth: "1985-03-20",
-    salary_grade: 11,
-    salary: "25000.00",
-    employment_status: "Permanent",
-    tin: "12345678901",
-    place_of_birth: "Manila",
-  },
-  {
-    first_name: "Maria",
-    middle_name: "Angeles",
-    last_name: "Santos",
-    deped_email: "maria.santos@deped.gov.ph",
-    employee_number: 10002,
-    designation: "Teacher II",
-    date_joined: "2014-08-15",
-    date_of_latest_promotion: "2019-11-20",
-    contact_number: "09179876543",
-    plantilla_number: "PLANT002",
-    date_of_original_appointment: "2014-08-15",
-    bp_number: "BP002",
-    address: "456 Rizal Ave., Quezon City",
-    civil_status: "Married",
-    date_of_birth: "1982-07-10",
-    salary_grade: 13,
-    salary: "32000.00",
-    employment_status: "Permanent",
-    tin: "12345678902",
-    place_of_birth: "Quezon City",
-  },
-  {
-    first_name: "Antonio",
-    middle_name: "Reyes",
-    last_name: "Garcia",
-    deped_email: "antonio.garcia@deped.gov.ph",
-    employee_number: 10003,
-    designation: "Master Teacher I",
-    date_joined: "2012-01-10",
-    date_of_latest_promotion: "2021-05-10",
-    contact_number: "09181111111",
-    plantilla_number: "PLANT003",
-    date_of_original_appointment: "2012-01-10",
-    bp_number: "BP003",
-    address: "789 Burgos St., Makati",
-    civil_status: "Married",
-    date_of_birth: "1978-11-25",
-    salary_grade: 16,
-    salary: "45000.00",
-    employment_status: "Permanent",
-    tin: "12345678903",
-    place_of_birth: "Makati",
-  },
-  {
-    first_name: "Rosa",
-    middle_name: "Flores",
-    last_name: "Martinez",
-    deped_email: "rosa.martinez@deped.gov.ph",
-    employee_number: 10004,
-    designation: "Teacher I",
-    date_joined: "2016-09-20",
-    date_of_latest_promotion: "2021-08-15",
-    contact_number: "09182222222",
-    plantilla_number: "PLANT004",
-    date_of_original_appointment: "2016-09-20",
-    bp_number: "BP004",
-    address: "321 Taft Ave., Manila",
-    civil_status: "Single",
-    date_of_birth: "1988-05-14",
-    salary_grade: 11,
-    salary: "25000.00",
-    employment_status: "Permanent",
-    tin: "12345678904",
-    place_of_birth: "Manila",
-  },
-  {
-    first_name: "Carlos",
-    middle_name: "Manuel",
-    last_name: "Lopez",
-    deped_email: "carlos.lopez@deped.gov.ph",
-    employee_number: 10005,
-    designation: "Principal III",
-    date_joined: "2010-06-15",
-    date_of_latest_promotion: "2020-12-01",
-    contact_number: "09183333333",
-    plantilla_number: "PLANT005",
-    date_of_original_appointment: "2010-06-15",
-    bp_number: "BP005",
-    address: "654 España Ave., Manila",
-    civil_status: "Married",
-    date_of_birth: "1975-09-30",
-    salary_grade: 20,
-    salary: "62000.00",
-    employment_status: "Permanent",
-    tin: "12345678905",
-    place_of_birth: "Manila",
-  },
-];
-
 function EmployeeDetailsTooltip({ employee }: { employee: Employee }) {
   return (
-    <div className="w-[360px] space-y-3 text-xs leading-relaxed">
+    <div className="w-90 space-y-3 text-xs leading-relaxed">
       <section className="space-y-1.5">
         <Text size="xs" weight="semibold" className="text-accent">
           Personal Info
@@ -236,14 +122,17 @@ function EmployeeDetailsTooltip({ employee }: { employee: Employee }) {
 
 function EmployeeDashboard() {
   const [nameSearchTerm, setNameSearchTerm] = useState("");
-  const getAllEmployees = useServerAction<{ name: string }, Employee[]>({
+  const getAllEmployeesThatSatisfies = useServerAction<
+    { name: string },
+    Employee[]
+  >({
     name: "getAllEmployees",
     apiUrl: "/api/getAllEmployeesThatSatisfies",
   });
 
   const queryFn = useCallback(
-    (name: string) => getAllEmployees({ name }),
-    [getAllEmployees],
+    (name: string) => getAllEmployeesThatSatisfies({ name }),
+    [getAllEmployeesThatSatisfies],
   );
 
   const {
@@ -251,7 +140,11 @@ function EmployeeDashboard() {
     isLoading,
     refresh,
     error,
-  } = useServerQuery(queryFn, [nameSearchTerm]);
+  } = useServerQuery(
+    "EmployeeDashboard:getAllEmployeesThatSatisfies",
+    queryFn,
+    [nameSearchTerm],
+  );
 
   const onInputChange = useCallback(
     (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -291,8 +184,8 @@ function EmployeeDashboard() {
         </CardHeader>
       </Card>
 
-      <Card className="h-full w-full gap-0 border-border py-0 mb-6">
-        <CardContent className="px-5 py-3">
+      <Card className="h-full w-full gap-0 border-border py-0 mb-6 overflow-y-scroll no-scrollbar">
+        <CardContent className="flex-1 w-full h-full px-5 py-3">
           {isLoading && (
             <div className="flex h-40 items-center justify-center">
               <Text className="text-text-muted">Loading employees...</Text>
@@ -445,46 +338,89 @@ function ActivityCard({
 }
 
 function OverviewDashboard() {
-  const totalEmployees = employees.length;
+  const getAllEmployees = useServerAction<{ name: string }, Employee[]>({
+    name: "getAllEmployees",
+    apiUrl: "/api/getAllEmployees",
+  });
 
-  const permanentCount = employees.filter(
-    (e) => e.employment_status === "Permanent",
-  ).length;
-
-  const teacherCount = employees.filter((e) =>
-    e.designation.toLowerCase().includes("teacher"),
-  ).length;
-
-  const principalCount = employees.filter((e) =>
-    e.designation.toLowerCase().includes("principal"),
-  ).length;
-
-  const averageSalaryGrade = Math.round(
-    employees.reduce((acc, e) => acc + e.salary_grade, 0) / employees.length,
+  const queryFn = useCallback(
+    (name: string) => getAllEmployees({ name }),
+    [getAllEmployees],
   );
 
-  const recentlyPromoted = [...employees]
-    .sort(
-      (a, b) =>
-        new Date(b.date_of_latest_promotion).getTime() -
-        new Date(a.date_of_latest_promotion).getTime(),
-    )
-    .slice(0, 3);
+  const {
+    data: employees = [],
+    isLoading,
+    refresh,
+    error,
+  } = useServerQuery("allEmployeeQuery", queryFn);
 
-  const recentlyJoined = [...employees]
-    .sort(
-      (a, b) =>
-        new Date(b.date_joined).getTime() - new Date(a.date_joined).getTime(),
-    )
-    .slice(0, 3);
+  const [stats, setStats] = useState({
+    totalEmployees: 0,
+    permanentCount: 0,
+    teacherCount: 0,
+    principalCount: 0,
+    averageSalaryGrade: 0,
+    recentlyPromoted: [] as Employee[],
+    recentlyJoined: [] as Employee[],
+    designationDistribution: {} as Record<string, number>,
+  });
 
-  const designationDistribution = employees.reduce<Record<string, number>>(
-    (acc, e) => {
-      acc[e.designation] = (acc[e.designation] || 0) + 1;
-      return acc;
-    },
-    {},
-  );
+  useEffect(() => {
+    if (!employees.length) return;
+
+    const totalEmployees = employees.length;
+
+    const permanentCount = employees.filter(
+      (e) => e.employment_status === "Permanent",
+    ).length;
+
+    const teacherCount = employees.filter((e) =>
+      e.designation.toLowerCase().includes("teacher"),
+    ).length;
+
+    const principalCount = employees.filter((e) =>
+      e.designation.toLowerCase().includes("principal"),
+    ).length;
+
+    const averageSalaryGrade = Math.round(
+      employees.reduce((acc, e) => acc + e.salary_grade, 0) / totalEmployees,
+    );
+
+    const recentlyPromoted = [...employees]
+      .sort(
+        (a, b) =>
+          new Date(b.date_of_latest_promotion).getTime() -
+          new Date(a.date_of_latest_promotion).getTime(),
+      )
+      .slice(0, 3);
+
+    const recentlyJoined = [...employees]
+      .sort(
+        (a, b) =>
+          new Date(b.date_joined).getTime() - new Date(a.date_joined).getTime(),
+      )
+      .slice(0, 3);
+
+    const designationDistribution = employees.reduce<Record<string, number>>(
+      (acc, e) => {
+        acc[e.designation] = (acc[e.designation] || 0) + 1;
+        return acc;
+      },
+      {},
+    );
+
+    setStats({
+      totalEmployees,
+      permanentCount,
+      teacherCount,
+      principalCount,
+      averageSalaryGrade,
+      recentlyPromoted,
+      recentlyJoined,
+      designationDistribution,
+    });
+  }, [employees]);
 
   return (
     <main className="min-w-0 space-y-8 p-4 md:p-8">
@@ -496,12 +432,11 @@ function OverviewDashboard() {
             </Text>
           </CardTitle>
           <CardAction>
-            {/* optional actions for overview, e.g., refresh, filter, or export */}
             <div className="flex items-center gap-2">
               <Button
                 className="px-3 py-2"
                 aria-label="refresh overview"
-                onClick={() => window.location.reload()}
+                onClick={() => refresh()}
               >
                 Refresh
               </Button>
@@ -511,16 +446,22 @@ function OverviewDashboard() {
       </Card>
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
-        <StatCard title="Total Employees" value={totalEmployees} />
-        <StatCard title="Permanent" value={permanentCount} />
-        <StatCard title="Teachers" value={teacherCount} />
-        <StatCard title="Principals" value={principalCount} />
-        <StatCard title="Avg Salary Grade" value={averageSalaryGrade} />
+        <StatCard title="Total Employees" value={stats.totalEmployees} />
+        <StatCard title="Permanent" value={stats.permanentCount} />
+        <StatCard title="Teachers" value={stats.teacherCount} />
+        <StatCard title="Principals" value={stats.principalCount} />
+        <StatCard title="Avg Salary Grade" value={stats.averageSalaryGrade} />
       </section>
 
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-        <ActivityCard title="Recently Promoted" employees={recentlyPromoted} />
-        <ActivityCard title="Recently Joined" employees={recentlyJoined} />
+        <ActivityCard
+          title="Recently Promoted"
+          employees={stats.recentlyPromoted}
+        />
+        <ActivityCard
+          title="Recently Joined"
+          employees={stats.recentlyJoined}
+        />
       </section>
 
       <Card className="border-border">
@@ -530,15 +471,17 @@ function OverviewDashboard() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
-          {Object.entries(designationDistribution).map(([role, count]) => (
-            <div
-              key={role}
-              className="flex items-center justify-between text-sm"
-            >
-              <Text>{role}</Text>
-              <Badge>{count}</Badge>
-            </div>
-          ))}
+          {Object.entries(stats.designationDistribution).map(
+            ([role, count]) => (
+              <div
+                key={role}
+                className="flex items-center justify-between text-sm"
+              >
+                <Text>{role}</Text>
+                <Badge>{count}</Badge>
+              </div>
+            ),
+          )}
         </CardContent>
       </Card>
     </main>
