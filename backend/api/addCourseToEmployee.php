@@ -39,7 +39,7 @@ $insertCourseStatement = $db->prepare(
 );
 
 if (!$insertCourseStatement) {
-    respond(type: 'error', message: 'Failed to prepare statement.', statusCode: 500);
+    respond(type: 'error', message: 'Unable to prepare add course request.', statusCode: 500);
 }
 
 $insertCourseStatement->bind_param(
@@ -52,10 +52,8 @@ $insertCourseStatement->bind_param(
 );
 
 if (!$insertCourseStatement->execute()) {
-    $errorMessage = $insertCourseStatement->error;
     $insertCourseStatement->close();
-
-    respond(type: 'error', message: 'Failed to add course: ' . $errorMessage, statusCode: 500);
+    respond(type: 'error', message: 'Unable to add course to employee.', statusCode: 500);
 }
 
 $insertCourseStatement->close();

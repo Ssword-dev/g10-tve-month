@@ -82,31 +82,28 @@ $sql = 'UPDATE employees_table SET ' . implode(', ', $updates) . ' WHERE employe
 
 $statement = $db->prepare($sql);
 if (!$statement) {
-    respond(type: 'error', message: 'Failed to prepare employee update query: ' . $db->error, statusCode: 500);
+    respond(type: 'error', message: 'Unable to prepare employee update request.', statusCode: 500);
 }
 
 $statement->bind_param($types, ...$params);
 
 if (!$statement->execute()) {
-    $errorMessage = $statement->error;
     $statement->close();
-
-    respond(type: 'error', message: 'Failed to update employee: ' . $errorMessage, statusCode: 500);
+    respond(type: 'error', message: 'Unable to update employee record.', statusCode: 500);
 }
 
 $statement->close();
 
 $employeeStatement = $db->prepare('SELECT * FROM employees_table WHERE employee_number = ? LIMIT 1');
 if (!$employeeStatement) {
-    respond(type: 'error', message: 'Failed to prepare employee lookup query.', statusCode: 500);
+    respond(type: 'error', message: 'Unable to prepare employee lookup request.', statusCode: 500);
 }
 
 $employeeStatement->bind_param('i', $employeeNumber);
 
 if (!$employeeStatement->execute()) {
     $employeeStatement->close();
-
-    respond(type: 'error', message: 'Failed to fetch updated employee.', statusCode: 500);
+    respond(type: 'error', message: 'Unable to load updated employee details.', statusCode: 500);
 }
 
 $employeeResult = $employeeStatement->get_result();

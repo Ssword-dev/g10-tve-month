@@ -1,11 +1,13 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LandingPage from "./pages/Landing";
-import Loading from "./Loading";
+import { BrowserRouter as Router, Navigate, Route, Routes } from "react-router-dom";
+import Loading from "@/Loading";
+import LandingPage from "@/pages/Landing";
 
-const LoginPage = React.lazy(() => import("./pages/Login"));
-const SignupPage = React.lazy(() => import("./pages/Signup"));
-const DashboardPage = React.lazy(() => import("./pages/Dashboard"));
+const LoginPage = React.lazy(() => import("@/pages/Login"));
+const SignupPage = React.lazy(() => import("@/pages/Signup"));
+const DashboardLayout = React.lazy(() => import("@/layouts/Dashboard"));
+const OverviewDashboardPage = React.lazy(() => import("@/pages/OverviewDashboard"));
+const EmployeeDashboardPage = React.lazy(() => import("@/pages/EmployeeDashboard"));
 
 function App() {
   return (
@@ -34,10 +36,28 @@ function App() {
           path="/dashboard"
           element={
             <React.Suspense fallback={<Loading />}>
-              <DashboardPage />
+              <DashboardLayout />
             </React.Suspense>
           }
-        />
+        >
+          <Route index element={<Navigate to="overview" replace />} />
+          <Route
+            path="overview"
+            element={
+              <React.Suspense fallback={<Loading />}>
+                <OverviewDashboardPage />
+              </React.Suspense>
+            }
+          />
+          <Route
+            path="employees"
+            element={
+              <React.Suspense fallback={<Loading />}>
+                <EmployeeDashboardPage />
+              </React.Suspense>
+            }
+          />
+        </Route>
       </Routes>
     </Router>
   );

@@ -5,10 +5,11 @@
  * only for typescript, and only typescript, this
  * function adds little to no overhead.
  * @param value The value to be casted.
- * @returns 
+ * @returns
  */
-function unsafeCast<T>(value: unknown): T {
-    return value as T;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function unsafeCast<T = any>(value: unknown): T {
+  return value as T;
 }
 
 export default unsafeCast;

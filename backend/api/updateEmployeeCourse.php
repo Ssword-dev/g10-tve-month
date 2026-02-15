@@ -50,7 +50,7 @@ $updateCourseStatement = $db->prepare(
 );
 
 if (!$updateCourseStatement) {
-    respond(type: 'error', message: 'Failed to prepare update statement.', statusCode: 500);
+    respond(type: 'error', message: 'Unable to prepare update course request.', statusCode: 500);
 }
 
 $updateCourseStatement->bind_param(
@@ -65,10 +65,8 @@ $updateCourseStatement->bind_param(
 );
 
 if (!$updateCourseStatement->execute()) {
-    $errorMessage = $updateCourseStatement->error;
     $updateCourseStatement->close();
-
-    respond(type: 'error', message: 'Failed to update course: ' . $errorMessage, statusCode: 500);
+    respond(type: 'error', message: 'Unable to update employee course.', statusCode: 500);
 }
 
 $affectedRows = $updateCourseStatement->affected_rows;

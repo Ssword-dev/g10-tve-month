@@ -33,16 +33,14 @@ $deleteCourseStatement = $db->prepare(
 );
 
 if (!$deleteCourseStatement) {
-    respond(type: 'error', message: 'Failed to prepare delete statement.', statusCode: 500);
+    respond(type: 'error', message: 'Unable to prepare delete course request.', statusCode: 500);
 }
 
 $deleteCourseStatement->bind_param('iss', $employeeNumber, $courseName, $degreeLevel);
 
 if (!$deleteCourseStatement->execute()) {
-    $errorMessage = $deleteCourseStatement->error;
     $deleteCourseStatement->close();
-
-    respond(type: 'error', message: 'Failed to delete course: ' . $errorMessage, statusCode: 500);
+    respond(type: 'error', message: 'Unable to delete employee course.', statusCode: 500);
 }
 
 $affectedRows = $deleteCourseStatement->affected_rows;

@@ -2,7 +2,7 @@
 // http methods config
 // --------------------------------------------------
 
-import unsafeCast from "../typescript/unsafeCast";
+import unsafeCast from "@/utils/unsafeCast";
 
 const METHODS = {
   GET: { usesQuery: true },
