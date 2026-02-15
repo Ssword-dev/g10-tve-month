@@ -1,8 +1,9 @@
 <?php
 
 require dirname(__DIR__) . '/vendor/autoload.php';
+require_once dirname(__DIR__) . '/helpers/employees.php';
 
-$db = db(); // mysqli OOP instance
+$db = db();
 
 // only allow GET requests
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
@@ -112,7 +113,7 @@ foreach ($filtersDefinition as $filterKey) {
 }
 
 // --- build query ---
-$sql = "SELECT employee_number, first_name, middle_name, last_name, designation, date_joined, employment_status
+$sql = "SELECT *
         FROM employees_table";
 
 if ($qs->conditions) {
@@ -133,13 +134,24 @@ if ($qs->params) {
 }
 
 // --- execute ---
-$stmt->execute();
+if (!$stmt->execute()) {
+    $stmt->close();
+
+    respond(type: 'error', message: 'Failed to execute query: ' . $stmt->error, statusCode: 500);
+}
+
 $result = $stmt->get_result();
 $employees = [];
 while ($row = $result->fetch_assoc()) {
     $employees[] = $row;
 }
 $stmt->close();
+
+try {
+    $employees = with_employee_courses($db, $employees);
+} catch (RuntimeException $exception) {
+    respond(type: 'error', message: $exception->getMessage(), statusCode: 500);
+}
 
 // --- respond ---
 respond(type: 'data', data: $employees, message: count($employees) . " employee(s) found.");

@@ -1,66 +1,72 @@
 <?php
+
 require dirname(__DIR__) . '/vendor/autoload.php';
+require_once dirname(__DIR__) . '/helpers/employees.php';
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    respond(type: 'error', message: 'Invalid request method. POST required.', statusCode: 405);
+}
 
 $db = db();
+$payload = parse_json_body();
 
-$employee_number = $_POST['employee_number'] ?? $_GET['employee_number'] ?? null;
-$course_name     = $_POST['course_name'] ?? $_GET['course_name'] ?? null;
-$degree_level    = $_POST['degree_level'] ?? $_GET['degree_level'] ?? null;
-$units_completed = $_POST['units_completed'] ?? $_GET['units_completed'] ?? null;
-$is_finished     = $_POST['is_finished'] ?? $_GET['is_finished'] ?? null;
+$employeeNumberRaw = input_get('employee_number', $payload);
+$courseName = trim((string)input_get('course_name', $payload, ''));
+$degreeLevel = trim((string)input_get('degree_level', $payload, ''));
+$unitsCompletedRaw = input_get('units_completed', $payload, null);
+$isFinishedRaw = input_get('is_finished', $payload, 0);
 
-// validate required fields
-if (!$employee_number || !$course_name || !$degree_level) {
-    respond(
-        type: 'error',
-        message: 'Missing required fields.'
-    );
+if (!is_numeric($employeeNumberRaw) || (int)$employeeNumberRaw <= 0) {
+    respond(type: 'error', message: 'Invalid employee_number value.', statusCode: 422);
 }
 
-// prepare statement
-$insertCourseStatement = $db->prepare("
-    INSERT INTO courses_table (
-        achiever_employee_number,
-        course_name,
-        degree_level,
-        units_completed,
-        is_finished
-    )
-    VALUES (?, ?, ?, ?, ?)
-");
+if ($courseName === '' || $degreeLevel === '') {
+    respond(type: 'error', message: 'course_name and degree_level are required.', statusCode: 422);
+}
+
+$allowedDegreeLevels = ['bachelor', 'master', 'doctorate'];
+if (!in_array($degreeLevel, $allowedDegreeLevels, true)) {
+    respond(type: 'error', message: 'degree_level must be bachelor, master, or doctorate.', statusCode: 422);
+}
+
+$employeeNumber = (int)$employeeNumberRaw;
+$unitsCompleted = ($unitsCompletedRaw === null || $unitsCompletedRaw === '') ? null : (int)$unitsCompletedRaw;
+$isFinished = normalize_boolean($isFinishedRaw);
+
+$insertCourseStatement = $db->prepare(
+    'INSERT INTO courses_table (achiever_employee_number, course_name, degree_level, units_completed, is_finished)
+     VALUES (?, ?, ?, ?, ?)'
+);
 
 if (!$insertCourseStatement) {
-    respond(
-        type: 'error',
-        message: 'Failed to prepare statement.'
-    );
+    respond(type: 'error', message: 'Failed to prepare statement.', statusCode: 500);
 }
 
-// bind params and execute
 $insertCourseStatement->bind_param(
-    "issii",
-    $employee_number,
-    $course_name,
-    $degree_level,
-    $units_completed,
-    $is_finished
+    'issii',
+    $employeeNumber,
+    $courseName,
+    $degreeLevel,
+    $unitsCompleted,
+    $isFinished,
 );
 
 if (!$insertCourseStatement->execute()) {
-    respond(
-        type: 'error',
-        message: 'Failed to execute insertion.'
-    );
+    $errorMessage = $insertCourseStatement->error;
+    $insertCourseStatement->close();
+
+    respond(type: 'error', message: 'Failed to add course: ' . $errorMessage, statusCode: 500);
 }
 
-// success response
+$insertCourseStatement->close();
+
 respond(
     type: 'data',
     data: [
-        'employee_number' => $employee_number,
-        'course_name'     => $course_name,
-        'degree_level'    => $degree_level,
-        'units_completed' => $units_completed,
-        'is_finished'     => $is_finished
-    ]
+        'employee_number' => $employeeNumber,
+        'course_name' => $courseName,
+        'degree_level' => $degreeLevel,
+        'units_completed' => $unitsCompleted,
+        'is_finished' => $isFinished,
+    ],
 );

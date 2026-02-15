@@ -1,10 +1,9 @@
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   unwrap,
   type AnyServerResponse,
   type Unwrap,
 } from "@/core/bridge/ServerAction";
-import unsafeCast from "@/core/typescript/unsafeCast";
 
 /* =========================
    type helpers
@@ -18,128 +17,122 @@ type InferArgs<TFn> = TFn extends (
   : never;
 type InferData<TFn extends AsyncServerFn> = Unwrap<Awaited<ReturnType<TFn>>>;
 
-/* =========================
-   server query cache & subscription system
-   ========================= */
-
-interface ServerQueryEntry<TData> {
+interface ServerQueryState<TData> {
   data: TData | null;
   error: Error | null;
   isLoading: boolean;
   isSuccess: boolean;
-  subscribers: Set<() => void>;
-  execute: () => Promise<void>;
 }
 
-const serverQueryCache = new Map<string, ServerQueryEntry<unknown>>();
+export interface ServerQuery<TArgs extends unknown[], TData> {
+  readonly key: string;
+  getState: () => ServerQueryState<TData>;
+  refresh: (...args: TArgs) => Promise<void>;
+  subscribe: (subscriber: () => void) => () => void;
+}
 
-function getOrCreateQuery<TData, TQueryFn extends AsyncServerFn>(
+export function createServerQuery<TQueryFn extends AsyncServerFn>(
   key: string,
   queryFn: TQueryFn,
-  args: InferArgs<TQueryFn>,
-): ServerQueryEntry<TData> {
-  if (serverQueryCache.has(key)) {
-    return unsafeCast<ServerQueryEntry<TData>>(serverQueryCache.get(key)!);
-  }
-
-  const entry: ServerQueryEntry<TData> = {
-    data: null,
-    error: null,
-    isLoading: false,
-    isSuccess: false,
-    subscribers: new Set(),
-    execute: async () => {
-      entry.isLoading = true;
-      entry.isSuccess = false;
-      entry.error = null;
-      notifySubscribers();
-
-      try {
-        const result = await queryFn(...args);
-        const unwrapped = unwrap(result) as TData;
-        entry.data = unwrapped;
-        entry.isSuccess = true;
-        entry.error = null;
-      } catch (err) {
-        entry.error = err as Error;
-        entry.data = null;
-        entry.isSuccess = false;
-      } finally {
-        entry.isLoading = false;
-        notifySubscribers();
-      }
-    },
-  };
-
-  serverQueryCache.set(key, entry);
-  return entry;
-}
-
-function notifySubscribers(entry?: ServerQueryEntry<unknown>) {
-  if (entry) {
-    entry.subscribers.forEach((cb) => cb());
-  } else {
-    // notify all entries
-    serverQueryCache.forEach((e) => e.subscribers.forEach((cb) => cb()));
-  }
-}
-
-/* =========================
-   hook
-   ========================= */
-
-export default function useServerQuery<TQueryFn extends AsyncServerFn>(
-  queryKey: string,
-  queryFn: TQueryFn,
-  args: InferArgs<TQueryFn>,
-) {
+  initialArgs: InferArgs<TQueryFn>,
+): ServerQuery<InferArgs<TQueryFn>, InferData<TQueryFn>> {
+  type TArgs = InferArgs<TQueryFn>;
   type TData = InferData<TQueryFn>;
 
-  const [state, setState] = useState<{
-    data: TData | null;
-    error: Error | null;
-    isLoading: boolean;
-    isSuccess: boolean;
-  }>({
+  let lastArgs: TArgs = initialArgs;
+
+  let state: ServerQueryState<TData> = {
     data: null,
     error: null,
     isLoading: false,
     isSuccess: false,
-  });
+  };
 
-  const queryEntry = getOrCreateQuery<TData, TQueryFn>(queryKey, queryFn, args);
+  const subscribers = new Set<() => void>();
 
-  // update local state whenever cache changes
+  const notifySubscribers = () => {
+    subscribers.forEach((subscriber) => subscriber());
+  };
+
+  const refresh = async (...args: TArgs) => {
+    const argsToUse = args.length > 0 ? args : lastArgs;
+
+    lastArgs = argsToUse;
+    state = {
+      ...state,
+      isLoading: true,
+      isSuccess: false,
+      error: null,
+    };
+    notifySubscribers();
+
+    try {
+      const result = await queryFn(...argsToUse);
+      const data = unwrap(result) as TData;
+      state = {
+        data,
+        error: null,
+        isLoading: false,
+        isSuccess: true,
+      };
+    } catch (err) {
+      state = {
+        data: null,
+        error: err as Error,
+        isLoading: false,
+        isSuccess: false,
+      };
+    }
+
+    notifySubscribers();
+  };
+
+  const subscribe = (subscriber: () => void) => {
+    subscribers.add(subscriber);
+    return () => {
+      subscribers.delete(subscriber);
+    };
+  };
+
+  const serverQuery: ServerQuery<TArgs, TData> = {
+    key,
+    getState: () => state,
+    refresh,
+    subscribe,
+  };
+
+  void refresh(...initialArgs);
+
+  return serverQuery;
+}
+
+export default function useServerQuery<TArgs extends unknown[], TData>(
+  serverQuery: ServerQuery<TArgs, TData>,
+) {
+  const [state, setState] = useState(serverQuery.getState());
+
   const updateState = useCallback(() => {
-    setState({
-      data: queryEntry.data,
-      error: queryEntry.error,
-      isLoading: queryEntry.isLoading,
-      isSuccess: queryEntry.isSuccess,
-    });
-  }, [queryEntry]);
+    setState(serverQuery.getState());
+  }, [serverQuery]);
+
+  const refresh = useCallback(
+    (...args: TArgs) => serverQuery.refresh(...args),
+    [serverQuery],
+  );
 
   useEffect(() => {
-    queryEntry.subscribers.add(updateState);
+    const unsubscribe = serverQuery.subscribe(updateState);
 
-    // initialize state
-    // this is safe since this useEffect does not depend
-    // on the current state.
+    // This is safe since the effect does not depend on the
+    // state.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     updateState();
 
-    // execute query if not loaded yet
-    if (!queryEntry.isLoading && !queryEntry.isSuccess && !queryEntry.data) {
-      queryEntry.execute();
-    }
-
-    return () => {
-      queryEntry.subscribers.delete(updateState);
-    };
-  }, [queryEntry, updateState]);
+    return unsubscribe;
+  }, [serverQuery, updateState]);
 
   return {
     ...state,
-    refresh: queryEntry.execute,
+    refresh,
   };
 }
