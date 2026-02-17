@@ -21,6 +21,6 @@
         "psr-4": {
             "Core\\": "core"
         },
-        "files": ["./helpers/config.php", "./helpers/db.php", "./helpers/respond.php"]
+        "files": ["./helpers/body.php", "./helpers/config.php", "./helpers/db.php", "./helpers/respond.php"]
     }
 }

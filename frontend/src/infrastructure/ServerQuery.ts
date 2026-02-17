@@ -1,4 +1,5 @@
 // src/infrastructure/ServerQuery.ts
+import unsafeCast from "@/utils/unsafeCast";
 import { unwrap, type AnyServerResponse, type Unwrap } from "./ServerAction";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -20,7 +21,7 @@ export interface ServerQueryState<TData> {
 export interface ServerQuery<TArgs extends unknown[], TData> {
   readonly key: string;
   getState: () => ServerQueryState<TData>;
-  refresh: (...args: TArgs) => Promise<void>;
+  refresh: (...args: TArgs | []) => Promise<void>;
   subscribe: (subscriber: () => void) => () => void;
 }
 
@@ -43,8 +44,8 @@ export function createServerQuery<TQueryFn extends AsyncServerFn>(
 
   const notifySubscribers = () => subscribers.forEach((s) => s());
 
-  const refresh = async (...args: TArgs) => {
-    const argsToUse = args.length > 0 ? args : lastArgs;
+  const refresh = async (...args: TArgs | []) => {
+    const argsToUse = unsafeCast<TArgs>(args.length > 0 ? args : lastArgs);
     lastArgs = argsToUse;
 
     state = { ...state, isLoading: true, isSuccess: false, error: null };

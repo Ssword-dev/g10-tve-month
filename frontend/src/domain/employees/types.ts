@@ -1,6 +1,7 @@
 type DegreeLevel = "bachelor" | "master" | "doctorate";
 
 type Course = {
+  employee_number: number;
   course_name: string;
   degree_level: DegreeLevel;
   units_completed: number | null;

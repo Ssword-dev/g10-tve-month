@@ -7,89 +7,89 @@
 
 :root {
   /* =========================
-     Warm Earth Neutrals (Brown-led)
+     Lively Green + White Theme (Light)
      ========================= */
-  --palette-color-background: oklch(98.442% 0.02281 93.341);   /* warm parchment */
-  --palette-color-surface:    oklch(95% 0.020 85);   /* card surface */
-  --palette-color-muted:      oklch(90% 0.025 85);   /* hover / subtle fill */
+  --palette-color-background: oklch(99.2% 0.032 150); /* mint white */
+  --palette-color-surface:    oklch(99.7% 0.020 148); /* lifted white */
+  --palette-color-muted:      oklch(96.8% 0.060 150); /* fresh mint */
 
   /* =========================
-     Text (coffee brown)
+     Text
      ========================= */
-  --palette-color-text:        oklch(28% 0.030 75);  /* deep brown */
-  --palette-color-text-muted:  oklch(48% 0.025 80);  /* soft taupe */
+  --palette-color-text:        oklch(24% 0.055 154); /* rich evergreen */
+  --palette-color-text-muted:  oklch(44% 0.030 155); /* cool sage */
 
   /* =========================
      Borders & dividers
      ========================= */
-  --palette-color-border:        oklch(78% 0.020 85);
-  --palette-color-border-muted:  oklch(84% 0.015 85);
+  --palette-color-border:        oklch(85% 0.045 151);
+  --palette-color-border-muted:  oklch(90% 0.028 150);
 
   /* =========================
-     Accent (golden yellow)
+     Accent
      ========================= */
-  --palette-color-accent:         oklch(75% 0.14 95); /* warm yellow */
-  --palette-color-accent-strong:  oklch(68% 0.18 90); /* golden amber */
+  --palette-color-accent:         oklch(80% 0.170 147); /* lively lime */
+  --palette-color-accent-strong:  oklch(67% 0.210 149); /* electric emerald */
 
   /* =========================
      Semantic colors
      ========================= */
-  --palette-color-primary:   oklch(62% 0.14 150); /* leafy green */
-  --palette-color-secondary: oklch(66% 0.16 45);  /* soft orange */
+  --palette-color-primary:   oklch(60% 0.190 150); /* spring green */
+  --palette-color-secondary: oklch(73% 0.120 165); /* mint-cyan green */
 
-  --palette-color-danger:    oklch(58% 0.18 30);  /* burnt orange-red */
-  --palette-color-warning:   oklch(72% 0.18 95);  /* sunflower yellow */
-  --palette-color-success:   oklch(60% 0.16 155); /* healthy green */
-  --palette-color-info:      oklch(64% 0.10 120); /* olive-teal */
+  --palette-color-danger:    oklch(61% 0.225 28);  /* vivid red-orange */
+  --palette-color-warning:   oklch(84% 0.185 92);  /* bright amber */
+  --palette-color-success:   oklch(65% 0.180 155); /* bright success green */
+  --palette-color-info:      oklch(67% 0.135 230); /* clean azure */
 
   /* =========================
      Shadows
      ========================= */
-  --palette-color-shadow: oklch(70% 0.030 80);
+  --palette-color-shadow: oklch(52% 0.060 150 / 0.45);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     /* -------------------------
-       Neutral scale (cool graphite)
+       Lively Green Theme (Dark)
        ------------------------- */
-    --palette-color-background: oklch(10% 0.012 260);
-    --palette-color-surface:    oklch(14% 0.014 260);
-    --palette-color-muted:      oklch(20% 0.014 260);
+    --palette-color-background: oklch(13% 0.075 154);
+    --palette-color-surface:    oklch(18% 0.070 154);
+    --palette-color-muted:      oklch(24% 0.062 154);
 
     /* -------------------------
        Text
        ------------------------- */
-    --palette-color-text:        oklch(96% 0.008 260);
-    --palette-color-text-muted:  oklch(72% 0.010 260);
+    --palette-color-text:        oklch(96% 0.030 150);
+    --palette-color-text-muted:  oklch(82% 0.035 152);
 
     /* -------------------------
        Borders & dividers
        ------------------------- */
-    --palette-color-border:        oklch(34% 0.010 260);
-    --palette-color-border-muted:  oklch(26% 0.010 260);
+    --palette-color-border:        oklch(40% 0.038 154);
+    --palette-color-border-muted:  oklch(34% 0.032 154);
 
     /* -------------------------
-       Brand accent (same hue as light)
+       Accent
        ------------------------- */
-    --palette-color-accent:         oklch(78% 0.12 270);
-    --palette-color-accent-strong:  oklch(70% 0.18 270);
+    --palette-color-accent:         oklch(76% 0.165 149);
+    --palette-color-accent-strong:  oklch(70% 0.205 149);
 
     /* -------------------------
        Semantic colors
        ------------------------- */
-    --palette-color-primary:   oklch(78% 0.10 155);
-    --palette-color-secondary: oklch(78% 0.10 330);
+    --palette-color-primary:   oklch(72% 0.175 151);
+    --palette-color-secondary: oklch(76% 0.125 168);
 
-    --palette-color-danger:    oklch(70% 0.14 25);
-    --palette-color-warning:   oklch(76% 0.14 95);
-    --palette-color-success:   oklch(72% 0.14 160);
-    --palette-color-info:      oklch(74% 0.14 250);
+    --palette-color-danger:    oklch(73% 0.195 28);
+    --palette-color-warning:   oklch(82% 0.165 92);
+    --palette-color-success:   oklch(74% 0.170 154);
+    --palette-color-info:      oklch(76% 0.145 232);
 
     /* -------------------------
        Shadows
        ------------------------- */
-    --palette-color-shadow: oklch(0% 0 0 / 0.35);
+    --palette-color-shadow: oklch(8% 0.030 155 / 0.55);
   }
 }
 

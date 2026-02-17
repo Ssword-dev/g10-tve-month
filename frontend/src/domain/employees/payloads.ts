@@ -29,6 +29,10 @@ type EmployeeUpdatePayload = {
   place_of_birth: string;
 };
 
+type EmployeeDeletePayload = {
+  employee_number: number;
+};
+
 // input for adding a course to an employee
 type AddCoursePayload = Course;
 
@@ -44,10 +48,24 @@ type EmployeeSearchPayload = {
   name: string;
 };
 
+type EmployeeByNumberPayload = {
+  employee_number: number;
+};
+
+type CreateEmployeePayload = Omit<EmployeeUpdatePayload, "employee_number"> & {
+  employee_number: number;
+};
+
+type GetAllEmployeesPayload = Record<string, never>;
+
 export type {
   UpdateCoursePayload,
+  EmployeeDeletePayload,
   EmployeeUpdatePayload,
   AddCoursePayload,
   DeleteEmployeeCoursePayload,
   EmployeeSearchPayload,
+  EmployeeByNumberPayload,
+  CreateEmployeePayload,
+  GetAllEmployeesPayload,
 };

@@ -6,6 +6,7 @@ import CardTitle from "@/components/CardTitle";
 import Input from "@/components/Input";
 import Label from "@/components/Label";
 import Text from "@/components/Text";
+import { loginAction } from "@/domain/auth/actions";
 import { LogIn } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -22,25 +23,11 @@ export default function LoginPage() {
       setIsSubmitting(true);
       setErrorText("");
 
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "same-origin",
-        body: JSON.stringify({
-          employee_number: Number(employeeNumber),
-          password,
-        }),
+      const result = await loginAction({
+        employee_number: Number(employeeNumber),
+        password,
       });
-
-      const parsed = (await response.json()) as
-        | { type: "data"; data: { authenticated: boolean } }
-        | { type: "error"; message: string };
-
-      if (!response.ok || parsed.type === "error") {
-        throw new Error(
-          parsed.type === "error" ? parsed.message : "Login failed.",
-        );
-      }
+      result.unwrap();
 
       navigate("/dashboard");
     } catch (error) {

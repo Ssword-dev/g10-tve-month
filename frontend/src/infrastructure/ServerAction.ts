@@ -24,8 +24,9 @@ type ResponseType = "data" | "error" | "success";
 
 type AnyTData = unknown;
 type TDataDefault = unknown;
-type AnyTParams = Record<string, unknown>;
-type TParamsDefault = Record<string, unknown>;
+type JsonParams = Record<string, unknown>;
+type AnyTParams = JsonParams | FormData;
+type TParamsDefault = JsonParams;
 
 interface BaseResponse<T extends ResponseType, TData> {
   type: T;
@@ -95,6 +96,10 @@ function usesQuery(method: Method): boolean {
 }
 
 function buildQueryString(query: AnyTParams): string {
+  if (query instanceof FormData) {
+    return "";
+  }
+
   const params = new URLSearchParams();
   for (const [key, value] of Object.entries(query)) {
     if (value !== undefined && value !== null) {
@@ -110,15 +115,27 @@ function buildUrl(baseUrl: string, query: AnyTParams | null): string {
   return queryString ? `${baseUrl}?${queryString}` : baseUrl;
 }
 
-function buildBody(params: AnyTParams, method: Method): string | null {
-  return usesQuery(method) ? null : JSON.stringify(params);
+function buildBody(params: AnyTParams, method: Method): BodyInit | null {
+  if (usesQuery(method)) {
+    return null;
+  }
+
+  if (params instanceof FormData) {
+    return params;
+  }
+
+  return JSON.stringify(params);
 }
 
 function buildQuery<TParams extends AnyTParams>(
   params: TParams,
   method: Method,
 ): TParams | null {
-  return usesQuery(method) ? params : null;
+  if (!usesQuery(method) || params instanceof FormData) {
+    return null;
+  }
+
+  return params;
 }
 
 // unwrap function
@@ -155,13 +172,18 @@ export function createServerAction<
       let parsed: ServerResponse<TData>;
 
       try {
+        const body = buildBody(params, method);
+        const shouldSetJsonContentType = !(body instanceof FormData);
+
         const response = await fetch(url, {
           method,
           headers: {
-            "Content-Type": "application/json",
+            ...(shouldSetJsonContentType
+              ? { "Content-Type": "application/json" }
+              : {}),
             ...headers,
           },
-          body: buildBody(params, method),
+          body,
         });
         parsed = (await response.json()) as ServerResponse<TData>;
       } catch {

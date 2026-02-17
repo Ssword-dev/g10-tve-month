@@ -10,24 +10,19 @@ import Label from "@/components/Label";
 import Text from "@/components/Text";
 import {
   addCourseToEmployeeAction,
+  deleteEmployeeAction,
   deleteEmployeeCourseAction,
   employeeSearchQuery,
   updateEmployeeAction,
   updateEmployeeCourseAction,
 } from "@/domain/employees/actions";
-import type {
-  AddCoursePayload,
-  EmployeeUpdatePayload,
-  UpdateCoursePayload,
-} from "@/domain/employees/payloads";
+import type { EmployeeUpdatePayload } from "@/domain/employees/payloads";
 import type { Course, DegreeLevel, Employee } from "@/domain/employees/types";
 import useServerQuery from "@/hooks/useServerQuery";
 import unsafeCast from "@/utils/unsafeCast";
 import { X, Pencil, Trash2, Search } from "lucide-react";
 
 import { useEffect, useState, useMemo, useCallback } from "react";
-
-type CoursePayload = AddCoursePayload;
 
 type EmployeeFormState = {
   first_name: string;
@@ -158,7 +153,7 @@ function toEmployeePayload(
 function toCoursePayload(
   employeeNumber: number,
   form: CourseFormState,
-): CoursePayload {
+): Course {
   return {
     employee_number: employeeNumber,
     course_name: form.course_name.trim(),
@@ -439,7 +434,7 @@ function EmployeeInfoModal({
         </CardContent>
       </Card>
       <div className="flex justify-end">
-        <Button onClick={onOpenAdmin}>Admin Actions</Button>
+        <Button onClick={onOpenAdmin}>Take Action</Button>
       </div>
     </ModalShell>
   );
@@ -830,6 +825,32 @@ function CourseManagementSection({
   );
 }
 
+function DangerousActionSection({
+  employeeNumber,
+}: {
+  employeeNumber: number;
+}) {
+  const deleteEmployee = useCallback(() => {
+    deleteEmployeeAction({ employee_number: employeeNumber });
+    employeeSearchQuery.refresh();
+  }, [employeeNumber]);
+
+  return (
+    <Card className="gap-3 border-border p-4">
+      <CardTitle>
+        <Text weight="semibold" className="text-danger">
+          Dangerous Actions
+        </Text>
+      </CardTitle>
+      <CardContent className="grid grid-cols-1 gap-3 p-0 md:grid-cols-2">
+        <Button className="bg-danger text-text" onClick={deleteEmployee}>
+          Delete Employee
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
 function AdminActionsModal({
   employee,
   open,
@@ -1034,6 +1055,8 @@ function AdminActionsModal({
             : null
         }
       />
+
+      <DangerousActionSection employeeNumber={employee.employee_number} />
     </ModalShell>
   );
 }

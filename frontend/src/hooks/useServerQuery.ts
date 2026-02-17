@@ -1,4 +1,3 @@
-// src/hooks/useServerQuery.ts
 import { useState, useEffect, useCallback } from "react";
 import type { ServerQuery } from "@/infrastructure/ServerQuery";
 
