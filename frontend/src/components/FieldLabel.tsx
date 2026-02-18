@@ -1,6 +1,7 @@
 import { cn } from "@_ssword/classes";
 import type { AsChildProps, ClassProps, Props } from "./types";
 import Label from "./Label";
+import { Slot } from "@radix-ui/react-slot";
 
 const base = Label;
 
@@ -10,7 +11,7 @@ interface FieldLabelProps
   extends Props<ComponentBase>, ClassProps, AsChildProps {}
 
 function FieldLabel({ className, asChild, ...props }: FieldLabelProps) {
-  const Comp = Label;
+  const Comp = asChild ? Slot : base;
   return (
     <Comp
       data-slot="field-label"

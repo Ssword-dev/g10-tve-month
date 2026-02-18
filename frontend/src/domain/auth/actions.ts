@@ -2,7 +2,7 @@ import { createServerAction } from "@/infrastructure/ServerAction";
 import { createServerQuery } from "@/infrastructure/ServerQuery";
 
 export type EmployeeIsAdminPayload = Record<"employee_number", number>;
-export type LoginPayload = Record<"employee_number" | "password", number | string>;
+export type LoginPayload = Record<"deped_email" | "password", string>;
 export type CreateAdminUserPayload = Record<
   "employee_number" | "password" | "confirm_password",
   number | string

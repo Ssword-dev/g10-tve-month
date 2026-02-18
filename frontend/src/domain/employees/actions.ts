@@ -1,17 +1,16 @@
 import { createServerAction } from "@/infrastructure/ServerAction";
 import {
-  type EmployeeUpdatePayload,
+  type UpdateEmployeePayload,
   type AddCoursePayload,
   type UpdateCoursePayload,
-  type DeleteEmployeeCoursePayload,
-  type EmployeeSearchPayload,
-  type EmployeeDeletePayload,
-  type EmployeeByNumberPayload,
-  type CreateEmployeePayload,
+  type DeleteCoursePayload,
+  type FilterEmployeePayload,
+  type DeleteEmployeePayload,
+  type GetEmployeePayload,
+  type AddEmployeePayload,
   type GetAllEmployeesPayload,
 } from "./payloads";
 import type { Employee, Course } from "./types";
-import { createServerQuery } from "@/infrastructure/ServerQuery";
 
 export const getAllEmployeesAction = createServerAction<
   GetAllEmployeesPayload,
@@ -22,47 +21,32 @@ export const getAllEmployeesAction = createServerAction<
   method: "GET",
 });
 
-export const getAllEmployeesThatSatisfiesAction = createServerAction<
-  EmployeeSearchPayload,
+export const filterEmployeesAction = createServerAction<
+  FilterEmployeePayload,
   Employee[]
 >({
-  name: "getAllEmployeesThatSatisfies",
-  apiUrl: "/api/getAllEmployeesThatSatisfies",
+  name: "filterEmployees",
+  apiUrl: "/api/filterEmployees",
   method: "GET",
 });
 
-export const employeeSearchQuery = createServerQuery(
-  "EmployeeDashboard:getAllEmployeesThatSatisfies",
-  (name: string) => getAllEmployeesThatSatisfiesAction({ name }),
-  [""],
-);
-
-export const allEmployeesQuery = createServerQuery(
-  "Employees:getAllEmployees",
-  () => getAllEmployeesAction({}),
-  [],
-);
-
-export const getEmployeeByEmployeeNumberAction = createServerAction<
-  EmployeeByNumberPayload,
-  Employee
->({
-  name: "getEmployeeByEmployeeNumber",
-  apiUrl: "/api/getEmployeeByEmployeeNumber",
+export const getEmployee = createServerAction<GetEmployeePayload, Employee>({
+  name: "getEmployee",
+  apiUrl: "/api/getEmployee",
   method: "GET",
 });
 
-export const createEmployeeAction = createServerAction<
-  CreateEmployeePayload,
+export const addEmployeeAction = createServerAction<
+  AddEmployeePayload,
   Employee
 >({
-  name: "createEmployee",
-  apiUrl: "/api/createEmployee",
+  name: "addEmployee",
+  apiUrl: "/api/addEmployee",
   method: "POST",
 });
 
 export const updateEmployeeAction = createServerAction<
-  EmployeeUpdatePayload,
+  UpdateEmployeePayload,
   Employee
 >({
   name: "updateEmployee",
@@ -71,7 +55,7 @@ export const updateEmployeeAction = createServerAction<
 });
 
 export const deleteEmployeeAction = createServerAction<
-  EmployeeDeletePayload,
+  DeleteEmployeePayload,
   void
 >({
   name: "deleteEmployee",
@@ -79,29 +63,29 @@ export const deleteEmployeeAction = createServerAction<
   method: "POST",
 });
 
-export const addCourseToEmployeeAction = createServerAction<
+export const addCourseAction = createServerAction<
   AddCoursePayload,
   AddCoursePayload
 >({
-  name: "addCourseToEmployee",
-  apiUrl: "/api/addCourseToEmployee",
+  name: "addCourse",
+  apiUrl: "/api/addCourse",
   method: "POST",
 });
 
-export const updateEmployeeCourseAction = createServerAction<
+export const updateCourseAction = createServerAction<
   UpdateCoursePayload,
   Course
 >({
-  name: "updateEmployeeCourse",
-  apiUrl: "/api/updateEmployeeCourse",
+  name: "updateCourse",
+  apiUrl: "/api/updateCourse",
   method: "POST",
 });
 
-export const deleteEmployeeCourseAction = createServerAction<
-  DeleteEmployeeCoursePayload,
-  DeleteEmployeeCoursePayload
+export const deleteCourseAction = createServerAction<
+  DeleteCoursePayload,
+  DeleteCoursePayload
 >({
-  name: "deleteEmployeeCourse",
-  apiUrl: "/api/deleteEmployeeCourse",
+  name: "deleteCourse",
+  apiUrl: "/api/deleteCourse",
   method: "POST",
 });

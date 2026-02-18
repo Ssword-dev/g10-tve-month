@@ -10,42 +10,42 @@
      Lively Green + White Theme (Light)
      ========================= */
   --palette-color-background: oklch(99.2% 0.032 150); /* mint white */
-  --palette-color-surface:    oklch(99.7% 0.020 148); /* lifted white */
-  --palette-color-muted:      oklch(96.8% 0.060 150); /* fresh mint */
+  --palette-color-surface: oklch(99.7% 0.02 148); /* lifted white */
+  --palette-color-muted: oklch(96.8% 0.06 150); /* fresh mint */
 
   /* =========================
      Text
      ========================= */
-  --palette-color-text:        oklch(24% 0.055 154); /* rich evergreen */
-  --palette-color-text-muted:  oklch(44% 0.030 155); /* cool sage */
+  --palette-color-text: oklch(24% 0.055 154); /* rich evergreen */
+  --palette-color-text-muted: oklch(44% 0.03 155); /* cool sage */
 
   /* =========================
      Borders & dividers
      ========================= */
-  --palette-color-border:        oklch(85% 0.045 151);
-  --palette-color-border-muted:  oklch(90% 0.028 150);
+  --palette-color-border: oklch(85% 0.045 151);
+  --palette-color-border-muted: oklch(90% 0.028 150);
 
   /* =========================
      Accent
      ========================= */
-  --palette-color-accent:         oklch(80% 0.170 147); /* lively lime */
-  --palette-color-accent-strong:  oklch(67% 0.210 149); /* electric emerald */
+  --palette-color-accent: oklch(80% 0.17 147); /* lively lime */
+  --palette-color-accent-strong: oklch(67% 0.21 149); /* electric emerald */
 
   /* =========================
      Semantic colors
      ========================= */
-  --palette-color-primary:   oklch(60% 0.190 150); /* spring green */
-  --palette-color-secondary: oklch(73% 0.120 165); /* mint-cyan green */
+  --palette-color-primary: oklch(60% 0.19 150); /* spring green */
+  --palette-color-secondary: oklch(73% 0.12 165); /* mint-cyan green */
 
-  --palette-color-danger:    oklch(61% 0.225 28);  /* vivid red-orange */
-  --palette-color-warning:   oklch(84% 0.185 92);  /* bright amber */
-  --palette-color-success:   oklch(65% 0.180 155); /* bright success green */
-  --palette-color-info:      oklch(67% 0.135 230); /* clean azure */
+  --palette-color-danger: oklch(61% 0.225 28); /* vivid red-orange */
+  --palette-color-warning: oklch(84% 0.185 92); /* bright amber */
+  --palette-color-success: oklch(65% 0.18 155); /* bright success green */
+  --palette-color-info: oklch(67% 0.135 230); /* clean azure */
 
   /* =========================
      Shadows
      ========================= */
-  --palette-color-shadow: oklch(52% 0.060 150 / 0.45);
+  --palette-color-shadow: oklch(52% 0.06 150 / 0.45);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -54,42 +54,42 @@
        Lively Green Theme (Dark)
        ------------------------- */
     --palette-color-background: oklch(13% 0.075 154);
-    --palette-color-surface:    oklch(18% 0.070 154);
-    --palette-color-muted:      oklch(24% 0.062 154);
+    --palette-color-surface: oklch(18% 0.07 154);
+    --palette-color-muted: oklch(24% 0.062 154);
 
     /* -------------------------
        Text
        ------------------------- */
-    --palette-color-text:        oklch(96% 0.030 150);
-    --palette-color-text-muted:  oklch(82% 0.035 152);
+    --palette-color-text: oklch(96% 0.03 150);
+    --palette-color-text-muted: oklch(82% 0.035 152);
 
     /* -------------------------
        Borders & dividers
        ------------------------- */
-    --palette-color-border:        oklch(40% 0.038 154);
-    --palette-color-border-muted:  oklch(34% 0.032 154);
+    --palette-color-border: oklch(40% 0.038 154);
+    --palette-color-border-muted: oklch(34% 0.032 154);
 
     /* -------------------------
        Accent
        ------------------------- */
-    --palette-color-accent:         oklch(76% 0.165 149);
-    --palette-color-accent-strong:  oklch(70% 0.205 149);
+    --palette-color-accent: oklch(76% 0.165 149);
+    --palette-color-accent-strong: oklch(70% 0.205 149);
 
     /* -------------------------
        Semantic colors
        ------------------------- */
-    --palette-color-primary:   oklch(72% 0.175 151);
+    --palette-color-primary: oklch(75% 0.19 220);
     --palette-color-secondary: oklch(76% 0.125 168);
 
-    --palette-color-danger:    oklch(73% 0.195 28);
-    --palette-color-warning:   oklch(82% 0.165 92);
-    --palette-color-success:   oklch(74% 0.170 154);
-    --palette-color-info:      oklch(76% 0.145 232);
+    --palette-color-danger: oklch(73% 0.195 28);
+    --palette-color-warning: oklch(82% 0.165 92);
+    --palette-color-success: oklch(74% 0.17 154);
+    --palette-color-info: oklch(76% 0.145 232);
 
     /* -------------------------
        Shadows
        ------------------------- */
-    --palette-color-shadow: oklch(8% 0.030 155 / 0.55);
+    --palette-color-shadow: oklch(8% 0.03 155 / 0.55);
   }
 }
 
@@ -195,7 +195,6 @@
   }
 }
 
-
 /*
   Make sure the html and body elements have no scrollbars.
 */
@@ -203,4 +202,3 @@ html,
 body {
   @apply no-scrollbar;
 }
-

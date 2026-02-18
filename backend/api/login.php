@@ -33,22 +33,22 @@ if (str_contains($contentType, 'application/json')) {
     $requestData = $_POST;
 }
 
-$employeeNumberRaw = $requestData['employee_number'] ?? null;
+$depedEmailRaw = $requestData['deped_email'] ?? null;
 $passwordRaw = $requestData['password'] ?? null;
 
-if ($employeeNumberRaw === null || $passwordRaw === null) {
+if ($depedEmailRaw === null || $passwordRaw === null) {
     respond(
         type: 'error',
-        message: 'employee_number and password are required.',
+        message: 'deped_email and password are required.',
         statusCode: 422
     );
 }
 
-$employeeNumber = filter_var($employeeNumberRaw, FILTER_VALIDATE_INT);
-if ($employeeNumber === false || $employeeNumber <= 0) {
+$depedEmail = trim((string) $depedEmailRaw);
+if ($depedEmail === '' || !filter_var($depedEmail, FILTER_VALIDATE_EMAIL)) {
     respond(
         type: 'error',
-        message: 'employee_number must be a positive integer.',
+        message: 'deped_email must be a valid email address.',
         statusCode: 422
     );
 }
@@ -76,7 +76,7 @@ $stmt = $db->prepare("
     FROM admin_users_table AS A
     INNER JOIN employees_table AS E
         ON E.employee_number = A.employee_number
-    WHERE A.employee_number = ?
+    WHERE LOWER(E.deped_email) = LOWER(?)
     LIMIT 1
 ");
 
@@ -88,7 +88,7 @@ if (!$stmt) {
     );
 }
 
-$stmt->bind_param('i', $employeeNumber);
+$stmt->bind_param('s', $depedEmail);
 
 if (!$stmt->execute()) {
     $stmt->close();
@@ -107,7 +107,7 @@ $stmt->close();
 if (!$adminUser || !password_verify($password, $adminUser['password_hash'] ?? '')) {
     respond(
         type: 'error',
-        message: 'Invalid employee_number or password.',
+        message: 'Invalid deped_email or password.',
         statusCode: 401
     );
 }

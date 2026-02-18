@@ -1,12 +1,28 @@
-import type { DegreeLevel } from "./types";
-import type { Course } from "./types";
+import type {
+  DegreeLevel,
+  Employee,
+  Course,
+  FilterEmployeesPayload as FilterEmployeesPayloadInterface,
+} from "./types";
 
+// Course-related payloads
 type UpdateCoursePayload = Course & {
   original_course_name: string;
   original_degree_level: DegreeLevel;
 };
 
-type EmployeeUpdatePayload = {
+type AddCoursePayload = Course;
+
+type DeleteCoursePayload = {
+  employee_number: number;
+  course_name: string;
+  degree_level: DegreeLevel;
+};
+
+// Employee-related payloads
+type AddEmployeePayload = Employee;
+
+type UpdateEmployeePayload = {
   employee_number: number;
   first_name: string;
   middle_name: string;
@@ -29,43 +45,31 @@ type EmployeeUpdatePayload = {
   place_of_birth: string;
 };
 
-type EmployeeDeletePayload = {
+type DeleteEmployeePayload = {
   employee_number: number;
 };
 
-// input for adding a course to an employee
-type AddCoursePayload = Course;
-
-// input for deleting an employee's course
-type DeleteEmployeeCoursePayload = {
-  employee_number: number;
-  course_name: string;
-  degree_level: DegreeLevel;
-};
-
-// input for searching employees
-type EmployeeSearchPayload = {
-  name: string;
-};
-
-type EmployeeByNumberPayload = {
+type GetEmployeePayload = {
   employee_number: number;
 };
 
-type CreateEmployeePayload = Omit<EmployeeUpdatePayload, "employee_number"> & {
-  employee_number: number;
+type FilterEmployeePayload = {
+  [K in keyof FilterEmployeesPayloadInterface]: FilterEmployeesPayloadInterface[K];
 };
 
 type GetAllEmployeesPayload = Record<string, never>;
 
 export type {
+  // Course
   UpdateCoursePayload,
-  EmployeeDeletePayload,
-  EmployeeUpdatePayload,
   AddCoursePayload,
-  DeleteEmployeeCoursePayload,
-  EmployeeSearchPayload,
-  EmployeeByNumberPayload,
-  CreateEmployeePayload,
+  DeleteCoursePayload,
+
+  // Employee
+  AddEmployeePayload,
+  UpdateEmployeePayload,
+  DeleteEmployeePayload,
+  GetEmployeePayload,
+  FilterEmployeePayload,
   GetAllEmployeesPayload,
 };

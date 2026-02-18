@@ -6,14 +6,14 @@ import CardTitle from "@/components/CardTitle";
 import Input from "@/components/Input";
 import Label from "@/components/Label";
 import Text from "@/components/Text";
-import { loginAction } from "@/domain/auth/actions";
+import { currentAdminSessionQuery, loginAction } from "@/domain/auth/actions";
 import { LogIn } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const [employeeNumber, setEmployeeNumber] = useState("");
+  const [depedEmail, setDepedEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorText, setErrorText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,10 +24,11 @@ export default function LoginPage() {
       setErrorText("");
 
       const result = await loginAction({
-        employee_number: Number(employeeNumber),
+        deped_email: depedEmail.trim(),
         password,
       });
       result.unwrap();
+      await currentAdminSessionQuery.refresh();
 
       navigate("/dashboard");
     } catch (error) {
@@ -38,7 +39,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="flex min-h-screen w-full items-center justify-center bg-background p-4">
+    <main className="flex min-h-screen w-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md border-border">
         <CardHeader>
           <CardTitle>
@@ -56,12 +57,12 @@ export default function LoginPage() {
             }}
           >
             <div className="space-y-1">
-              <Label htmlFor="employee-number">Employee Number</Label>
+              <Label htmlFor="deped-email">DepEd Email</Label>
               <Input
-                id="employee-number"
-                type="number"
-                value={employeeNumber}
-                onChange={(event) => setEmployeeNumber(event.target.value)}
+                id="deped-email"
+                type="email"
+                value={depedEmail}
+                onChange={(event) => setDepedEmail(event.target.value)}
               />
             </div>
             <div className="space-y-1">
