@@ -14,7 +14,7 @@ const base = "div";
 type ComponentBase = typeof base;
 
 const cardVM = cvm(
-  "bg-surface text-text flex flex-col gap-6 rounded-xl border px-3 py-6 shadow-sm",
+  "bg-card text-foreground flex flex-col gap-6 rounded-xl border px-3 py-6 shadow-sm",
   {
     variants: {
       borderAccent: {

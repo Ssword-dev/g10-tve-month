@@ -39,7 +39,7 @@ export function EmployeeInfoModal({
         </CardTitle>
         <CardContent className="space-y-2 p-0">
           {(employee.courses ?? []).length === 0 && (
-            <Text size="sm" className="text-text-muted">
+            <Text size="sm" className="text-muted-foreground">
               No courses found for this employee.
             </Text>
           )}
@@ -52,7 +52,7 @@ export function EmployeeInfoModal({
                 <Text weight="semibold">{course.course_name}</Text>
                 <Badge>{course.degree_level}</Badge>
               </div>
-              <Text size="sm" className="text-text-muted">
+              <Text size="sm" className="text-muted-foreground">
                 Units: {course.units_completed ?? "N/A"} | Finished:{" "}
                 {course.is_finished ? "Yes" : "No"}
               </Text>

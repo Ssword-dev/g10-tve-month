@@ -85,7 +85,10 @@ if (!$statement) {
     respond(type: 'error', message: 'Unable to prepare employee update request.', statusCode: 500);
 }
 
-$statement->bind_param($types, ...$params);
+if (!bind_params($statement, $types, $params)) {
+    $statement->close();
+    respond(type: 'error', message: 'Unable to bind update parameters.', statusCode: 500);
+}
 
 if (!$statement->execute()) {
     $statement->close();

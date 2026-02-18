@@ -16,14 +16,14 @@ export function EmployeeTable({ employees, isLoading, error, onRetry, onSelect }
   if (isLoading)
     return (
       <div className="flex h-40 items-center justify-center">
-        <Text className="text-text-muted">Loading employees...</Text>
+        <Text className="text-muted-foreground">Loading employees...</Text>
       </div>
     );
 
   if (error)
     return (
       <div className="flex flex-col items-center justify-center gap-3 h-40">
-        <Text className="text-danger">Failed to load employees.</Text>
+        <Text className="text-destructive">Failed to load employees.</Text>
         <Button onClick={onRetry}>Retry</Button>
       </div>
     );
@@ -32,7 +32,7 @@ export function EmployeeTable({ employees, isLoading, error, onRetry, onSelect }
     <div className="h-full min-h-0 min-w-0 overflow-x-scroll overflow-y-scroll">
       <table className="w-full text-left text-sm">
         <thead>
-          <tr className="border-border-muted border-b text-text-muted">
+          <tr className="border-border/70 border-b text-muted-foreground">
             <th className="py-2 pr-4 font-medium">Employee #</th>
             <th className="py-2 pr-4 font-medium">Full Name</th>
             <th className="py-2 pr-4 font-medium">Email</th>
@@ -43,7 +43,7 @@ export function EmployeeTable({ employees, isLoading, error, onRetry, onSelect }
         <tbody>
           {employees.length === 0 && (
             <tr>
-              <td colSpan={9} className="py-6 text-center text-text-muted">
+              <td colSpan={9} className="py-6 text-center text-muted-foreground">
                 No employees found.
               </td>
             </tr>
@@ -51,7 +51,7 @@ export function EmployeeTable({ employees, isLoading, error, onRetry, onSelect }
           {employees.map((employee) => (
             <tr
               key={employee.employee_number}
-              className="border-border-muted border-b align-top last:border-b-0"
+              className="border-border/70 border-b align-top last:border-b-0"
             >
               <td className="py-3 pr-4">
                 <button

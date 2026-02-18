@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
+import type { z } from "zod";
 
 import { cn } from "@_ssword/classes";
 import { addEmployeeAction } from "@/domain/employees/actions";
-import type { AddEmployeePayload } from "@/domain/employees/payloads";
 import Button from "@/components/Button";
 import Card from "@/components/Card";
 import CardAction from "@/components/CardAction";
@@ -18,8 +18,9 @@ import Input from "@/components/Input";
 import type { Props } from "@/components/types";
 
 import { filterEmployeesQuery } from "../queries";
-import { employeeFormSchema } from "../schemas";
+import { createEmployeeSchema } from "../schemas";
 import type { EmployeeFormState } from "../types";
+import { toAddEmployeePayload } from "../utils";
 
 interface FieldDefinition<TKey extends string> extends Props<typeof Input> {
   name: TKey;
@@ -34,9 +35,10 @@ export function AddEmployeeForm({ closeModal }: { closeModal: () => void }) {
     control,
     handleSubmit,
     formState: { isSubmitting },
-  } = useForm<EmployeeFormState>({
-    resolver: zodResolver(employeeFormSchema),
+  } = useForm<z.input<typeof createEmployeeSchema>, unknown, EmployeeFormState>({
+    resolver: zodResolver(createEmployeeSchema),
     defaultValues: {
+      employee_number: "",
       first_name: "",
       middle_name: "",
       last_name: "",
@@ -50,7 +52,7 @@ export function AddEmployeeForm({ closeModal }: { closeModal: () => void }) {
       contact_number: "",
       plantilla_number: "",
       bp_number: "",
-      salary_grade: 1,
+      salary_grade: "",
       salary: "",
       address: "",
       civil_status: "",
@@ -61,7 +63,7 @@ export function AddEmployeeForm({ closeModal }: { closeModal: () => void }) {
 
   const submitEmployeePayload = async (data: EmployeeFormState) => {
     try {
-      const result = await addEmployeeAction({ ...data, courses: [] });
+      const result = await addEmployeeAction(toAddEmployeePayload(data));
       result.unwrap();
       filterEmployeesQuery.refresh();
       closeModal();
@@ -72,6 +74,7 @@ export function AddEmployeeForm({ closeModal }: { closeModal: () => void }) {
 
   const fieldCategories = [
     [
+      { name: "employee_number", label: "Employee Number", type: "number", placeholder: "Enter employee number", required: true },
       { name: "first_name", label: "First Name", placeholder: "Enter first name", required: true },
       { name: "middle_name", label: "Middle Name", placeholder: "Enter middle name" },
       { name: "last_name", label: "Last Name", placeholder: "Enter last name", required: true },
@@ -111,7 +114,7 @@ export function AddEmployeeForm({ closeModal }: { closeModal: () => void }) {
     type,
     placeholder,
     required,
-  }: FieldDefinition<keyof AddEmployeePayload>) => {
+  }: FieldDefinition<keyof EmployeeFormState>) => {
     return (
       <Controller
         key={name}
@@ -119,9 +122,9 @@ export function AddEmployeeForm({ closeModal }: { closeModal: () => void }) {
         name={name}
         render={({ field, fieldState }) => (
           <Field className="grid gap-1.5">
-            <FieldLabel htmlFor={name} className="text-sm font-medium text-text-muted">
+            <FieldLabel htmlFor={name} className="text-sm font-medium text-muted-foreground">
               {label}
-              {required && <span className="text-danger ml-1">*</span>}
+              {required && <span className="text-destructive ml-1">*</span>}
             </FieldLabel>
             <Input
               id={name}
@@ -131,10 +134,10 @@ export function AddEmployeeForm({ closeModal }: { closeModal: () => void }) {
               aria-invalid={!!fieldState.error}
               value={field.value ?? ""}
               className={cn(
-                "bg-surface border-border text-text placeholder:text-text-muted/50",
+                "bg-card border-border text-foreground placeholder:text-muted-foreground/50",
                 "focus:border-primary focus:ring-1 focus:ring-primary/30",
                 "transition-colors duration-200",
-                fieldState.error && "border-danger focus:border-danger focus:ring-danger/30",
+                fieldState.error && "border-destructive focus:border-destructive focus:ring-destructive/30",
               )}
             />
             <FieldError errors={fieldState.error ? [fieldState.error] : []} />
@@ -148,10 +151,10 @@ export function AddEmployeeForm({ closeModal }: { closeModal: () => void }) {
   const isFirstPage = currentPage === 0;
 
   return (
-    <Card asChild className="w-full h-full border-border bg-surface shadow-lg overflow-hidden">
+    <Card asChild className="w-full h-full border-border bg-card shadow-lg overflow-hidden">
       <form onSubmit={handleSubmit(submitEmployeePayload)}>
         <CardHeader className="border-b border-border bg-muted/30 px-6 py-4">
-          <CardTitle className="text-xl font-semibold text-text">Add New Employee</CardTitle>
+          <CardTitle className="text-xl font-semibold text-foreground">Add New Employee</CardTitle>
         </CardHeader>
 
         <div className="flex justify-center gap-1.5 px-6 pt-3">
@@ -181,7 +184,7 @@ export function AddEmployeeForm({ closeModal }: { closeModal: () => void }) {
                 type="button"
                 variant="outline"
                 onClick={() => setCurrentPage((p) => p - 1)}
-                className="border-border bg-surface text-text hover:bg-muted"
+                className="border-border bg-card text-foreground hover:bg-muted"
               >
                 Previous
               </Button>
@@ -193,7 +196,7 @@ export function AddEmployeeForm({ closeModal }: { closeModal: () => void }) {
               <Button
                 type="button"
                 onClick={() => setCurrentPage((p) => p + 1)}
-                className="bg-primary text-background hover:bg-primary/90"
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 Next
               </Button>
@@ -201,7 +204,7 @@ export function AddEmployeeForm({ closeModal }: { closeModal: () => void }) {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-primary text-background hover:bg-primary/90"
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 {isSubmitting ? "Saving..." : "Save Employee"}
               </Button>

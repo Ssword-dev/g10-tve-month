@@ -31,3 +31,13 @@ function db(): mysqli {
 
     return $connection;
 }
+
+function bind_params(mysqli_stmt $statement, string $types, array $params): bool {
+    $bindArguments = [$types];
+
+    foreach ($params as $index => $value) {
+        $bindArguments[] = &$params[$index];
+    }
+
+    return call_user_func_array([$statement, 'bind_param'], $bindArguments);
+}

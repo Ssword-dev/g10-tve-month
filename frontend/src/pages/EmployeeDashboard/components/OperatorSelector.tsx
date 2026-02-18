@@ -25,7 +25,7 @@ export function OperatorSelector({ fieldType, value, onChange }: OperatorSelecto
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="bg-surface border-border rounded-lg border px-3 py-1.5 text-sm"
+      className="bg-card border-border rounded-lg border px-3 py-1.5 text-sm"
     >
       {operators.map((op) => (
         <option key={op.value} value={op.value}>

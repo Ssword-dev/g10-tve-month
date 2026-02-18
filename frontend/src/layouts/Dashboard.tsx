@@ -6,6 +6,7 @@ import useServerQuery from "@/hooks/useServerQuery";
 import { GraduationCap, LogOut } from "lucide-react";
 import { Outlet, useMatch, useNavigate } from "react-router-dom";
 import { useMemo, useState } from "react";
+import { cn } from "@_ssword/classes";
 
 export default function Dashboard() {
   const match = useMatch("/dashboard/:subRoute");
@@ -37,11 +38,11 @@ export default function Dashboard() {
 
   return (
     <TooltipProvider delayDuration={120}>
-      <div className="grid h-screen w-screen overflow-x-hidden grid-cols-1 bg-background text-text lg:grid-cols-[250px_1fr]">
-        <aside className="border-border-muted bg-surface/90 p-6 lg:border-r flex flex-col">
+      <div className="grid h-screen w-screen overflow-x-hidden grid-cols-1 bg-background text-foreground lg:grid-cols-[250px_1fr]">
+        <aside className="border-border/70 bg-card/90 p-6 lg:border-r flex flex-col">
           <div className="mb-8 flex items-center gap-3">
             <div className="rounded-xl bg-accent/35 p-2">
-              <GraduationCap className="size-5 text-accent-strong" />
+              <GraduationCap className="size-5 text-primary" />
             </div>
             <Text size="lg" weight="semibold">
               Dashboard
@@ -56,11 +57,12 @@ export default function Dashboard() {
                 <Button
                   key={name}
                   variant="glass"
-                  className={
-                    isActive
-                      ? "w-full justify-start gap-3 bg-accent text-text hover:bg-accent-strong"
-                      : "w-full justify-start gap-3 bg-transparent text-text-muted hover:bg-muted hover:text-text"
-                  }
+                  className={cn("px-2 py-1", {
+                    "w-full justify-start gap-3 bg-primary text-primary-foreground hover:bg-primary/90":
+                      isActive,
+                    "w-full justify-start gap-3 bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground":
+                      !isActive,
+                  })}
                   onClick={() => handleNavigate(name)}
                 >
                   <Text size="sm" weight="medium" className="text-inherit">
@@ -73,8 +75,8 @@ export default function Dashboard() {
 
           <div className="mt-auto space-y-3 pt-6">
             {currentUser ? (
-              <div className="rounded-lg border border-border-muted bg-muted/35 px-3 py-2">
-                <Text size="xs" className="text-text-muted">
+              <div className="rounded-lg border border-border/70 bg-muted/35 px-3 py-2">
+                <Text size="xs" className="text-muted-foreground">
                   Signed in as
                 </Text>
                 <Text size="sm" weight="semibold">
@@ -84,7 +86,7 @@ export default function Dashboard() {
             ) : null}
             <Button
               variant="glass"
-              className="w-full justify-start gap-2 bg-transparent text-text-muted hover:bg-muted hover:text-text"
+              className="w-full justify-start gap-2 bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
               onClick={() => void logout()}
               disabled={isLoggingOut}
             >

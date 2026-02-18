@@ -32,7 +32,7 @@ export function EmployeeField({
         onChange={(event) => onChange(event.target.value)}
       />
       {error && (
-        <Text size="xs" className="text-danger">
+        <Text size="xs" className="text-destructive">
           {error}
         </Text>
       )}

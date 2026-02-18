@@ -115,7 +115,7 @@ function HeroSection() {
           </Text>
 
           <motion.p
-            className="text-lg text-text-muted"
+            className="text-lg text-muted-foreground"
             {...animationPresets.fadeUp({
               y: 20,
               duration: 2.4,
@@ -143,7 +143,7 @@ function HeroSection() {
         </div>
       </div>
       <motion.div
-        className="h-full w-1/2 bg-surface"
+        className="h-full w-1/2 bg-card"
         {...animationPresets.fadeUp({ delay: 0.5 })}
       >
         <img
@@ -185,7 +185,7 @@ function Feature({
   description: string;
 }) {
   return (
-    <Card className="h-full p-6 rounded-xl border border-border bg-surface shadow-sm hover:shadow-lg transition-shadow">
+    <Card className="h-full p-6 rounded-xl border border-border bg-card shadow-sm hover:shadow-lg transition-shadow">
       <CardHeader>
         <CardTitle asChild>
           <Text size="xl" className="text-center font-semibold">
@@ -194,7 +194,7 @@ function Feature({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-text-muted text-center">{description}</p>
+        <p className="text-muted-foreground text-center">{description}</p>
       </CardContent>
     </Card>
   );
@@ -202,7 +202,7 @@ function Feature({
 
 function PostHeroSection() {
   return (
-    <section className="min-h-screen px-6 flex items-center bg-surface">
+    <section className="min-h-screen px-6 flex items-center bg-card">
       <div className="max-w-6xl mx-auto w-full flex flex-col items-center gap-12">
         <motion.div {...animationPresets.slideInX()}>
           <Text size="4xl" align="center" className="font-bold">
@@ -264,7 +264,7 @@ function PostHeroSection() {
 //               <Text size="lg" weight="bold">
 //                 {step.title}
 //               </Text>
-//               <Text className="text-text-muted">{step.text}</Text>
+//               <Text className="text-muted-foreground">{step.text}</Text>
 //             </motion.div>
 //           ))}
 //         </motion.div>
@@ -284,7 +284,7 @@ function TrustSection() {
           Built with security and reliability in mind
         </Text>
 
-        <Text className="text-text-muted mt-4">
+        <Text className="text-muted-foreground mt-4">
           Designed for schools that care about data privacy, long-term
           maintainability, and ease of adoption.
         </Text>
@@ -310,7 +310,7 @@ function CallToAction() {
             Ready to jump into action?
           </Text>
 
-          <Text className="text-text-muted">
+          <Text className="text-muted-foreground">
             Get your staff management under control in minutes — no training
             required.
           </Text>
@@ -341,7 +341,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <main className="bg-background text-text overflow-x-hidden">
+    <main className="bg-background text-foreground overflow-x-hidden">
       <HeroSection />
       <PostHeroSection />
       <TrustSection />

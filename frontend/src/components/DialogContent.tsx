@@ -5,7 +5,7 @@ import { Dialog as DialogPrimitive } from "radix-ui";
 import { cn } from "@_ssword/classes";
 import { XIcon } from "lucide-react";
 import DialogPortal from "./DialogPortal";
-import DialogOverlay from "./DialogPortal";
+import DialogOverlay from "./DialogOverlay";
 import DialogClose from "./DialogClose";
 
 function DialogContent({
@@ -31,7 +31,7 @@ function DialogContent({
         {showCloseButton && (
           <DialogClose asChild>
             <button
-              className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
+              className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-accent-foreground"
               aria-label="Close"
             >
               <XIcon className="h-4 w-4" />

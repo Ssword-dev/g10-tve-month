@@ -156,7 +156,8 @@ try {
         throw new RuntimeException('Failed to prepare duplicate employee check.');
     }
 
-    $check->bind_param('i', $form_data['employee_number']);
+    $formEmployeeNumber = $form_data['employee_number'];
+    $check->bind_param('i', $formEmployeeNumber);
     $check->execute();
     $check->store_result();
 
@@ -178,28 +179,31 @@ try {
         throw new RuntimeException('Failed to prepare employee insert.');
     }
 
-    $stmt->bind_param(
+    bind_params(
+        $stmt,
         'ssssisssssisssisssss',
-        $form_data['first_name'],
-        $form_data['middle_name'],
-        $form_data['last_name'],
-        $form_data['deped_email'],
-        $form_data['employee_number'],
-        $form_data['designation'],
-        $form_data['date_joined'],
-        $form_data['date_of_latest_promotion'],
-        $form_data['contact_number'],
-        $form_data['plantilla_number'],
-        $form_data['date_of_original_appointment'],
-        $form_data['bp_number'],
-        $form_data['address'],
-        $form_data['civil_status'],
-        $form_data['date_of_birth'],
-        $form_data['salary_grade'],
-        $form_data['salary'],
-        $form_data['employment_status'],
-        $form_data['tin'],
-        $form_data['place_of_birth']
+        [
+            $form_data['first_name'],
+            $form_data['middle_name'],
+            $form_data['last_name'],
+            $form_data['deped_email'],
+            $form_data['employee_number'],
+            $form_data['designation'],
+            $form_data['date_joined'],
+            $form_data['date_of_latest_promotion'],
+            $form_data['contact_number'],
+            $form_data['plantilla_number'],
+            $form_data['date_of_original_appointment'],
+            $form_data['bp_number'],
+            $form_data['address'],
+            $form_data['civil_status'],
+            $form_data['date_of_birth'],
+            $form_data['salary_grade'],
+            $form_data['salary'],
+            $form_data['employment_status'],
+            $form_data['tin'],
+            $form_data['place_of_birth'],
+        ],
     );
 
     if (!$stmt->execute()) {
@@ -212,7 +216,8 @@ try {
         throw new RuntimeException('Failed to prepare admin insert.');
     }
 
-    $stmt_admin->bind_param('is', $form_data['employee_number'], $password_hash);
+    $adminEmployeeNumber = $form_data['employee_number'];
+    $stmt_admin->bind_param('is', $adminEmployeeNumber, $password_hash);
     if (!$stmt_admin->execute()) {
         throw new RuntimeException('Failed to create admin user: ' . $db->error);
     }

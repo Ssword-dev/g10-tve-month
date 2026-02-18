@@ -90,7 +90,8 @@ if (!$check) {
     respond(type: 'error', message: 'Failed to prepare duplicate employee check.', statusCode: 500);
 }
 
-$check->bind_param('i', $record['employee_number']);
+$recordEmployeeNumber = $record['employee_number'];
+$check->bind_param('i', $recordEmployeeNumber);
 
 if (!$check->execute()) {
     $check->close();
@@ -119,28 +120,31 @@ if (!$stmt) {
     respond(type: 'error', message: 'Failed to prepare employee insert.', statusCode: 500);
 }
 
-$stmt->bind_param(
+bind_params(
+    $stmt,
     'ssssisssssisssisssss',
-    $record['first_name'],
-    $record['middle_name'],
-    $record['last_name'],
-    $record['deped_email'],
-    $record['employee_number'],
-    $record['designation'],
-    $record['date_joined'],
-    $record['date_of_latest_promotion'],
-    $record['contact_number'],
-    $record['plantilla_number'],
-    $record['date_of_original_appointment'],
-    $record['bp_number'],
-    $record['address'],
-    $record['civil_status'],
-    $record['date_of_birth'],
-    $record['salary_grade'],
-    $record['salary'],
-    $record['employment_status'],
-    $record['tin'],
-    $record['place_of_birth']
+    [
+        $record['first_name'],
+        $record['middle_name'],
+        $record['last_name'],
+        $record['deped_email'],
+        $record['employee_number'],
+        $record['designation'],
+        $record['date_joined'],
+        $record['date_of_latest_promotion'],
+        $record['contact_number'],
+        $record['plantilla_number'],
+        $record['date_of_original_appointment'],
+        $record['bp_number'],
+        $record['address'],
+        $record['civil_status'],
+        $record['date_of_birth'],
+        $record['salary_grade'],
+        $record['salary'],
+        $record['employment_status'],
+        $record['tin'],
+        $record['place_of_birth'],
+    ],
 );
 
 if (!$stmt->execute()) {
@@ -155,7 +159,8 @@ if (!$lookup) {
     respond(type: 'error', message: 'Failed to prepare employee lookup.', statusCode: 500);
 }
 
-$lookup->bind_param('i', $record['employee_number']);
+$lookupEmployeeNumber = $record['employee_number'];
+$lookup->bind_param('i', $lookupEmployeeNumber);
 
 if (!$lookup->execute()) {
     $lookup->close();

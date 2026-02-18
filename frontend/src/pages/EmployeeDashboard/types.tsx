@@ -1,8 +1,8 @@
 import type z from "zod";
 import type { employeeFormSchema, courseFormSchema } from "./schemas";
 
-type EmployeeFormState = z.infer<typeof employeeFormSchema>;
-type CourseFormState = z.infer<typeof courseFormSchema>;
+type EmployeeFormState = z.output<typeof employeeFormSchema>;
+type CourseFormState = z.output<typeof courseFormSchema>;
 
 type FieldErrorMap = Record<
   keyof EmployeeFormState | keyof CourseFormState,

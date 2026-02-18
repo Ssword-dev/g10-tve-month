@@ -14,7 +14,7 @@ interface SortFieldProps {
 
 export function SortField({ basis, direction, onChange, onRemove }: SortFieldProps) {
   return (
-    <div className="flex items-center gap-2 p-2 bg-surface border-border rounded-lg border">
+    <div className="flex items-center gap-2 p-2 bg-card border-border rounded-lg border">
       <select
         value={basis}
         onChange={(e) => onChange(e.target.value as keyof Employee, direction)}
@@ -39,7 +39,7 @@ export function SortField({ basis, direction, onChange, onRemove }: SortFieldPro
         variant="ghost"
         size="sm"
         onClick={onRemove}
-        className="text-text-muted hover:text-danger"
+        className="text-muted-foreground hover:text-destructive"
       >
         <X className="h-3 w-3" />
       </Button>

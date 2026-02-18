@@ -147,7 +147,7 @@ export function EmployeeFormSection({
           onChange={(v) => setForm((s) => ({ ...s, place_of_birth: v }))}
         />
       </CardContent>
-      <CardAction className="sticky bottom-0 bg-surface/95 py-3">
+      <CardAction className="sticky bottom-0 bg-card/95 py-3">
         <Button disabled={isSaving} onClick={() => void onSave()}>
           Save Employee
         </Button>

@@ -16,12 +16,13 @@ import {
   Plus,
   UserRound,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { useForm, type FieldPath, type UseFormRegister } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 const optionalDate = z
+  // Optional date: empty string is allowed, otherwise must match YYYY-MM-DD.
   .string()
   .trim()
   .default("")
@@ -31,12 +32,14 @@ const optionalDate = z
   );
 
 const optionalNumeric = z
+  // Optional numeric text: empty string is allowed, otherwise digits only.
   .string()
   .trim()
   .default("")
   .refine((value) => value === "" || /^\d+$/.test(value), "Numbers only.");
 
 const signupSchema = z
+  // Main form validation schema for the multi-step signup flow.
   .object({
     employeeNumber: z
       .string()
@@ -100,6 +103,7 @@ type StepFieldConfig = {
 };
 
 const defaultValues: SignupFormInput = {
+  // Initial values used by react-hook-form.
   employeeNumber: "",
   firstName: "",
   middleName: "",
@@ -130,6 +134,7 @@ const steps: Array<{
   subtitle: string;
   fields: FieldPath<SignupFormInput>[];
 }> = [
+  // Defines step order and which fields are validated per step.
   {
     id: "identity",
     title: "Identity",
@@ -174,6 +179,7 @@ const steps: Array<{
 ];
 
 const stepFieldLookup: Record<StepId, StepFieldConfig[]> = {
+  // UI metadata for rendering inputs per step.
   identity: [
     {
       id: "employeeNumber",
@@ -224,10 +230,12 @@ const stepFieldLookup: Record<StepId, StepFieldConfig[]> = {
 };
 
 function normalizeServerMessage(message: string): string {
+  // Backend sometimes returns HTML line breaks. Convert them to plain text lines.
   return message.replace(/<br\s*\/?>/gi, "\n").trim();
 }
 
 function appendSignupPayload(payload: FormData, values: SignupValues): void {
+  // Convert frontend field names to backend payload keys.
   const entries: Array<[string, string]> = [
     ["employee_number", values.employeeNumber.trim()],
     ["first_name", values.firstName.trim()],
@@ -266,7 +274,7 @@ function AvatarUploadPanel({
   const hasAvatar = previewUrl !== null;
 
   return (
-    <section className="rounded-xl border border-border bg-surface p-4">
+    <section className="rounded-xl border border-border bg-card p-4">
       <div className="mb-3 flex items-center justify-between">
         <Text weight="semibold">Profile Photo</Text>
         <Badge className="rounded-full bg-accent/20">Optional</Badge>
@@ -283,11 +291,11 @@ function AvatarUploadPanel({
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className="flex flex-col items-center gap-2 text-text-muted">
-            <div className="rounded-full border border-border bg-surface p-3">
+          <div className="flex flex-col items-center gap-2 text-muted-foreground">
+            <div className="rounded-full border border-border bg-card p-3">
               <Camera className="size-5" />
             </div>
-            <Text size="sm" className="text-text-muted">
+            <Text size="sm" className="text-muted-foreground">
               Add avatar
             </Text>
           </div>
@@ -298,7 +306,7 @@ function AvatarUploadPanel({
             hasAvatar ? "opacity-0 group-hover:opacity-100" : "opacity-100"
           }`}
         >
-          <span className="rounded-full bg-surface/90 p-3">
+          <span className="rounded-full bg-card/90 p-3">
             <Plus className="size-6" />
           </span>
         </div>
@@ -312,7 +320,7 @@ function AvatarUploadPanel({
         onChange={onFileChange}
       />
 
-      <Text size="xs" className="mt-3 text-text-muted">
+      <Text size="xs" className="mt-3 text-muted-foreground">
         JPEG, PNG, or WEBP. Max size 5MB.
       </Text>
     </section>
@@ -339,7 +347,7 @@ function FormField({
       <Label htmlFor={id}>{label}</Label>
       <Input id={id} type={type} placeholder={placeholder} {...register(id)} />
       {error ? (
-        <Text size="xs" className="text-danger">
+        <Text size="xs" className="text-destructive">
           {error}
         </Text>
       ) : null}
@@ -348,11 +356,18 @@ function FormField({
 }
 
 export default function SignupPage() {
+  // Router + timer ref used for delayed redirect after successful signup.
   const navigate = useNavigate();
   const redirectTimeoutRef = useRef<number | null>(null);
+
+  // Multi-step form UI state.
   const [stepIndex, setStepIndex] = useState(0);
+
+  // Avatar upload state.
   const [avatar, setAvatar] = useState<File | null>(null);
   const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(null);
+
+  // Submission feedback state.
   const [errorText, setErrorText] = useState("");
   const [successText, setSuccessText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -372,6 +387,7 @@ export default function SignupPage() {
   const isLastStep = stepIndex === steps.length - 1;
 
   useEffect(() => {
+    // Cleanup preview object URL and pending redirect when component unmounts.
     return () => {
       if (avatarPreviewUrl) {
         URL.revokeObjectURL(avatarPreviewUrl);
@@ -383,12 +399,8 @@ export default function SignupPage() {
     };
   }, [avatarPreviewUrl, redirectTimeoutRef]);
 
-  const stepProgressText = useMemo(
-    () => `Step ${stepIndex + 1} of ${steps.length}`,
-    [stepIndex],
-  );
-
   const onAvatarChange = (event: ChangeEvent<HTMLInputElement>) => {
+    // Validate selected file first before saving it to state.
     const file = event.target.files?.[0] ?? null;
     const acceptedTypes = ["image/jpeg", "image/png", "image/webp"];
     const maxSizeInBytes = 5 * 1024 * 1024;
@@ -417,6 +429,7 @@ export default function SignupPage() {
   };
 
   const goToNextStep = async () => {
+    // Validate only the fields in the current step before moving forward.
     const isCurrentStepValid = await trigger(currentStep.fields, {
       shouldFocus: true,
     });
@@ -430,10 +443,12 @@ export default function SignupPage() {
 
   const onSubmit = async (values: SignupValues) => {
     try {
+      // Reset UI feedback and start submit state.
       setIsSubmitting(true);
       setErrorText("");
       setSuccessText("");
 
+      // Build multipart payload so we can include optional avatar file.
       const payload = new FormData();
       appendSignupPayload(payload, values);
 
@@ -448,6 +463,7 @@ export default function SignupPage() {
         `Admin account created for ${data.first_name} ${data.last_name} (#${data.employee_number}).`,
       );
 
+      // Short delay so user can see success message before redirect.
       redirectTimeoutRef.current = window.setTimeout(() => {
         navigate("/login");
       }, 1200);
@@ -459,13 +475,16 @@ export default function SignupPage() {
   };
 
   const onFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    // Keep the SPA flow (no browser reload).
     event.preventDefault();
 
     if (!isLastStep) {
+      // For non-final steps, validate and move to the next step.
       void goToNextStep();
       return;
     }
 
+    // Final step: run full schema submit.
     void handleSubmit(onSubmit)(event);
   };
 
@@ -485,16 +504,16 @@ export default function SignupPage() {
             onSubmit={onFormSubmit}
             className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px]"
           >
-            <section className="space-y-5 rounded-xl border border-border bg-surface p-4 md:p-5">
+            <section className="space-y-5 rounded-xl border border-border bg-card p-4 md:p-5">
               <div className="flex flex-col">
                 {/* <div className="flex flex-row justify-between items-center">
-                  <Text size="sm" className="text-text-muted">
+                  <Text size="sm" className="text-muted-foreground">
                     {stepProgressText}
                   </Text>
                   <Text size="xl" weight="semibold">
                     {currentStep.title}
                   </Text>
-                  <Text size="sm" className="text-text-muted">
+                  <Text size="sm" className="text-muted-foreground">
                     {currentStep.subtitle}
                   </Text>
                 </div> */}
@@ -504,7 +523,7 @@ export default function SignupPage() {
                     <span
                       key={step.id}
                       className={`h-1.5 w-8 rounded-full transition-colors duration-300 ${
-                        idx <= stepIndex ? "bg-accent-strong" : "bg-border"
+                        idx <= stepIndex ? "bg-primary" : "bg-border"
                       }`}
                     />
                   ))}
@@ -526,7 +545,7 @@ export default function SignupPage() {
               </div>
 
               {errorText ? (
-                <Text size="sm" className="whitespace-pre-line text-danger">
+                <Text size="sm" className="whitespace-pre-line text-destructive">
                   {errorText}
                 </Text>
               ) : null}
@@ -577,7 +596,7 @@ export default function SignupPage() {
                 </div>
               </div>
 
-              <Text size="sm" className="text-text-muted">
+              <Text size="sm" className="text-muted-foreground">
                 Already have an account?{" "}
                 <Link to="/login" className="text-primary hover:underline">
                   Login

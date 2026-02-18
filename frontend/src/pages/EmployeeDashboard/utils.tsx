@@ -1,4 +1,7 @@
-import type { EmployeeUpdatePayload } from "@/domain/employees/payloads";
+import type {
+  AddEmployeePayload,
+  UpdateEmployeePayload,
+} from "@/domain/employees/payloads";
 import type { Course, Employee } from "@/domain/employees/types";
 import type {
   CourseFormState,
@@ -45,6 +48,7 @@ function emptyCourseForm(): CourseFormState {
 
 function toEmployeeFormState(employee: Employee): EmployeeFormState {
   return {
+    employee_number: String(employee.employee_number),
     first_name: employee.first_name ?? "",
     middle_name: employee.middle_name ?? "",
     last_name: employee.last_name ?? "",
@@ -72,9 +76,36 @@ function toEmployeeFormState(employee: Employee): EmployeeFormState {
 function toEmployeePayload(
   employee: Employee,
   form: EmployeeFormState,
-): EmployeeUpdatePayload {
+): UpdateEmployeePayload {
   return {
     employee_number: employee.employee_number,
+    first_name: form.first_name.trim(),
+    middle_name: form.middle_name.trim(),
+    last_name: form.last_name.trim(),
+    deped_email: form.deped_email.trim(),
+    designation: form.designation.trim(),
+    date_joined: toNullableString(form.date_joined),
+    date_of_latest_promotion: toNullableString(form.date_of_latest_promotion),
+    contact_number: form.contact_number.trim(),
+    plantilla_number: form.plantilla_number.trim(),
+    date_of_original_appointment: toNullableString(
+      form.date_of_original_appointment,
+    ),
+    bp_number: toNullableNumber(form.bp_number),
+    address: form.address.trim(),
+    civil_status: form.civil_status.trim(),
+    date_of_birth: toNullableString(form.date_of_birth),
+    salary_grade: toNullableNumber(form.salary_grade),
+    salary: form.salary.trim(),
+    employment_status: form.employment_status.trim(),
+    tin: form.tin.trim(),
+    place_of_birth: form.place_of_birth.trim(),
+  };
+}
+
+function toAddEmployeePayload(form: EmployeeFormState): AddEmployeePayload {
+  return {
+    employee_number: Number(form.employee_number),
     first_name: form.first_name.trim(),
     middle_name: form.middle_name.trim(),
     last_name: form.last_name.trim(),
@@ -114,6 +145,9 @@ function toCoursePayload(
 
 function validateEmployeeForm(form: EmployeeFormState): FieldErrorMap {
   const errors = {} as FieldErrorMap;
+  if (form.employee_number.trim() !== "" && toNullableNumber(form.employee_number) == null) {
+    errors.employee_number = "Employee number must be numeric.";
+  }
   if (!form.first_name.trim()) errors.first_name = "First name is required.";
   if (!form.last_name.trim()) errors.last_name = "Last name is required.";
   if (!form.designation.trim()) errors.designation = "Designation is required.";
@@ -181,6 +215,7 @@ export {
   emptyCourseForm,
   toEmployeeFormState,
   toEmployeePayload,
+  toAddEmployeePayload,
   toCoursePayload,
   validateEmployeeForm,
   validateCourseForm,

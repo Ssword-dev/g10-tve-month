@@ -27,7 +27,7 @@ export const filterEmployeesAction = createServerAction<
 >({
   name: "filterEmployees",
   apiUrl: "/api/filterEmployees",
-  method: "GET",
+  method: "POST",
 });
 
 export const getEmployee = createServerAction<GetEmployeePayload, Employee>({

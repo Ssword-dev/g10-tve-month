@@ -18,12 +18,12 @@ export function DangerousActionSection({ employeeNumber }: { employeeNumber: num
   return (
     <Card className="gap-3 border-border p-4">
       <CardTitle>
-        <Text weight="semibold" className="text-danger">
+        <Text weight="semibold" className="text-destructive">
           Dangerous Actions
         </Text>
       </CardTitle>
       <CardContent className="grid grid-cols-1 gap-3 p-0 md:grid-cols-2">
-        <Button className="bg-danger text-text" onClick={deleteEmployee}>
+        <Button variant="destructive" onClick={deleteEmployee}>
           Delete Employee
         </Button>
       </CardContent>

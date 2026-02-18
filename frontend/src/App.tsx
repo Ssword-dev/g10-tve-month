@@ -35,7 +35,7 @@ function RequireAdminRoute({ children }: { children: React.ReactNode }) {
     return (
       <main className="flex min-h-screen w-full items-center justify-center bg-background p-4">
         <div className="space-y-3 text-center">
-          <Text className="text-danger">Failed to validate your session.</Text>
+          <Text className="text-destructive">Failed to validate your session.</Text>
           <Button onClick={() => void refresh()}>Retry</Button>
         </div>
       </main>

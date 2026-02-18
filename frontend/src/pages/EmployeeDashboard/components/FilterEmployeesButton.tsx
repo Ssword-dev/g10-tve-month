@@ -9,8 +9,12 @@ import { TableToolButton } from "./TableToolButton";
 
 export function FilterEmployeesButton() {
   const [open, setOpen] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<FilterEmployeesPayload>({
+    fields: { include: "ALL", exclude: "NONE" },
+  });
 
   const handleApplyFilter = (filter: FilterEmployeesPayload) => {
+    setActiveFilter(filter);
     filterEmployeesQuery.refresh(filter);
     setOpen(false);
   };
@@ -21,7 +25,12 @@ export function FilterEmployeesButton() {
         <Filter className="h-5 w-5" />
       </TableToolButton>
 
-      <FilterModal open={open} onClose={() => setOpen(false)} onApply={handleApplyFilter} />
+      <FilterModal
+        open={open}
+        onClose={() => setOpen(false)}
+        onApply={handleApplyFilter}
+        initialFilter={activeFilter}
+      />
     </>
   );
 }

@@ -10,7 +10,7 @@ const base = 'span';
 
 type ComponentBase = typeof base;
 
-const terminalOutputVM = cvm('inline-flex flex-row font-mono text-text', {
+const terminalOutputVM = cvm('inline-flex flex-row font-mono text-foreground', {
 	variants: {},
 	defaultVariants: {},
 	compoundVariants: [],

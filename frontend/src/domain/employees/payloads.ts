@@ -1,6 +1,5 @@
 import type {
   DegreeLevel,
-  Employee,
   Course,
   FilterEmployeesPayload as FilterEmployeesPayloadInterface,
 } from "./types";
@@ -20,7 +19,7 @@ type DeleteCoursePayload = {
 };
 
 // Employee-related payloads
-type AddEmployeePayload = Employee;
+type AddEmployeePayload = UpdateEmployeePayload;
 
 type UpdateEmployeePayload = {
   employee_number: number;

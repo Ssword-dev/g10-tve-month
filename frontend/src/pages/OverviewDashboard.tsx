@@ -20,7 +20,7 @@ function StatCard({ title, value }: { title: string; value: number }) {
         <Text size="3xl" weight="bold">
           {value}
         </Text>
-        <Text size="2xl" weight="semibold" className="text-text-muted">
+        <Text size="2xl" weight="semibold" className="text-muted-foreground">
           {title}
         </Text>
       </CardContent>
@@ -52,11 +52,11 @@ function ActivityCard({
               <Text weight="medium">
                 {employee.last_name}, {employee.first_name}
               </Text>
-              <Text size="xs" className="text-text-muted">
+              <Text size="xs" className="text-muted-foreground">
                 ({employee.designation})
               </Text>
             </div>
-            <Text size="xs" className="text-text-muted">
+            <Text size="xs" className="text-muted-foreground">
               {title === "Recently Promoted"
                 ? employee.date_of_latest_promotion
                 : employee.date_joined}
@@ -106,7 +106,7 @@ export default function OverviewDashboard() {
       {error && (
         <Card className="border-border">
           <CardContent className="flex items-center justify-between gap-4 px-5 py-5">
-            <Text className="text-danger">
+            <Text className="text-destructive">
               Failed to load overview statistics.
             </Text>
             <Button onClick={() => refresh()}>Retry</Button>
@@ -159,7 +159,7 @@ export default function OverviewDashboard() {
           )}
           {!isLoading &&
             Object.keys(resolvedStats.designationDistribution).length === 0 && (
-              <Text size="sm" className="text-text-muted">
+              <Text size="sm" className="text-muted-foreground">
                 No designation data available.
               </Text>
             )}

@@ -66,7 +66,7 @@ export function CourseManagementSection({
           <div className="space-y-1">
             <Label>Degree Level</Label>
             <select
-              className="bg-surface border-border rounded-lg border px-2.5 py-1 text-sm"
+              className="bg-card border-border rounded-lg border px-2.5 py-1 text-sm"
               value={newCourse.degree_level}
               onChange={(event) =>
                 setNewCourse((s) => ({
@@ -80,7 +80,7 @@ export function CourseManagementSection({
               <option value="doctorate">doctorate</option>
             </select>
             {newCourseErrors.degree_level && (
-              <Text size="xs" className="text-danger">
+              <Text size="xs" className="text-destructive">
                 {newCourseErrors.degree_level}
               </Text>
             )}
@@ -120,7 +120,7 @@ export function CourseManagementSection({
         </CardTitle>
         <CardContent className="space-y-3 p-0">
           {courses.length === 0 && (
-            <Text size="sm" className="text-text-muted">
+            <Text size="sm" className="text-muted-foreground">
               No courses available.
             </Text>
           )}
@@ -133,7 +133,7 @@ export function CourseManagementSection({
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <Text weight="semibold">{course.course_name}</Text>
-                      <Text size="sm" className="text-text-muted">
+                      <Text size="sm" className="text-muted-foreground">
                         {course.degree_level} | Units: {course.units_completed ?? "N/A"} |
                         Finished: {course.is_finished ? "Yes" : "No"}
                       </Text>
@@ -178,7 +178,7 @@ export function CourseManagementSection({
                       <div className="space-y-1">
                         <Label>Degree Level</Label>
                         <select
-                          className="bg-surface border-border rounded-lg border px-2.5 py-1 text-sm"
+                          className="bg-card border-border rounded-lg border px-2.5 py-1 text-sm"
                           value={editForm.degree_level}
                           onChange={(event) =>
                             setEditForm((s) => ({
@@ -192,7 +192,7 @@ export function CourseManagementSection({
                           <option value="doctorate">doctorate</option>
                         </select>
                         {editErrors.degree_level && (
-                          <Text size="xs" className="text-danger">
+                          <Text size="xs" className="text-destructive">
                             {editErrors.degree_level}
                           </Text>
                         )}

@@ -1,7 +1,13 @@
 import { X } from "lucide-react";
 
 import { cn } from "@_ssword/classes";
-import type { AnyFieldFilter, NumberComparison } from "@/domain/employees/types";
+import type {
+  AnyFieldFilter,
+  BooleanComparison,
+  DateComparison,
+  NumberComparison,
+  StringComparison,
+} from "@/domain/employees/types";
 import Button from "@/components/Button";
 import Card from "@/components/Card";
 
@@ -21,27 +27,33 @@ interface FilterConditionProps {
 export function FilterCondition({ id, filter, onChange, onRemove }: FilterConditionProps) {
   const fieldInfo = employeeFields.find((f) => f.value === filter.field);
   const fieldType = fieldInfo?.type || "string";
+  type FilterComparison = NonNullable<AnyFieldFilter["comparisons"]>[number];
 
-  const updateComparison = (comparison: any, index: number) => {
-    const newComparisons = [...(filter.comparisons || [])];
+  const updateComparison = (comparison: FilterComparison, index: number) => {
+    const newComparisons = [...((filter.comparisons || []) as FilterComparison[])];
     newComparisons[index] = comparison;
-    onChange({ ...filter, comparisons: newComparisons });
+    onChange({ ...filter, comparisons: newComparisons } as AnyFieldFilter);
   };
 
   const removeComparison = (index: number) => {
     const newComparisons = filter.comparisons?.filter((_, i) => i !== index);
-    onChange({ ...filter, comparisons: newComparisons });
+    onChange({ ...filter, comparisons: newComparisons } as AnyFieldFilter);
   };
 
   const addComparison = () => {
-    const defaultComparison: NumberComparison = {
-      type: "eq",
-      operand: 0,
-    };
+    const defaultComparison: FilterComparison =
+      fieldType === "number"
+        ? ({ type: "eq", operand: 0 } as NumberComparison)
+        : fieldType === "boolean"
+          ? ({ type: "eq", operand: true } as BooleanComparison)
+          : ({ type: "eq", operand: "" } as StringComparison | DateComparison);
     onChange({
       ...filter,
-      comparisons: [...(filter.comparisons || []), defaultComparison],
-    });
+      comparisons: [
+        ...((filter.comparisons || []) as FilterComparison[]),
+        defaultComparison,
+      ],
+    } as AnyFieldFilter);
   };
 
   const toggleNull = () => {
@@ -55,7 +67,7 @@ export function FilterCondition({ id, filter, onChange, onRemove }: FilterCondit
 
   return (
     <SortableItem id={id}>
-      <Card className="border-border bg-surface p-3">
+      <Card className="border-border bg-card p-3">
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <FieldSelector value={filter.field} onChange={(field) => onChange({ ...filter, field })} />
@@ -64,7 +76,7 @@ export function FilterCondition({ id, filter, onChange, onRemove }: FilterCondit
               variant={filter.null ? "default" : "outline"}
               size="sm"
               onClick={toggleNull}
-              className={cn("text-xs", filter.null && "bg-primary text-background")}
+              className={cn("text-xs", filter.null && "bg-primary text-primary-foreground")}
             >
               {filter.null?.is_null ? "IS NULL" : filter.null ? "NOT NULL" : "Nullable"}
             </Button>
@@ -73,7 +85,7 @@ export function FilterCondition({ id, filter, onChange, onRemove }: FilterCondit
               variant="ghost"
               size="sm"
               onClick={onRemove}
-              className="ml-auto text-text-muted hover:text-danger"
+              className="ml-auto text-muted-foreground hover:text-destructive"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -86,7 +98,9 @@ export function FilterCondition({ id, filter, onChange, onRemove }: FilterCondit
                   <OperatorSelector
                     fieldType={fieldType}
                     value={comp.type}
-                    onChange={(type) => updateComparison({ ...comp, type }, idx)}
+                    onChange={(type) =>
+                      updateComparison({ ...comp, type } as FilterComparison, idx)
+                    }
                   />
                   <ValueInput
                     fieldType={fieldType}
@@ -94,14 +108,18 @@ export function FilterCondition({ id, filter, onChange, onRemove }: FilterCondit
                     value={
                       "operand" in comp
                         ? comp.operand
-                        : "min" in comp
+                        : "operands" in comp
+                          ? comp.operands
+                          : "min" in comp
                           ? { min: comp.min, max: comp.max }
-                          : comp.operands
+                          : { min: comp.from, max: comp.to }
                     }
                     onChange={(val) => {
-                      if (comp.type === "between") {
+                      if ("min" in comp && "max" in comp) {
                         updateComparison({ ...comp, min: val.min, max: val.max }, idx);
-                      } else if (comp.type === "in") {
+                      } else if ("from" in comp && "to" in comp) {
+                        updateComparison({ ...comp, from: val.min, to: val.max }, idx);
+                      } else if ("operands" in comp) {
                         updateComparison({ ...comp, operands: val }, idx);
                       } else {
                         updateComparison({ ...comp, operand: val }, idx);
@@ -113,7 +131,7 @@ export function FilterCondition({ id, filter, onChange, onRemove }: FilterCondit
                     variant="ghost"
                     size="sm"
                     onClick={() => removeComparison(idx)}
-                    className="text-text-muted hover:text-danger"
+                    className="text-muted-foreground hover:text-destructive"
                   >
                     <X className="h-3 w-3" />
                   </Button>

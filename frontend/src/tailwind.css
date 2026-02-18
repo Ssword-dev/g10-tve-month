@@ -1,123 +1,91 @@
 @source "../**/*";
 @import "tailwindcss";
 
-:root {
-  --accessibility-contrast: 100%;
-}
+@custom-variant dark (&:is(.dark *));
 
 :root {
-  /* =========================
-     Lively Green + White Theme (Light)
-     ========================= */
-  --palette-color-background: oklch(99.2% 0.032 150); /* mint white */
-  --palette-color-surface: oklch(99.7% 0.02 148); /* lifted white */
-  --palette-color-muted: oklch(96.8% 0.06 150); /* fresh mint */
+  --background: oklch(98.8% 0.008 152);
+  --foreground: oklch(25% 0.04 154);
 
-  /* =========================
-     Text
-     ========================= */
-  --palette-color-text: oklch(24% 0.055 154); /* rich evergreen */
-  --palette-color-text-muted: oklch(44% 0.03 155); /* cool sage */
+  --card: oklch(99.7% 0.006 152);
+  --card-foreground: oklch(25% 0.04 154);
 
-  /* =========================
-     Borders & dividers
-     ========================= */
-  --palette-color-border: oklch(85% 0.045 151);
-  --palette-color-border-muted: oklch(90% 0.028 150);
+  --popover: oklch(99.8% 0.005 152);
+  --popover-foreground: oklch(25% 0.04 154);
 
-  /* =========================
-     Accent
-     ========================= */
-  --palette-color-accent: oklch(80% 0.17 147); /* lively lime */
-  --palette-color-accent-strong: oklch(67% 0.21 149); /* electric emerald */
+  --primary: oklch(46% 0.11 154);
+  --primary-foreground: oklch(98.6% 0.006 152);
 
-  /* =========================
-     Semantic colors
-     ========================= */
-  --palette-color-primary: oklch(60% 0.19 150); /* spring green */
-  --palette-color-secondary: oklch(73% 0.12 165); /* mint-cyan green */
+  --secondary: oklch(93.8% 0.022 153);
+  --secondary-foreground: oklch(28% 0.042 154);
 
-  --palette-color-danger: oklch(61% 0.225 28); /* vivid red-orange */
-  --palette-color-warning: oklch(84% 0.185 92); /* bright amber */
-  --palette-color-success: oklch(65% 0.18 155); /* bright success green */
-  --palette-color-info: oklch(67% 0.135 230); /* clean azure */
+  --muted: oklch(96.2% 0.014 152);
+  --muted-foreground: oklch(45% 0.02 154);
 
-  /* =========================
-     Shadows
-     ========================= */
-  --palette-color-shadow: oklch(52% 0.06 150 / 0.45);
+  --accent: oklch(90.4% 0.04 153);
+  --accent-foreground: oklch(27% 0.04 154);
+
+  --destructive: oklch(60% 0.2 30);
+  --destructive-foreground: oklch(98% 0.01 30);
+
+  --border: oklch(87.5% 0.012 152);
+  --input: oklch(90.8% 0.01 152);
+  --ring: oklch(52% 0.095 154);
+
+  --warning: oklch(76% 0.15 92);
+  --success: oklch(58% 0.14 155);
+  --info: oklch(61% 0.11 232);
+
+  --shadow: oklch(33% 0.04 154 / 0.18);
+
+  --radius: 0.625rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* -------------------------
-       Lively Green Theme (Dark)
-       ------------------------- */
-    --palette-color-background: oklch(13% 0.075 154);
-    --palette-color-surface: oklch(18% 0.07 154);
-    --palette-color-muted: oklch(24% 0.062 154);
+.dark {
+  --background: oklch(17% 0.028 154);
+  --foreground: oklch(95% 0.02 150);
 
-    /* -------------------------
-       Text
-       ------------------------- */
-    --palette-color-text: oklch(96% 0.03 150);
-    --palette-color-text-muted: oklch(82% 0.035 152);
+  --card: oklch(21% 0.03 154);
+  --card-foreground: oklch(95% 0.02 150);
 
-    /* -------------------------
-       Borders & dividers
-       ------------------------- */
-    --palette-color-border: oklch(40% 0.038 154);
-    --palette-color-border-muted: oklch(34% 0.032 154);
+  --popover: oklch(21% 0.03 154);
+  --popover-foreground: oklch(95% 0.02 150);
 
-    /* -------------------------
-       Accent
-       ------------------------- */
-    --palette-color-accent: oklch(76% 0.165 149);
-    --palette-color-accent-strong: oklch(70% 0.205 149);
+  --primary: oklch(74% 0.14 151);
+  --primary-foreground: oklch(20% 0.045 154);
 
-    /* -------------------------
-       Semantic colors
-       ------------------------- */
-    --palette-color-primary: oklch(75% 0.19 220);
-    --palette-color-secondary: oklch(76% 0.125 168);
+  --secondary: oklch(29% 0.05 154);
+  --secondary-foreground: oklch(94% 0.02 150);
 
-    --palette-color-danger: oklch(73% 0.195 28);
-    --palette-color-warning: oklch(82% 0.165 92);
-    --palette-color-success: oklch(74% 0.17 154);
-    --palette-color-info: oklch(76% 0.145 232);
+  --muted: oklch(26% 0.03 154);
+  --muted-foreground: oklch(77% 0.02 152);
 
-    /* -------------------------
-       Shadows
-       ------------------------- */
-    --palette-color-shadow: oklch(8% 0.03 155 / 0.55);
-  }
-}
+  --accent: oklch(33% 0.06 153);
+  --accent-foreground: oklch(95% 0.02 150);
 
-@media (prefers-contrast: less) {
-  :root {
-    --accessibility-contrast: 90%;
-  }
-}
+  --destructive: oklch(68% 0.18 30);
+  --destructive-foreground: oklch(20% 0.035 30);
 
-@media (prefers-contrast: more) {
-  :root {
-    --accessibility-contrast: 110%;
-  }
-}
+  --border: oklch(36% 0.02 154);
+  --input: oklch(33% 0.02 154);
+  --ring: oklch(70% 0.11 151);
 
-* {
-  filter: contrast(var(--accessibility-contrast));
+  --warning: oklch(77% 0.13 92);
+  --success: oklch(70% 0.13 155);
+  --info: oklch(72% 0.1 232);
+
+  --shadow: oklch(6% 0.02 154 / 0.52);
 }
 
 @layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
   body {
-    width: 100vw;
+    @apply bg-background text-foreground antialiased;
+    margin: 0;
     min-height: 100vh;
-    color: var(--palette-color-text);
-    background: var(--palette-color-background);
-    transition:
-      color 0.5s,
-      background-color 0.5s;
     line-height: 1.6;
     font-family:
       Inter,
@@ -136,55 +104,50 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    @apply bg-background;
-  }
-
-  * {
-    filter: contrast(var(--accessibility-contrast));
   }
 }
 
-/* 
-  Force the app itself to render only in the whole screen.
-  This is to prevent scrollbars from appearing when the content overflows.
-  The app should handle its own scrolling via scrollable containers,
-  not the entire page.
-*/
 #app {
   height: 100vh;
   width: 100%;
 }
 
-/*
-  Defines utility classes for the entire app to use,
-  these are theme variables, which are variables the tailwind v4
-  theme system can understand and use in generating utility classes.
-  This alone allows use of theming at ease.
-*/
 @theme inline {
-  --color-background: var(--palette-color-background);
-  --color-surface: var(--palette-color-surface);
-  --color-muted: var(--palette-color-muted);
-  --color-text: var(--palette-color-text);
-  --color-text-muted: var(--palette-color-text-muted);
-  --color-accent: var(--palette-color-accent);
-  --color-accent-strong: var(--palette-color-accent-strong);
-  --color-border: var(--palette-color-border);
-  --color-border-muted: var(--palette-color-border-muted);
-  --color-primary: var(--palette-color-primary);
-  --color-secondary: var(--palette-color-secondary);
-  --color-danger: var(--palette-color-danger);
-  --color-warning: var(--palette-color-warning);
-  --color-success: var(--palette-color-success);
-  --color-info: var(--palette-color-info);
-  --color-shadow: var(--palette-color-shadow);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+  --color-info: var(--info);
+
+  --color-shadow: var(--shadow);
 }
 
-/*
-  Utility class to hide scrollbars across all browsers.
-  This is used on the html and body elements to prevent scrollbars from appearing
-  when content overflows, as the app should handle its own scrolling via scrollable containers.
-*/
 @utility no-scrollbar {
   & {
     scrollbar-width: none;
@@ -195,9 +158,6 @@
   }
 }
 
-/*
-  Make sure the html and body elements have no scrollbars.
-*/
 html,
 body {
   @apply no-scrollbar;

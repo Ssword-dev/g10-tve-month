@@ -6,20 +6,24 @@ const base = 'span';
 
 type ComponentBase = typeof base;
 
-const badgeVM = cvm('inline-flex px-2 py-1 text-text', {
-	variants: {
-		variant: {
-			default: '',
-			primary: 'bg-primary',
-			secondary: 'bg-secondary',
-			info: 'bg-info',
-			warn: 'bg-warn',
-			destructive: 'bg-destructive',
+const badgeVM = cvm(
+	'inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium leading-none',
+	{
+		variants: {
+			variant: {
+				default: 'border-border bg-muted text-muted-foreground',
+				primary: 'border-transparent bg-primary text-primary-foreground',
+				secondary: 'border-transparent bg-secondary text-secondary-foreground',
+				info: 'border-transparent bg-info/15 text-info',
+				warn: 'border-transparent bg-warning/20 text-foreground',
+				destructive:
+					'border-transparent bg-destructive/15 text-destructive',
+			},
 		},
+		defaultVariants: {},
+		compoundVariants: [],
 	},
-	defaultVariants: {},
-	compoundVariants: [],
-});
+);
 
 interface BadgeProps extends Props<ComponentBase>, ClassProps, VariantProps<typeof badgeVM> {}
 

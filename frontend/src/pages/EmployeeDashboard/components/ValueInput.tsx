@@ -9,7 +9,7 @@ interface ValueInputProps {
 
 export function ValueInput({ fieldType, operator, value, onChange }: ValueInputProps) {
   if (operator === "is_null" || operator === "not_null") {
-    return <div className="text-sm text-text-muted px-3">(no value)</div>;
+    return <div className="text-sm text-muted-foreground px-3">(no value)</div>;
   }
 
   if (operator === "between") {
@@ -22,7 +22,7 @@ export function ValueInput({ fieldType, operator, value, onChange }: ValueInputP
           onChange={(e) => onChange({ ...value, min: e.target.value })}
           className="w-28"
         />
-        <span className="text-text-muted">and</span>
+        <span className="text-muted-foreground">and</span>
         <Input
           type={fieldType === "date" ? "date" : fieldType === "number" ? "number" : "text"}
           placeholder={fieldType === "date" ? "To" : "Max"}

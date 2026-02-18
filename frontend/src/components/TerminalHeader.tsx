@@ -10,7 +10,7 @@ const base = 'div';
 
 type ComponentBase = typeof base;
 
-const terminalHeaderVM = cvm('flex flex-row gap-2 px-2 py-3 bg-surface rounded-t-md', {
+const terminalHeaderVM = cvm('flex flex-row gap-2 px-2 py-3 bg-card rounded-t-md', {
 	variants: {},
 	defaultVariants: {},
 	compoundVariants: [],

@@ -180,8 +180,8 @@ export function AdminActionsModal({ employee, open, onClose, onSaved }: AdminAct
         </Card>
       )}
       {errorText && (
-        <Card className="border-danger/30 bg-danger/10 p-3">
-          <Text size="sm" className="text-danger">
+        <Card className="border-destructive/30 bg-destructive/10 p-3">
+          <Text size="sm" className="text-destructive">
             {errorText}
           </Text>
         </Card>

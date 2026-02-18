@@ -12,28 +12,42 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
+  // `useNavigate` lets us redirect after successful login.
   const navigate = useNavigate();
+
+  // Local form state for controlled inputs.
   const [depedEmail, setDepedEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  // UI state for async request feedback.
   const [errorText, setErrorText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const login = async () => {
     try {
+      // Reset UI errors and lock the submit button while request runs.
       setIsSubmitting(true);
       setErrorText("");
 
+      // Send credentials to backend.
       const result = await loginAction({
         deped_email: depedEmail.trim(),
         password,
       });
+
+      // Throws if backend returned an error envelope.
       result.unwrap();
+
+      // Refresh cached session query so the app has fresh auth state.
       await currentAdminSessionQuery.refresh();
 
+      // Move user to dashboard on success.
       navigate("/dashboard");
     } catch (error) {
+      // Convert server errors to a readable message.
       setErrorText((error as Error).message);
     } finally {
+      // Always unlock the button when request finishes.
       setIsSubmitting(false);
     }
   };
@@ -52,6 +66,7 @@ export default function LoginPage() {
           <form
             className="space-y-4"
             onSubmit={(event) => {
+              // Prevent full-page reload; run async login manually.
               event.preventDefault();
               void login();
             }}
@@ -76,7 +91,7 @@ export default function LoginPage() {
             </div>
 
             {errorText && (
-              <Text size="sm" className="text-danger">
+              <Text size="sm" className="text-destructive">
                 {errorText}
               </Text>
             )}
@@ -91,7 +106,7 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          <Text size="sm" className="text-text-muted">
+          <Text size="sm" className="text-muted-foreground">
             Need an account?{" "}
             <Link to="/signup" className="text-primary hover:underline">
               Create admin account

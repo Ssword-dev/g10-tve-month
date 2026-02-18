@@ -87,7 +87,10 @@ function with_employee_courses(mysqli $db, array $employees): array {
         throw new RuntimeException('Failed to prepare courses lookup query: ' . $db->error);
     }
 
-    $coursesStatement->bind_param($typeString, ...$employeeNumbers);
+    if (!bind_params($coursesStatement, $typeString, $employeeNumbers)) {
+        $coursesStatement->close();
+        throw new RuntimeException('Failed to bind courses lookup parameters.');
+    }
 
     if (!$coursesStatement->execute()) {
         $coursesStatement->close();

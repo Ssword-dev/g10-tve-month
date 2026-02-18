@@ -4,13 +4,13 @@ import Text from "@/components/Text";
 export default function Loading() {
   return (
     <main className="flex min-h-screen w-screen items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md rounded-xl border border-border bg-surface p-6 shadow-sm">
+      <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-sm">
         <div className="mb-5 flex items-center gap-3">
           <span
-            className="size-5 animate-spin rounded-full border-2 border-border border-t-accent-strong"
+            className="size-5 animate-spin rounded-full border-2 border-border border-t-primary"
             aria-hidden="true"
           />
-          <Text size="sm" className="text-text-muted">
+          <Text size="sm" className="text-muted-foreground">
             Loading page...
           </Text>
         </div>

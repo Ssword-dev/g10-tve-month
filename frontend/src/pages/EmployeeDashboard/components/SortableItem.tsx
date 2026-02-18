@@ -30,7 +30,7 @@ export function SortableItem({ id, children }: SortableItemProps) {
       <div
         {...attributes}
         {...listeners}
-        className="absolute left-0 top-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing p-1 text-text-muted hover:text-text"
+        className="absolute left-0 top-1/2 -translate-y-1/2 cursor-grab active:cursor-grabbing p-1 text-muted-foreground hover:text-foreground"
       >
         <GripVertical className="h-4 w-4" />
       </div>

@@ -15,18 +15,20 @@ const dateSchema = z
 const numericStringSchema = (schema: z.ZodNumber) =>
   z
     .string()
+    .default("")
     .refine((val) => val === "" || /^\d+$/.test(val), "Must be numeric.")
-    .transform((val) => (val === "" ? null : Number(val)))
-    .pipe(schema.nullable());
+    .refine(
+      (val) => val === "" || schema.safeParse(Number(val)).success,
+      "Value is out of range.",
+    );
 
 // Employee Form Schema (for adding/updating)
 const employeeFormSchema = z.object({
-  // Make employee_number optional for creation forms
   employee_number: z
-    .number()
-    .int()
-    .positive("Employee number must be positive.")
-    .optional(),
+    .string()
+    .default("")
+    .refine((val) => val === "" || /^\d+$/.test(val), "Employee number must be numeric.")
+    .refine((val) => val === "" || Number(val) > 0, "Employee number must be positive."),
   first_name: z.string().min(1, "First name is required."),
   middle_name: z.string().optional().default(""),
   last_name: z.string().min(1, "Last name is required."),
@@ -74,8 +76,14 @@ const courseFormSchema = z.object({
   is_finished: z.boolean().default(false),
 });
 
-// Separate schema for creating employee (no employee_number required)
-const createEmployeeSchema = employeeFormSchema.omit({ employee_number: true });
+// Separate schema for creating employee (employee_number required)
+const createEmployeeSchema = employeeFormSchema.extend({
+  employee_number: z
+    .string()
+    .min(1, "Employee number is required.")
+    .regex(/^\d+$/, "Employee number must be numeric.")
+    .refine((val) => Number(val) > 0, "Employee number must be positive."),
+});
 
 // Separate schema for updating employee (requires employee_number)
 const updateEmployeeSchema = employeeFormSchema.extend({

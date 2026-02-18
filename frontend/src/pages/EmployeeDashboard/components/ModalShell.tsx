@@ -44,10 +44,10 @@ export function ModalShell({
       }}
     >
       <Card
-        className="h-[90vh] w-full max-w-6xl overflow-y-auto no-scrollbar border-border bg-surface p-0"
+        className="h-[90vh] w-full max-w-6xl overflow-y-auto no-scrollbar border-border bg-card p-0"
         onClick={(event) => event.stopPropagation()}
       >
-        <CardHeader className="sticky top-0 z-10 flex flex-row items-center justify-between border-b border-border bg-surface px-5 py-3">
+        <CardHeader className="sticky top-0 z-10 flex flex-row items-center justify-between border-b border-border bg-card px-5 py-3">
           <CardTitle>
             <Text size="xl" weight="bold">
               {title}

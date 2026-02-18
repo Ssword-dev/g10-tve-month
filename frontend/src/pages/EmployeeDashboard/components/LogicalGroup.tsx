@@ -64,11 +64,11 @@ export function LogicalGroup({
 
   return (
     <SortableItem id={id}>
-      <Card className={cn("border-border bg-surface/50", level > 0 && "ml-6")}>
+      <Card className={cn("border-border bg-card/50", level > 0 && "ml-6")}>
         <CardContent className="p-3">
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <button onClick={() => setIsExpanded(!isExpanded)} className="text-text-muted hover:text-text">
+              <button onClick={() => setIsExpanded(!isExpanded)} className="text-muted-foreground hover:text-foreground">
                 {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
               </button>
               <Badge
@@ -80,7 +80,7 @@ export function LogicalGroup({
               >
                 {group.type.toUpperCase()}
               </Badge>
-              <Text size="sm" className="text-text-muted">
+              <Text size="sm" className="text-muted-foreground">
                 group
               </Text>
               <Button
@@ -88,7 +88,7 @@ export function LogicalGroup({
                 variant="ghost"
                 size="sm"
                 onClick={onRemove}
-                className="ml-auto text-text-muted hover:text-danger"
+                className="ml-auto text-muted-foreground hover:text-destructive"
               >
                 <X className="h-4 w-4" />
               </Button>

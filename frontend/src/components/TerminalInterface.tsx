@@ -10,7 +10,7 @@ const base = 'div';
 
 type ComponentBase = typeof base;
 
-const terminalInterfaceVM = cvm('px-2 py-1 bg-surface/70 font-mono', {
+const terminalInterfaceVM = cvm('px-2 py-1 bg-card/70 font-mono', {
 	variants: {},
 	defaultVariants: {},
 	compoundVariants: [],
