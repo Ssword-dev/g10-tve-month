@@ -8,7 +8,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $db = db();
-$payload = parse_json_body();
+$payload = body();
+if (!is_array($payload)) {
+    $payload = [];
+}
 
 $employeeNumberRaw = input_get('employee_number', $payload);
 if (!is_numeric($employeeNumberRaw)) {
@@ -36,7 +39,7 @@ $editableFields = [
     'civil_status' => 's',
     'date_of_birth' => 's',
     'salary_grade' => 'i',
-    'salary' => 's',
+    'salary' => 'i',
     'employment_status' => 's',
     'tin' => 's',
     'place_of_birth' => 's',

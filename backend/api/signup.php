@@ -39,29 +39,34 @@ function nullable_date(string $value): ?string
     return $isValid ? $trimmed : null;
 }
 
+$payload = body();
+if (!is_array($payload)) {
+    $payload = [];
+}
+
 $form_data = [
-    'employee_number' => nullable_int((string)($_POST['employee_number'] ?? '')),
-    'first_name' => trim((string)($_POST['first_name'] ?? '')),
-    'middle_name' => trim((string)($_POST['middle_name'] ?? '')),
-    'last_name' => trim((string)($_POST['last_name'] ?? '')),
-    'deped_email' => nullable_string((string)($_POST['deped_email'] ?? '')),
-    'designation' => nullable_string((string)($_POST['designation'] ?? '')),
-    'date_joined' => nullable_date((string)($_POST['date_joined'] ?? '')),
-    'date_of_latest_promotion' => nullable_date((string)($_POST['date_of_latest_promotion'] ?? '')),
-    'contact_number' => nullable_string((string)($_POST['contact_number'] ?? '')),
-    'plantilla_number' => nullable_string((string)($_POST['plantilla_number'] ?? '')),
-    'date_of_original_appointment' => nullable_date((string)($_POST['date_of_original_appointment'] ?? '')),
-    'bp_number' => nullable_int((string)($_POST['bp_number'] ?? '')),
-    'address' => nullable_string((string)($_POST['address'] ?? '')),
-    'civil_status' => nullable_string((string)($_POST['civil_status'] ?? '')),
-    'date_of_birth' => nullable_date((string)($_POST['date_of_birth'] ?? '')),
-    'salary_grade' => nullable_int((string)($_POST['salary_grade'] ?? '')),
-    'salary' => nullable_string((string)($_POST['salary'] ?? '')),
-    'employment_status' => nullable_string((string)($_POST['employment_status'] ?? '')),
-    'tin' => nullable_string((string)($_POST['tin'] ?? '')),
-    'place_of_birth' => nullable_string((string)($_POST['place_of_birth'] ?? '')),
-    'password' => (string)($_POST['password'] ?? ''),
-    'confirm_password' => (string)($_POST['confirm_password'] ?? ''),
+    'employee_number' => nullable_int((string)($payload['employee_number'] ?? '')),
+    'first_name' => trim((string)($payload['first_name'] ?? '')),
+    'middle_name' => trim((string)($payload['middle_name'] ?? '')),
+    'last_name' => trim((string)($payload['last_name'] ?? '')),
+    'deped_email' => nullable_string((string)($payload['deped_email'] ?? '')),
+    'designation' => nullable_string((string)($payload['designation'] ?? '')),
+    'date_joined' => nullable_date((string)($payload['date_joined'] ?? '')),
+    'date_of_latest_promotion' => nullable_date((string)($payload['date_of_latest_promotion'] ?? '')),
+    'contact_number' => nullable_string((string)($payload['contact_number'] ?? '')),
+    'plantilla_number' => nullable_string((string)($payload['plantilla_number'] ?? '')),
+    'date_of_original_appointment' => nullable_date((string)($payload['date_of_original_appointment'] ?? '')),
+    'bp_number' => nullable_int((string)($payload['bp_number'] ?? '')),
+    'address' => nullable_string((string)($payload['address'] ?? '')),
+    'civil_status' => nullable_string((string)($payload['civil_status'] ?? '')),
+    'date_of_birth' => nullable_date((string)($payload['date_of_birth'] ?? '')),
+    'salary_grade' => nullable_int((string)($payload['salary_grade'] ?? '')),
+    'salary' => nullable_int((string)($payload['salary'] ?? '')),
+    'employment_status' => nullable_string((string)($payload['employment_status'] ?? '')),
+    'tin' => nullable_string((string)($payload['tin'] ?? '')),
+    'place_of_birth' => nullable_string((string)($payload['place_of_birth'] ?? '')),
+    'password' => (string)($payload['password'] ?? ''),
+    'confirm_password' => (string)($payload['confirm_password'] ?? ''),
 ];
 
 $errors = [];
@@ -181,7 +186,7 @@ try {
 
     bind_params(
         $stmt,
-        'ssssisssssisssisssss',
+        'ssssissssssisssiisss',
         [
             $form_data['first_name'],
             $form_data['middle_name'],

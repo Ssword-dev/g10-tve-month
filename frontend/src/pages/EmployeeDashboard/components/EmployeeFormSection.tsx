@@ -123,7 +123,9 @@ export function EmployeeFormSection({
         />
         <EmployeeField
           label="Salary"
+          type="number"
           value={form.salary}
+          error={errors.salary}
           onChange={(v) => setForm((s) => ({ ...s, salary: v }))}
         />
         <EmployeeField

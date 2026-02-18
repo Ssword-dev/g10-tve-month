@@ -12,6 +12,13 @@ type UpdateCoursePayload = Course & {
 
 type AddCoursePayload = Course;
 
+type AddEmployeeCoursePayload = {
+  course_name: string;
+  degree_level: DegreeLevel;
+  units_completed: number | null;
+  is_finished: number;
+};
+
 type DeleteCoursePayload = {
   employee_number: number;
   course_name: string;
@@ -19,7 +26,9 @@ type DeleteCoursePayload = {
 };
 
 // Employee-related payloads
-type AddEmployeePayload = UpdateEmployeePayload;
+type AddEmployeePayload = UpdateEmployeePayload & {
+  courses?: AddEmployeeCoursePayload[];
+};
 
 type UpdateEmployeePayload = {
   employee_number: number;
@@ -38,7 +47,7 @@ type UpdateEmployeePayload = {
   civil_status: string;
   date_of_birth: string | null;
   salary_grade: number | null;
-  salary: string;
+  salary: number | null;
   employment_status: string;
   tin: string;
   place_of_birth: string;
@@ -62,6 +71,7 @@ export type {
   // Course
   UpdateCoursePayload,
   AddCoursePayload,
+  AddEmployeeCoursePayload,
   DeleteCoursePayload,
 
   // Employee

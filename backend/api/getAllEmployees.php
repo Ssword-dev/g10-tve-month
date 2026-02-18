@@ -8,6 +8,21 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 
 $db = db();
 
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+$isAuthenticatedAdmin = is_array($_SESSION['auth_user'] ?? null) && is_numeric($_SESSION['employee_number'] ?? null);
+$allowedGuestFields = [
+    'employee_number',
+    'first_name',
+    'middle_name',
+    'last_name',
+    'designation',
+    'employment_status',
+    'date_joined',
+];
+
 $stmt = $db->prepare('SELECT * FROM employees_table ORDER BY last_name ASC, first_name ASC;');
 
 if (!$stmt) {
@@ -24,6 +39,9 @@ $result = $stmt->get_result();
 $employees = [];
 
 while ($employee = $result->fetch_assoc()) {
+    if (!$isAuthenticatedAdmin) {
+        $employee = array_intersect_key($employee, array_flip($allowedGuestFields));
+    }
     $employees[] = $employee;
 }
 

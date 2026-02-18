@@ -43,10 +43,41 @@ function RequireAdminRoute({ children }: { children: React.ReactNode }) {
   }
 
   if (!data?.authenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/dashboard/employees" replace />;
   }
 
   return <>{children}</>;
+}
+
+function RequireDashboardRoute({ children }: { children: React.ReactNode }) {
+  const { isLoading, error, refresh } = useServerQuery(currentAdminSessionQuery);
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (error) {
+    return (
+      <main className="flex min-h-screen w-full items-center justify-center bg-background p-4">
+        <div className="space-y-3 text-center">
+          <Text className="text-destructive">Failed to validate your session.</Text>
+          <Button onClick={() => void refresh()}>Retry</Button>
+        </div>
+      </main>
+    );
+  }
+
+  return <>{children}</>;
+}
+
+function DashboardIndexRedirect() {
+  const { data, isLoading } = useServerQuery(currentAdminSessionQuery);
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  return <Navigate to={data?.authenticated ? "overview" : "employees"} replace />;
 }
 
 function GuestOnlyRoute({ children }: { children: React.ReactNode }) {
@@ -89,13 +120,20 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <RequireAdminRoute>
+              <RequireDashboardRoute>
                 <DashboardLayout />
-              </RequireAdminRoute>
+              </RequireDashboardRoute>
             }
           >
-            <Route index element={<Navigate to="overview" replace />} />
-            <Route path="overview" element={<OverviewDashboardPage />} />
+            <Route index element={<DashboardIndexRedirect />} />
+            <Route
+              path="overview"
+              element={
+                <RequireAdminRoute>
+                  <OverviewDashboardPage />
+                </RequireAdminRoute>
+              }
+            />
             <Route path="employees" element={<EmployeeDashboardPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

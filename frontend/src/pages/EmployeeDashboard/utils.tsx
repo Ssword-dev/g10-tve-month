@@ -66,7 +66,7 @@ function toEmployeeFormState(employee: Employee): EmployeeFormState {
     civil_status: employee.civil_status ?? "",
     date_of_birth: toInputDate(employee.date_of_birth),
     salary_grade: employee.salary_grade ? String(employee.salary_grade) : "",
-    salary: employee.salary ?? "",
+    salary: employee.salary != null ? String(employee.salary) : "",
     employment_status: employee.employment_status ?? "",
     tin: employee.tin ?? "",
     place_of_birth: employee.place_of_birth ?? "",
@@ -96,7 +96,7 @@ function toEmployeePayload(
     civil_status: form.civil_status.trim(),
     date_of_birth: toNullableString(form.date_of_birth),
     salary_grade: toNullableNumber(form.salary_grade),
-    salary: form.salary.trim(),
+    salary: toNullableNumber(form.salary),
     employment_status: form.employment_status.trim(),
     tin: form.tin.trim(),
     place_of_birth: form.place_of_birth.trim(),
@@ -123,7 +123,7 @@ function toAddEmployeePayload(form: EmployeeFormState): AddEmployeePayload {
     civil_status: form.civil_status.trim(),
     date_of_birth: toNullableString(form.date_of_birth),
     salary_grade: toNullableNumber(form.salary_grade),
-    salary: form.salary.trim(),
+    salary: toNullableNumber(form.salary),
     employment_status: form.employment_status.trim(),
     tin: form.tin.trim(),
     place_of_birth: form.place_of_birth.trim(),
@@ -165,6 +165,9 @@ function validateEmployeeForm(form: EmployeeFormState): FieldErrorMap {
     toNullableNumber(form.salary_grade) == null
   ) {
     errors.salary_grade = "Salary grade must be numeric.";
+  }
+  if (form.salary.trim() !== "" && toNullableNumber(form.salary) == null) {
+    errors.salary = "Salary must be numeric.";
   }
 
   if (!isValidDateOrEmpty(form.date_joined))

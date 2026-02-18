@@ -29,7 +29,7 @@ CREATE TABLE `employees_table` (
     `civil_status` VARCHAR(15), -- WORD sized.
     `date_of_birth` DATE,
     `salary_grade` INT,
-    `salary` VARCHAR(50), -- pag lumampas sila sa salary na 50 characters, hahaha sanaol
+    `salary` INT,
     `employment_status` VARCHAR(15),
     `tin` VARCHAR(11),
     `place_of_birth` VARCHAR(120),

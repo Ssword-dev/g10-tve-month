@@ -8,7 +8,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $db = db();
-$payload = parse_json_body();
+$payload = body();
+if (!is_array($payload)) {
+    $payload = [];
+}
 
 $employeeNumberRaw = input_get('employee_number', $payload);
 $originalCourseName = trim((string)input_get('original_course_name', $payload, ''));

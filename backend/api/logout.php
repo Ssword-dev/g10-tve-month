@@ -13,6 +13,9 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
+// Parse request payload through the shared body() helper to keep POST input handling consistent.
+body();
+
 $_SESSION = [];
 
 if (ini_get('session.use_cookies')) {
@@ -34,5 +37,10 @@ respond(
     type: 'data',
     data: [
         'authenticated' => false,
+        'role' => 'guest',
+        'permissions' => [
+            'can_manage_employees' => false,
+            'can_view_sensitive_employee_fields' => false,
+        ],
     ]
 );

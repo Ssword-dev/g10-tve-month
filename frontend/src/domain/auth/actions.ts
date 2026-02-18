@@ -21,6 +21,11 @@ export interface EmployeeIsAdminResponse {
 
 export interface AdminSessionResponse {
   authenticated: boolean;
+  role: "admin" | "guest";
+  permissions: {
+    can_manage_employees: boolean;
+    can_view_sensitive_employee_fields: boolean;
+  };
   user: {
     employee_number: number;
     first_name: string;
@@ -37,6 +42,11 @@ export interface LoginResponse extends AdminSessionResponse {}
 
 export interface LogoutResponse {
   authenticated: boolean;
+  role: "guest";
+  permissions: {
+    can_manage_employees: false;
+    can_view_sensitive_employee_fields: false;
+  };
 }
 
 export interface AdminUserSummary {

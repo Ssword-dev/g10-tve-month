@@ -4,6 +4,10 @@
 // DO NOT EDIT THIS CONFIGURATION UNLESS   //
 // YOU KNOW WHAT YOU ARE DOING... Please.  //
 
+if (!is_callable('config')) {
+    throw new Exception('Cannot set configuration variables, as `config()` is not found.');
+}
+
 config('mysql_host', 'localhost');
 config('mysql_user', 'root');
 config('mysql_password', '');

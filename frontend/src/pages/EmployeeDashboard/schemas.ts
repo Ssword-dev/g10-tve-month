@@ -56,7 +56,9 @@ const employeeFormSchema = z.object({
       .min(1, "Salary grade must be at least 1")
       .max(33, "Salary grade cannot exceed 33"),
   ),
-  salary: z.string().optional().default(""),
+  salary: numericStringSchema(
+    z.number().int().min(0, "Salary cannot be negative."),
+  ),
   employment_status: z.string().min(1, "Employment status is required."),
   tin: z.string().optional().default(""),
   place_of_birth: z.string().optional().default(""),

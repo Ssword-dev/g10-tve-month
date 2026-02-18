@@ -1,5 +1,11 @@
 import Card from "@/components/Card";
 import CardContent from "@/components/CardContent";
+import { currentAdminSessionQuery } from "@/domain/auth/actions";
+import {
+  canManageEmployees,
+  getAuthRole,
+  getFilterableEmployeeFields,
+} from "@/domain/auth/session";
 import useServerQuery from "@/hooks/useServerQuery";
 import { useState, useMemo, useEffect } from "react";
 import {
@@ -18,8 +24,12 @@ export default function EmployeeDashboard() {
     "none",
   );
 
+  const { data: sessionData } = useServerQuery(currentAdminSessionQuery);
   const { data, isLoading, error } = useServerQuery(filterEmployeesQuery);
   const employees = data ?? [];
+  const role = getAuthRole(sessionData);
+  const canManage = canManageEmployees(sessionData);
+  const allowedFilterFields = getFilterableEmployeeFields(role);
 
   const selectedEmployee = useMemo(
     () =>
@@ -44,11 +54,15 @@ export default function EmployeeDashboard() {
     <main className="flex h-full min-h-0 min-w-0 flex-col gap-6 overflow-hidden p-4 md:p-8">
       <Card className="min-h-0 w-full flex-1 gap-0 overflow-hidden border-border py-0">
         <CardContent className="min-h-0 w-full flex-1 px-5 py-3">
-          <EmployeeTableShell>
+          <EmployeeTableShell
+            canManageEmployees={canManage}
+            allowedFilterFields={allowedFilterFields}
+          >
             <EmployeeTable
               employees={employees}
               isLoading={isLoading}
               error={error}
+              showSensitiveFields={canManage}
               onRetry={() => {
                 filterEmployeesQuery.refresh();
               }}
@@ -68,12 +82,20 @@ export default function EmployeeDashboard() {
           setSelectedEmployeeNumber(null);
           setActiveModal("none");
         }}
-        onOpenAdmin={() => setActiveModal("admin")}
+        canManageEmployees={canManage}
+        showSensitiveFields={canManage}
+        onOpenAdmin={() => {
+          if (!canManage) {
+            return;
+          }
+
+          setActiveModal("admin");
+        }}
       />
 
       <AdminActionsModal
         employee={selectedEmployee}
-        open={activeModal === "admin" && selectedEmployee != null}
+        open={canManage && activeModal === "admin" && selectedEmployee != null}
         onClose={() => setActiveModal("none")}
         onSaved={() => filterEmployeesQuery.refresh()}
       />

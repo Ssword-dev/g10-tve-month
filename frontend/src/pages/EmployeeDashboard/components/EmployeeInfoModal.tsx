@@ -16,6 +16,8 @@ interface EmployeeInfoModalProps {
   open: boolean;
   onClose: () => void;
   onOpenAdmin: () => void;
+  canManageEmployees: boolean;
+  showSensitiveFields: boolean;
 }
 
 export function EmployeeInfoModal({
@@ -23,6 +25,8 @@ export function EmployeeInfoModal({
   open,
   onClose,
   onOpenAdmin,
+  canManageEmployees,
+  showSensitiveFields,
 }: EmployeeInfoModalProps) {
   if (!employee) return null;
 
@@ -32,7 +36,7 @@ export function EmployeeInfoModal({
       title={`Employee #${employee.employee_number}`}
       onRequestClose={onClose}
     >
-      <EmployeeDetailsCard employee={employee} />
+      <EmployeeDetailsCard employee={employee} showSensitiveFields={showSensitiveFields} />
       <Card className="gap-3 border-border p-4">
         <CardTitle>
           <Text weight="semibold">Courses</Text>
@@ -60,9 +64,11 @@ export function EmployeeInfoModal({
           ))}
         </CardContent>
       </Card>
-      <div className="flex justify-end">
-        <Button onClick={onOpenAdmin}>Take Action</Button>
-      </div>
+      {canManageEmployees ? (
+        <div className="flex justify-end">
+          <Button onClick={onOpenAdmin}>Take Action</Button>
+        </div>
+      ) : null}
     </ModalShell>
   );
 }

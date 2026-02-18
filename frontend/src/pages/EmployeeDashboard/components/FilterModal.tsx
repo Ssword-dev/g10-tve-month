@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Plus, X } from "lucide-react";
 
 import type {
@@ -26,6 +26,8 @@ import {
   stringOperators,
   type EmployeeFieldType,
 } from "./filterBuilderShared";
+import { defaultEmployeeFilter } from "../queries";
+import { SortField } from "./SortField";
 
 type NullMode = "is_not_null" | "is_null" | "nullable";
 
@@ -49,6 +51,7 @@ interface FilterModalProps {
   onClose: () => void;
   onApply: (filter: FilterEmployeesPayload) => void;
   initialFilter?: FilterEmployeesPayload;
+  allowedFields?: Array<keyof Employee>;
 }
 
 const createRule = (fieldType: EmployeeFieldType): RuleState => {
@@ -118,24 +121,71 @@ function toComparison(rule: RuleState, fieldType: EmployeeFieldType) {
   return { type: rule.operator, operand: rule.value.trim() };
 }
 
-const defaultFields: FilterEmployeesPayload["fields"] = {
-  include: "ALL",
-  exclude: "NONE",
-};
+const defaultFields: FilterEmployeesPayload["fields"] = defaultEmployeeFilter.fields;
 
-export function FilterModal({ open, onClose, onApply, initialFilter }: FilterModalProps) {
+export function FilterModal({
+  open,
+  onClose,
+  onApply,
+  initialFilter,
+  allowedFields,
+}: FilterModalProps) {
   const [fields, setFields] = useState<FilterEmployeesPayload["fields"]>(
     initialFilter?.fields ?? defaultFields,
   );
   const [columnFilters, setColumnFilters] = useState<ColumnFilterState[]>([]);
+  const [sortRules, setSortRules] = useState<NonNullable<FilterEmployeesPayload["sort"]>>(
+    initialFilter?.sort ?? defaultEmployeeFilter.sort ?? [],
+  );
+  const availableFields = useMemo(() => {
+    if (!allowedFields || allowedFields.length === 0) {
+      return employeeFields;
+    }
+
+    const allowed = new Set(allowedFields);
+    return employeeFields.filter((field) => allowed.has(field.value));
+  }, [allowedFields]);
+
+  useEffect(() => {
+    if (availableFields.length === 0) {
+      return;
+    }
+
+    const allowed = new Set(availableFields.map((field) => field.value));
+
+    setColumnFilters((current) =>
+      current.filter((columnFilter) => allowed.has(columnFilter.field)),
+    );
+
+    setFields((current) => {
+      const nextInclude =
+        current.include === "ALL"
+          ? "ALL"
+          : current.include.filter((field) => allowed.has(field));
+      const nextExclude =
+        current.exclude === "NONE"
+          ? "NONE"
+          : current.exclude.filter((field) => allowed.has(field));
+
+      return { include: nextInclude, exclude: nextExclude };
+    });
+
+    setSortRules((current) =>
+      current.filter((rule) => allowed.has(rule.basis)),
+    );
+  }, [availableFields]);
 
   const usedFields = useMemo(
     () => new Set(columnFilters.map((columnFilter) => columnFilter.field)),
     [columnFilters],
   );
+  const usedSortFields = useMemo(
+    () => new Set(sortRules.map((rule) => rule.basis)),
+    [sortRules],
+  );
 
   const addColumnFilter = () => {
-    const next = employeeFields.find((field) => !usedFields.has(field.value));
+    const next = availableFields.find((field) => !usedFields.has(field.value));
     if (!next) return;
 
     setColumnFilters((current) => [
@@ -174,6 +224,34 @@ export function FilterModal({ open, onClose, onApply, initialFilter }: FilterMod
         rules: nextRules.length > 0 ? nextRules : [createRule(getFieldMeta(columnFilter.field).type)],
       };
     });
+  };
+
+  const addSortRule = () => {
+    const nextField = availableFields.find((field) => !usedSortFields.has(field.value));
+    if (!nextField) {
+      return;
+    }
+
+    setSortRules((current) => [
+      ...current,
+      { basis: nextField.value, direction: "asc" },
+    ]);
+  };
+
+  const updateSortRule = (
+    index: number,
+    basis: keyof Employee,
+    direction: "asc" | "desc",
+  ) => {
+    setSortRules((current) =>
+      current.map((rule, ruleIndex) =>
+        ruleIndex === index ? { basis, direction } : rule,
+      ),
+    );
+  };
+
+  const removeSortRule = (index: number) => {
+    setSortRules((current) => current.filter((_, ruleIndex) => ruleIndex !== index));
   };
 
   const toggleIncludeColumn = (field: keyof Employee) => {
@@ -239,12 +317,23 @@ export function FilterModal({ open, onClose, onApply, initialFilter }: FilterMod
           ? expressions[0]
           : ({ type: "and", filters: expressions } as FilterExpression);
 
+    const normalizedFields: FilterEmployeesPayload["fields"] = {
+      include:
+        fields.include === "ALL"
+          ? "ALL"
+          : Array.from(new Set(["employee_number", ...fields.include])),
+      exclude:
+        fields.exclude === "NONE"
+          ? "NONE"
+          : fields.exclude.filter((field) => field !== "employee_number"),
+    };
+
     onApply({
-      fields,
+      fields: normalizedFields,
       where,
       page: initialFilter?.page ?? 1,
       limit: initialFilter?.limit ?? 50,
-      sort: initialFilter?.sort ?? [],
+      sort: sortRules,
     });
     onClose();
   };
@@ -252,6 +341,7 @@ export function FilterModal({ open, onClose, onApply, initialFilter }: FilterMod
   const handleReset = () => {
     setFields(defaultFields);
     setColumnFilters([]);
+    setSortRules(defaultEmployeeFilter.sort ?? []);
   };
 
   return (
@@ -269,7 +359,7 @@ export function FilterModal({ open, onClose, onApply, initialFilter }: FilterMod
                   Include Columns
                 </Text>
                 <div className="grid max-h-52 grid-cols-2 gap-2 overflow-y-auto">
-                  {employeeFields.map((field) => {
+                  {availableFields.map((field) => {
                     const selected = fields.include !== "ALL" && fields.include.includes(field.value);
                     return (
                       <label key={`include-${field.value}`} className="flex items-center gap-2 rounded-md p-2 hover:bg-muted/50">
@@ -290,7 +380,7 @@ export function FilterModal({ open, onClose, onApply, initialFilter }: FilterMod
                   Exclude Columns
                 </Text>
                 <div className="grid max-h-52 grid-cols-2 gap-2 overflow-y-auto">
-                  {employeeFields.map((field) => {
+                  {availableFields.map((field) => {
                     const selected = fields.exclude !== "NONE" && fields.exclude.includes(field.value);
                     return (
                       <label key={`exclude-${field.value}`} className="flex items-center gap-2 rounded-md p-2 hover:bg-muted/50">
@@ -310,7 +400,7 @@ export function FilterModal({ open, onClose, onApply, initialFilter }: FilterMod
             <section className="rounded-lg border border-border bg-card p-4">
               <div className="mb-3 flex items-center justify-between">
                 <Text weight="semibold">Column Filters (AND)</Text>
-                <Button type="button" size="sm" onClick={addColumnFilter} disabled={usedFields.size >= employeeFields.length}>
+                <Button type="button" size="sm" onClick={addColumnFilter} disabled={usedFields.size >= availableFields.length}>
                   <Plus className="mr-1 h-4 w-4" />
                   Add Column
                 </Button>
@@ -345,7 +435,7 @@ export function FilterModal({ open, onClose, onApply, initialFilter }: FilterMod
                             }}
                             className="rounded-md border border-border bg-background px-3 py-1.5 text-sm"
                           >
-                            {employeeFields.map((field) => {
+                            {availableFields.map((field) => {
                               const usedByOther = usedFields.has(field.value) && field.value !== columnFilter.field;
                               return (
                                 <option key={field.value} value={field.value} disabled={usedByOther}>
@@ -509,6 +599,43 @@ export function FilterModal({ open, onClose, onApply, initialFilter }: FilterMod
                       </div>
                     );
                   })
+                )}
+              </div>
+            </section>
+
+            <section className="rounded-lg border border-border bg-card p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <Text weight="semibold">Sort</Text>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={addSortRule}
+                  disabled={usedSortFields.size >= availableFields.length}
+                >
+                  <Plus className="mr-1 h-4 w-4" />
+                  Add Sort
+                </Button>
+              </div>
+
+              <div className="space-y-2">
+                {sortRules.length === 0 ? (
+                  <Text size="sm" className="text-muted-foreground">
+                    No sort rules added. Backend default ordering will be used.
+                  </Text>
+                ) : (
+                  sortRules.map((rule, index) => (
+                    <SortField
+                      key={`${rule.basis}-${index}`}
+                      allowedFields={availableFields.map((field) => field.value)}
+                      basis={rule.basis}
+                      direction={rule.direction}
+                      onChange={(basis, direction) =>
+                        updateSortRule(index, basis, direction)
+                      }
+                      onRemove={() => removeSortRule(index)}
+                    />
+                  ))
                 )}
               </div>
             </section>

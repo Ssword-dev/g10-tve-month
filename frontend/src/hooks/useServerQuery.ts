@@ -14,6 +14,15 @@ export default function useServerQuery<TArgs extends unknown[], TData>(
     (...args: TArgs) => serverQuery.refresh(...args),
     [serverQuery],
   );
+  const refetch = useCallback(
+    (...args: TArgs) => serverQuery.refetch(...args),
+    [serverQuery],
+  );
+  const invalidate = useCallback(
+    (...args: TArgs) => serverQuery.invalidate(...args),
+    [serverQuery],
+  );
+  const invalidateAll = useCallback(() => serverQuery.invalidateAll(), [serverQuery]);
 
   useEffect(() => {
     const unsubscribe = serverQuery.subscribe(updateState);
@@ -23,5 +32,5 @@ export default function useServerQuery<TArgs extends unknown[], TData>(
     return unsubscribe;
   }, [serverQuery, updateState]);
 
-  return { ...state, refresh };
+  return { ...state, refresh, refetch, invalidate, invalidateAll };
 }

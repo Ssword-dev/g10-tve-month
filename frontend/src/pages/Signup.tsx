@@ -74,7 +74,7 @@ const signupSchema = z
     plantillaNumber: z.string().trim().default(""),
     bpNumber: optionalNumeric,
     salaryGrade: optionalNumeric,
-    salary: z.string().trim().default(""),
+    salary: optionalNumeric,
     tin: z
       .string()
       .trim()
@@ -98,7 +98,7 @@ type StepId = "identity" | "personal" | "employment" | "admin";
 type StepFieldConfig = {
   id: FieldPath<SignupFormInput>;
   label: string;
-  type?: "text" | "email" | "password" | "date";
+  type?: "text" | "email" | "password" | "date" | "number";
   placeholder?: string;
 };
 
@@ -219,9 +219,9 @@ const stepFieldLookup: Record<StepId, StepFieldConfig[]> = {
       type: "date",
     },
     { id: "plantillaNumber", label: "Plantilla Number" },
-    { id: "bpNumber", label: "BP Number" },
-    { id: "salaryGrade", label: "Salary Grade" },
-    { id: "salary", label: "Salary" },
+    { id: "bpNumber", label: "BP Number", type: "number" },
+    { id: "salaryGrade", label: "Salary Grade", type: "number" },
+    { id: "salary", label: "Salary", type: "number" },
   ],
   admin: [
     { id: "password", label: "Password *", type: "password" },
@@ -337,7 +337,7 @@ function FormField({
 }: {
   id: FieldPath<SignupFormInput>;
   label: string;
-  type?: "text" | "email" | "password" | "date";
+  type?: "text" | "email" | "password" | "date" | "number";
   placeholder?: string;
   register: UseFormRegister<SignupFormInput>;
   error?: string;

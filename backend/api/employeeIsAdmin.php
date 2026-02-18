@@ -9,24 +9,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     );
 }
 
-$contentType = strtolower($_SERVER['CONTENT_TYPE'] ?? '');
-$rawBody = file_get_contents('php://input');
-
-$requestData = [];
-if (str_contains($contentType, 'application/json')) {
-    $decoded = json_decode($rawBody ?: 'null', true);
-
-    if (!is_array($decoded)) {
-        respond(
-            type: 'error',
-            message: 'Invalid JSON body.',
-            statusCode: 400
-        );
-    }
-
-    $requestData = $decoded;
-} else {
-    $requestData = $_POST;
+$requestData = body();
+if (!is_array($requestData)) {
+    $requestData = [];
 }
 
 $employeeNumberRaw = $requestData['employee_number'] ?? null;

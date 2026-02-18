@@ -2,6 +2,7 @@ import Button from "@/components/Button";
 import TooltipProvider from "@/components/TooltipProvider";
 import Text from "@/components/Text";
 import { currentAdminSessionQuery, logoutAction } from "@/domain/auth/actions";
+import { getAuthRole } from "@/domain/auth/session";
 import useServerQuery from "@/hooks/useServerQuery";
 import { GraduationCap, LogOut } from "lucide-react";
 import { Outlet, useMatch, useNavigate } from "react-router-dom";
@@ -15,8 +16,9 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const { data: sessionData } = useServerQuery(currentAdminSessionQuery);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const role = getAuthRole(sessionData);
 
-  const subRoutes = ["overview", "employees"];
+  const subRoutes = role === "admin" ? ["overview", "employees"] : ["employees"];
 
   const handleNavigate = (route: string) => {
     navigate(`/dashboard/${route}`);
@@ -84,15 +86,17 @@ export default function Dashboard() {
                 </Text>
               </div>
             ) : null}
-            <Button
-              variant="glass"
-              className="w-full justify-start gap-2 bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
-              onClick={() => void logout()}
-              disabled={isLoggingOut}
-            >
-              <LogOut className="size-4" />
-              {isLoggingOut ? "Signing out..." : "Sign out"}
-            </Button>
+            {role === "admin" ? (
+              <Button
+                variant="glass"
+                className="w-full justify-start gap-2 bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
+                onClick={() => void logout()}
+                disabled={isLoggingOut}
+              >
+                <LogOut className="size-4" />
+                {isLoggingOut ? "Signing out..." : "Sign out"}
+              </Button>
+            ) : null}
           </div>
         </aside>
 

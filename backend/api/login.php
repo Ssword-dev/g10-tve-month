@@ -13,24 +13,9 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-$contentType = strtolower($_SERVER['CONTENT_TYPE'] ?? '');
-$rawBody = file_get_contents('php://input');
-
-$requestData = [];
-if (str_contains($contentType, 'application/json')) {
-    $decoded = json_decode($rawBody ?: 'null', true);
-
-    if (!is_array($decoded)) {
-        respond(
-            type: 'error',
-            message: 'Invalid JSON body.',
-            statusCode: 400
-        );
-    }
-
-    $requestData = $decoded;
-} else {
-    $requestData = $_POST;
+$requestData = body();
+if (!is_array($requestData)) {
+    $requestData = [];
 }
 
 $depedEmailRaw = $requestData['deped_email'] ?? null;
@@ -137,6 +122,11 @@ respond(
     type: 'data',
     data: [
         'authenticated' => true,
+        'role' => 'admin',
+        'permissions' => [
+            'can_manage_employees' => true,
+            'can_view_sensitive_employee_fields' => true,
+        ],
         'user' => $_SESSION['auth_user'],
     ]
 );

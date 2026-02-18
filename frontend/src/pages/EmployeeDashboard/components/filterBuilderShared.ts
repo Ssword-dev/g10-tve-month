@@ -11,11 +11,31 @@ type EmployeeFieldMeta = {
 
 export const employeeFields: EmployeeFieldMeta[] = [
   { value: "first_name", label: "First Name", type: "string", nullable: false },
-  { value: "middle_name", label: "Middle Name", type: "string", nullable: true },
+  {
+    value: "middle_name",
+    label: "Middle Name",
+    type: "string",
+    nullable: true,
+  },
   { value: "last_name", label: "Last Name", type: "string", nullable: false },
-  { value: "deped_email", label: "DepEd Email", type: "string", nullable: true },
-  { value: "employee_number", label: "Employee #", type: "number", nullable: false },
-  { value: "designation", label: "Designation", type: "string", nullable: false },
+  {
+    value: "deped_email",
+    label: "DepEd Email",
+    type: "string",
+    nullable: true,
+  },
+  {
+    value: "employee_number",
+    label: "Employee #",
+    type: "number",
+    nullable: false,
+  },
+  {
+    value: "designation",
+    label: "Designation",
+    type: "string",
+    nullable: false,
+  },
   { value: "date_joined", label: "Date Joined", type: "date", nullable: true },
   {
     value: "date_of_latest_promotion",
@@ -23,8 +43,18 @@ export const employeeFields: EmployeeFieldMeta[] = [
     type: "date",
     nullable: true,
   },
-  { value: "contact_number", label: "Contact #", type: "string", nullable: true },
-  { value: "plantilla_number", label: "Plantilla #", type: "string", nullable: true },
+  {
+    value: "contact_number",
+    label: "Contact #",
+    type: "string",
+    nullable: true,
+  },
+  {
+    value: "plantilla_number",
+    label: "Plantilla #",
+    type: "string",
+    nullable: true,
+  },
   {
     value: "date_of_original_appointment",
     label: "Original Appointment",
@@ -33,13 +63,38 @@ export const employeeFields: EmployeeFieldMeta[] = [
   },
   { value: "bp_number", label: "BP #", type: "number", nullable: true },
   { value: "address", label: "Address", type: "string", nullable: true },
-  { value: "civil_status", label: "Civil Status", type: "string", nullable: true },
-  { value: "date_of_birth", label: "Date of Birth", type: "date", nullable: true },
-  { value: "salary_grade", label: "Salary Grade", type: "number", nullable: true },
-  { value: "salary", label: "Salary", type: "string", nullable: true },
-  { value: "employment_status", label: "Employment Status", type: "string", nullable: false },
+  {
+    value: "civil_status",
+    label: "Civil Status",
+    type: "string",
+    nullable: true,
+  },
+  {
+    value: "date_of_birth",
+    label: "Date of Birth",
+    type: "date",
+    nullable: true,
+  },
+  {
+    value: "salary_grade",
+    label: "Salary Grade",
+    type: "number",
+    nullable: true,
+  },
+  { value: "salary", label: "Salary", type: "number", nullable: true },
+  {
+    value: "employment_status",
+    label: "Employment Status",
+    type: "string",
+    nullable: false,
+  },
   { value: "tin", label: "TIN", type: "string", nullable: true },
-  { value: "place_of_birth", label: "Place of Birth", type: "string", nullable: true },
+  {
+    value: "place_of_birth",
+    label: "Place of Birth",
+    type: "string",
+    nullable: true,
+  },
 ];
 
 export const numberOperators = [

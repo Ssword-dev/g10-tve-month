@@ -7,7 +7,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     respond(type: 'error', message: 'Invalid request method. POST required.', statusCode: 405);
 }
 
-$payload = parse_json_body();
+$payload = body();
+if (!is_array($payload)) {
+    $payload = [];
+}
 $employeeNumberRaw = input_get('employee_number', $payload);
 $newPassword = (string)input_get('new_password', $payload, '');
 $confirmPassword = (string)input_get('confirm_password', $payload, '');

@@ -6,13 +6,25 @@ import Button from "@/components/Button";
 import { employeeFields } from "./filterBuilderShared";
 
 interface SortFieldProps {
+  allowedFields?: Array<keyof Employee>;
   basis: keyof Employee;
   direction: "asc" | "desc";
   onChange: (basis: keyof Employee, direction: "asc" | "desc") => void;
   onRemove: () => void;
 }
 
-export function SortField({ basis, direction, onChange, onRemove }: SortFieldProps) {
+export function SortField({
+  allowedFields,
+  basis,
+  direction,
+  onChange,
+  onRemove,
+}: SortFieldProps) {
+  const selectableFields =
+    allowedFields && allowedFields.length > 0
+      ? employeeFields.filter((field) => allowedFields.includes(field.value))
+      : employeeFields;
+
   return (
     <div className="flex items-center gap-2 p-2 bg-card border-border rounded-lg border">
       <select
@@ -20,7 +32,7 @@ export function SortField({ basis, direction, onChange, onRemove }: SortFieldPro
         onChange={(e) => onChange(e.target.value as keyof Employee, direction)}
         className="bg-transparent border-none text-sm focus:outline-none"
       >
-        {employeeFields.map((field) => (
+        {selectableFields.map((field) => (
           <option key={field.value} value={field.value}>
             {field.label}
           </option>

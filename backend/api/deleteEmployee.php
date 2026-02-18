@@ -1,95 +1,89 @@
 <?php
+
 require dirname(__DIR__) . '/vendor/autoload.php';
+require_once dirname(__DIR__) . '/helpers/employees.php';
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    respond(type: 'error', message: 'Invalid request method. POST required.', statusCode: 405);
+}
 
 $db = db();
-$body = body();
+$payload = body();
+if (!is_array($payload)) {
+    $payload = [];
+}
+$employeeNumberRaw = input_get('employee_number', $payload);
 
-// get employee_number (POST first, fallback to GET)
-$employee_number = (string)($body['employee_number'] ?? null);
+if (!is_numeric($employeeNumberRaw) || (int)$employeeNumberRaw <= 0) {
+    respond(type: 'error', message: 'employee_number must be a positive integer.', statusCode: 422);
+}
 
-// validate numeric
-if (!is_numeric($employee_number)) {
+$employeeNumber = (int)$employeeNumberRaw;
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+$activeAdminEmployeeNumber = $_SESSION['employee_number'] ?? null;
+if (is_numeric($activeAdminEmployeeNumber) && (int)$activeAdminEmployeeNumber === $employeeNumber) {
     respond(
         type: 'error',
-        message: 'Invalid employee number provided. got:' . var_export($employee_number)
+        message: 'Cannot delete the currently authenticated admin employee.',
+        statusCode: 403
     );
 }
 
-// ensure integer (reject floats)
-if (intval($employee_number) != floatval($employee_number)) {
+$adminLinkCheck = $db->prepare('SELECT employee_number FROM admin_users_table WHERE employee_number = ? LIMIT 1');
+if (!$adminLinkCheck) {
+    respond(type: 'error', message: 'Failed to prepare admin link check.', statusCode: 500);
+}
+
+$adminLinkCheck->bind_param('i', $employeeNumber);
+if (!$adminLinkCheck->execute()) {
+    $adminLinkCheck->close();
+    respond(type: 'error', message: 'Failed to execute admin link check.', statusCode: 500);
+}
+
+$isLinkedToAdmin = (bool)$adminLinkCheck->get_result()->fetch_assoc();
+$adminLinkCheck->close();
+
+if ($isLinkedToAdmin) {
     respond(
         type: 'error',
-        message: 'Employee number must be an integer, got: ' . var_export($employee_number)
+        message: 'Cannot delete an employee with an active admin role. Revoke admin role first.',
+        statusCode: 409
     );
 }
 
-$employee_number = intval($employee_number);
-
-// must be positive
-if ($employee_number <= 0) {
-    respond(
-        type: 'error',
-        message: 'Employee number must be a positive integer.'
-    );
-}
-
-// fetch employee
-$employeeStatement = $db->prepare("
-    SELECT 
-        e.employee_number,
-        e.first_name,
-        e.last_name
-    FROM employees_table e
-    WHERE e.employee_number = ?
-    LIMIT 1
-");
-
+$employeeStatement = $db->prepare('SELECT employee_number FROM employees_table WHERE employee_number = ? LIMIT 1');
 if (!$employeeStatement) {
-    respond(
-        type: 'error',
-        message: 'Failed to prepare employee query.',
-        statusCode: 500
-    );
+    respond(type: 'error', message: 'Failed to prepare employee lookup.', statusCode: 500);
 }
 
-$employeeStatement->bind_param("i", $employee_number);
-$employeeStatement->execute();
-
-$result = $employeeStatement->get_result();
-$employee = $result->fetch_assoc();
-
-if (!$employee) {
+$employeeStatement->bind_param('i', $employeeNumber);
+if (!$employeeStatement->execute()) {
     $employeeStatement->close();
-
-    respond(
-        type: 'error',
-        message: 'Employee not found.',
-        statusCode: 404
-    );
+    respond(type: 'error', message: 'Failed to execute employee lookup.', statusCode: 500);
 }
 
+$exists = (bool)$employeeStatement->get_result()->fetch_assoc();
 $employeeStatement->close();
 
-$deleteStatement = $db->prepare("DELETE FROM `employees_table` WHERE employee_number = ?;");
-
-if (!$deleteStatement) {
-    respond(
-        type: 'error',
-        message: 'Failed to prepare statement for employee deletion.',
-        statusCode: 500
-    );
+if (!$exists) {
+    respond(type: 'error', message: 'Employee not found.', statusCode: 404);
 }
 
-$deleteStatement->bind_param('i', $employee_number);
+$deleteStatement = $db->prepare('DELETE FROM employees_table WHERE employee_number = ? LIMIT 1');
+if (!$deleteStatement) {
+    respond(type: 'error', message: 'Failed to prepare employee deletion.', statusCode: 500);
+}
 
+$deleteStatement->bind_param('i', $employeeNumber);
 if (!$deleteStatement->execute()) {
-    respond(
-        type: 'error',
-        message: 'Failed to delete employee due to mysql error:' . $deleteCourseStatement->error,
-        statusCode: 500
-    );
-};
+    $deleteStatement->close();
+    respond(type: 'error', message: 'Failed to delete employee.', statusCode: 500);
+}
 
-respond(
-    type: 'success'
-);
+$deleteStatement->close();
+
+respond(type: 'success');

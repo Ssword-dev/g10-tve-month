@@ -14,15 +14,26 @@ if (!$input) {
     $input = $_GET;
 }
 
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+$isAuthenticatedAdmin = is_array($_SESSION['auth_user'] ?? null) && is_numeric($_SESSION['employee_number'] ?? null);
+$role = $isAuthenticatedAdmin ? 'admin' : 'guest';
+
+$guestAllowedFields = [
+    'employee_number',
+    'first_name',
+    'middle_name',
+    'last_name',
+    'designation',
+    'employment_status',
+    'date_joined',
+];
+
 final class FilterParser
 {
-    private array $allowedFields = [
-        'employee_number', 'first_name', 'middle_name', 'last_name', 'deped_email',
-        'designation', 'date_joined', 'date_of_latest_promotion', 'contact_number',
-        'plantilla_number', 'date_of_original_appointment', 'bp_number', 'address',
-        'civil_status', 'date_of_birth', 'salary_grade', 'salary', 'employment_status',
-        'tin', 'place_of_birth',
-    ];
+    private array $allowedFields;
 
     private array $fieldTypes = [
         'employee_number' => 'int',
@@ -41,11 +52,17 @@ final class FilterParser
         'civil_status' => 'string',
         'date_of_birth' => 'date',
         'salary_grade' => 'int',
-        'salary' => 'string',
+        'salary' => 'int',
         'employment_status' => 'string',
         'tin' => 'string',
         'place_of_birth' => 'string',
     ];
+
+    public function __construct(array $allowedFields)
+    {
+        $validFields = array_values(array_intersect($allowedFields, array_keys($this->fieldTypes)));
+        $this->allowedFields = $validFields;
+    }
 
     public function getAllowedFields(): array
     {
@@ -295,7 +312,13 @@ final class FilterParser
     }
 }
 
-$parser = new FilterParser();
+$parser = new FilterParser($role === 'admin' ? [
+    'employee_number', 'first_name', 'middle_name', 'last_name', 'deped_email',
+    'designation', 'date_joined', 'date_of_latest_promotion', 'contact_number',
+    'plantilla_number', 'date_of_original_appointment', 'bp_number', 'address',
+    'civil_status', 'date_of_birth', 'salary_grade', 'salary', 'employment_status',
+    'tin', 'place_of_birth',
+] : $guestAllowedFields);
 $parsedWhere = $parser->parse($input);
 
 $sql = 'SELECT * FROM employees_table';
@@ -386,29 +409,32 @@ try {
     respond(type: 'error', message: $exception->getMessage(), statusCode: 500);
 }
 
-if (isset($input['fields']) && is_array($input['fields'])) {
-    $include = $input['fields']['include'] ?? 'ALL';
-    $exclude = $input['fields']['exclude'] ?? 'NONE';
+$allowed = $parser->getAllowedFields();
+$fieldsInput = isset($input['fields']) && is_array($input['fields']) ? $input['fields'] : [];
+$include = $fieldsInput['include'] ?? ($role === 'admin' ? 'ALL' : $allowed);
+$exclude = $fieldsInput['exclude'] ?? 'NONE';
 
-    $employees = array_map(function (array $employee) use ($include, $exclude, $parser): array {
-        $allowed = $parser->getAllowedFields();
+$employees = array_map(function (array $employee) use ($include, $exclude, $allowed, $role): array {
+    // Guest users can only ever receive fields in the allowed subset.
+    if ($role !== 'admin') {
+        $employee = array_intersect_key($employee, array_flip($allowed));
+    }
 
-        if (is_array($include) && count($include) > 0) {
-            $validInclude = array_values(array_intersect($include, $allowed));
-            if ($validInclude) {
-                $employee = array_intersect_key($employee, array_flip($validInclude));
-            }
+    if (is_array($include) && count($include) > 0) {
+        $validInclude = array_values(array_intersect($include, $allowed));
+        if ($validInclude) {
+            $employee = array_intersect_key($employee, array_flip($validInclude));
         }
+    }
 
-        if (is_array($exclude) && count($exclude) > 0) {
-            $validExclude = array_values(array_intersect($exclude, $allowed));
-            foreach ($validExclude as $key) {
-                unset($employee[$key]);
-            }
+    if (is_array($exclude) && count($exclude) > 0) {
+        $validExclude = array_values(array_intersect($exclude, $allowed));
+        foreach ($validExclude as $key) {
+            unset($employee[$key]);
         }
+    }
 
-        return $employee;
-    }, $employees);
-}
+    return $employee;
+}, $employees);
 
 respond(type: 'data', data: $employees, message: count($employees) . ' employee(s) found.');
