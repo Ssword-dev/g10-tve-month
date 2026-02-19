@@ -60,6 +60,10 @@ export interface AdminUserSummary {
   avatar_url: string | null;
 }
 
+export interface CurrentAdminProfilePictureResponse {
+  avatar_url: string;
+}
+
 export const loginAction = createServerAction<LoginPayload, LoginResponse>({
   name: "login",
   apiUrl: "/api/login",
@@ -81,6 +85,15 @@ export const getCurrentAdminSessionAction = createServerAction<
 >({
   name: "getCurrentAdminSession",
   apiUrl: "/api/getCurrentAdminSession",
+  method: "GET",
+});
+
+export const getCurrentAdminProfilePictureAction = createServerAction<
+  Record<string, never>,
+  CurrentAdminProfilePictureResponse
+>({
+  name: "getCurrentAdminProfilePicture",
+  apiUrl: "/api/getCurrentAdminProfilePicture",
   method: "GET",
 });
 
@@ -126,6 +139,12 @@ export const removeAdminRoleAction = createServerAction<RemoveAdminRolePayload, 
 export const currentAdminSessionQuery = createServerQuery(
   "Auth:getCurrentAdminSession",
   () => getCurrentAdminSessionAction({}),
+  [],
+);
+
+export const currentAdminProfilePictureQuery = createServerQuery(
+  "Auth:getCurrentAdminProfilePicture",
+  () => getCurrentAdminProfilePictureAction({}),
   [],
 );
 

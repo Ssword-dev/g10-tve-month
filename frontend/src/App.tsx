@@ -15,6 +15,8 @@ import LandingPage from "@/pages/Landing";
 const LoginPage = React.lazy(() => import("@/pages/Login"));
 const SignupPage = React.lazy(() => import("@/pages/Signup"));
 const DashboardLayout = React.lazy(() => import("@/layouts/Dashboard"));
+const AboutUsPage = React.lazy(() => import("@/pages/AboutUs"));
+const CustomerServicePage = React.lazy(() => import("@/pages/CustomerService"));
 const OverviewDashboardPage = React.lazy(
   () => import("@/pages/OverviewDashboard"),
 );
@@ -135,6 +137,8 @@ function App() {
               }
             />
             <Route path="employees" element={<EmployeeDashboardPage />} />
+            <Route path="about-us" element={<AboutUsPage />} />
+            <Route path="customer-service" element={<CustomerServicePage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

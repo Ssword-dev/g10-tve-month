@@ -9,15 +9,20 @@ import { TableToolButton } from "./TableToolButton";
 
 interface FilterEmployeesButtonProps {
   allowedFields?: Array<keyof Employee>;
+  onFilterApply?: (filter: FilterEmployeesPayload) => void;
 }
 
-export function FilterEmployeesButton({ allowedFields }: FilterEmployeesButtonProps) {
+export function FilterEmployeesButton({
+  allowedFields,
+  onFilterApply,
+}: FilterEmployeesButtonProps) {
   const [open, setOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterEmployeesPayload>(defaultEmployeeFilter);
 
   const handleApplyFilter = (filter: FilterEmployeesPayload) => {
     setActiveFilter(filter);
     filterEmployeesQuery.refresh(filter);
+    onFilterApply?.(filter);
     setOpen(false);
   };
 

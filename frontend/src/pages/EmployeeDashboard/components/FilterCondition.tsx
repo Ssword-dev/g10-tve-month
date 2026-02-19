@@ -76,7 +76,10 @@ export function FilterCondition({ id, filter, onChange, onRemove }: FilterCondit
               variant={filter.null ? "default" : "outline"}
               size="sm"
               onClick={toggleNull}
-              className={cn("text-xs", filter.null && "bg-primary text-primary-foreground")}
+              className={cn(
+                "px-2 py-1 text-xs",
+                filter.null && "bg-primary text-primary-foreground",
+              )}
             >
               {filter.null?.is_null ? "IS NULL" : filter.null ? "NOT NULL" : "Nullable"}
             </Button>
@@ -85,7 +88,7 @@ export function FilterCondition({ id, filter, onChange, onRemove }: FilterCondit
               variant="ghost"
               size="sm"
               onClick={onRemove}
-              className="ml-auto text-muted-foreground hover:text-destructive"
+              className="ml-auto px-2 py-1 text-muted-foreground hover:text-destructive"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -131,7 +134,7 @@ export function FilterCondition({ id, filter, onChange, onRemove }: FilterCondit
                     variant="ghost"
                     size="sm"
                     onClick={() => removeComparison(idx)}
-                    className="text-muted-foreground hover:text-destructive"
+                    className="px-2 py-1 text-muted-foreground hover:text-destructive"
                   >
                     <X className="h-3 w-3" />
                   </Button>
@@ -143,7 +146,7 @@ export function FilterCondition({ id, filter, onChange, onRemove }: FilterCondit
                 variant="ghost"
                 size="sm"
                 onClick={addComparison}
-                className="text-xs text-primary"
+                className="px-2 py-1 text-xs text-primary"
               >
                 + Add condition
               </Button>

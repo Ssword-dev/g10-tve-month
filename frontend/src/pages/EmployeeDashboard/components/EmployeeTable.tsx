@@ -3,12 +3,14 @@ import type { Employee } from "@/domain/employees/types";
 import Badge from "@/components/Badge";
 import Button from "@/components/Button";
 import Text from "@/components/Text";
+import { employeeFields } from "./filterBuilderShared";
 
 interface EmployeeTableProps {
   employees: Employee[];
   isLoading: boolean;
   error: Error | null;
   showSensitiveFields: boolean;
+  includeOrder?: Array<keyof Employee> | "ALL";
   onRetry: () => void;
   onSelect: (employeeNumber: number) => void;
 }
@@ -18,6 +20,7 @@ export function EmployeeTable({
   isLoading,
   error,
   showSensitiveFields,
+  includeOrder,
   onRetry,
   onSelect,
 }: EmployeeTableProps) {
@@ -36,33 +39,90 @@ export function EmployeeTable({
       </div>
     );
 
-  const hasEmployeeNumber = employees.some((employee) => employee.employee_number != null);
-  const hasName =
-    employees.some((employee) => employee.last_name != null) ||
-    employees.some((employee) => employee.first_name != null) ||
-    employees.some((employee) => employee.middle_name != null);
-  const hasEmail = showSensitiveFields && employees.some((employee) => employee.deped_email != null);
-  const hasDesignation = employees.some((employee) => employee.designation != null);
-  const hasStatus = employees.some((employee) => employee.employment_status != null);
+  const presentFields = new Set<keyof Employee>();
+  for (const employee of employees) {
+    for (const key of Object.keys(employee) as Array<keyof Employee>) {
+      presentFields.add(key);
+    }
+  }
 
-  const visibleColumns = [
-    hasEmployeeNumber,
-    hasName,
-    hasEmail,
-    hasDesignation,
-    hasStatus,
-  ].filter(Boolean).length;
+  const defaultVisibleFields = employeeFields.filter((field) => {
+    if (!presentFields.has(field.value)) {
+      return false;
+    }
+
+    if (field.value === "deped_email" && !showSensitiveFields) {
+      return false;
+    }
+
+    return true;
+  });
+
+  const visibleFields =
+    includeOrder && includeOrder !== "ALL"
+      ? includeOrder
+          .map((field) =>
+            employeeFields.find((meta) => meta.value === field),
+          )
+          .filter((field): field is (typeof employeeFields)[number] => {
+            if (!field) {
+              return false;
+            }
+
+            if (!presentFields.has(field.value)) {
+              return false;
+            }
+
+            if (field.value === "deped_email" && !showSensitiveFields) {
+              return false;
+            }
+
+            return true;
+          })
+      : defaultVisibleFields;
+
+  const visibleColumns = Math.max(visibleFields.length, 1);
+
+  const renderCell = (employee: Employee, field: keyof Employee) => {
+    const value = employee[field];
+
+    if (field === "employee_number") {
+      if (typeof value === "number") {
+        return <span className="text-primary">{value}</span>;
+      }
+
+      return <Text className="text-muted-foreground">N/A</Text>;
+    }
+
+    if (field === "employment_status") {
+      return (
+        <Badge className="rounded-full bg-success/20 px-2.5 py-1 text-xs text-success">
+          {value == null || value === "" ? "N/A" : String(value)}
+        </Badge>
+      );
+    }
+
+    if (field === "salary" && typeof value === "number") {
+      return value.toLocaleString();
+    }
+
+    if (field === "courses") {
+      return Array.isArray(value) ? value.length : "N/A";
+    }
+
+    return value == null || value === "" ? "N/A" : String(value);
+  };
 
   return (
     <div className="h-full min-h-0 min-w-0 overflow-x-scroll overflow-y-scroll">
       <table className="w-full text-left text-sm">
         <thead>
           <tr className="border-border/70 border-b text-muted-foreground">
-            {hasEmployeeNumber ? <th className="py-2 pr-4 font-medium">Employee #</th> : null}
-            {hasName ? <th className="py-2 pr-4 font-medium">Full Name</th> : null}
-            {hasEmail ? <th className="py-2 pr-4 font-medium">Email</th> : null}
-            {hasDesignation ? <th className="py-2 pr-4 font-medium">Designation</th> : null}
-            {hasStatus ? <th className="py-2 pr-4 font-medium">Status</th> : null}
+            {visibleFields.map((field) => (
+              <th key={field.value} className="py-2 pr-4 font-medium">
+                {field.label}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
@@ -79,43 +139,18 @@ export function EmployeeTable({
           {employees.map((employee, index) => (
             <tr
               key={employee.employee_number ?? `${index}-${employee.last_name ?? "employee"}`}
-              className="border-border/70 border-b align-top last:border-b-0"
+              className="border-border/70 cursor-pointer border-b align-top hover:bg-muted/30 last:border-b-0"
+              onClick={() => {
+                if (typeof employee.employee_number === "number") {
+                  onSelect(employee.employee_number);
+                }
+              }}
             >
-              {hasEmployeeNumber ? (
-                <td className="py-3 pr-4">
-                  {employee.employee_number != null ? (
-                    <button
-                      className="text-primary cursor-help text-left hover:underline"
-                      onClick={() => onSelect(employee.employee_number)}
-                    >
-                      {employee.employee_number}
-                    </button>
-                  ) : (
-                    <Text className="text-muted-foreground">N/A</Text>
-                  )}
+              {visibleFields.map((field) => (
+                <td key={`${field.value}-${index}`} className="py-3 pr-4">
+                  {renderCell(employee, field.value)}
                 </td>
-              ) : null}
-              {hasName ? (
-                <td className="py-3 pr-4">
-                  <Text weight="medium" className="leading-tight">
-                    {employee.last_name ?? "N/A"}, {employee.first_name ?? "N/A"}{" "}
-                    {employee.middle_name ?? ""}
-                  </Text>
-                </td>
-              ) : null}
-              {hasEmail ? (
-                <td className="py-3 pr-4">{employee.deped_email ?? "N/A"}</td>
-              ) : null}
-              {hasDesignation ? (
-                <td className="py-3 pr-4">{employee.designation ?? "N/A"}</td>
-              ) : null}
-              {hasStatus ? (
-                <td className="py-3 pr-4">
-                  <Badge className="rounded-full bg-success/20 px-2.5 py-1 text-xs text-success">
-                    {employee.employment_status ?? "N/A"}
-                  </Badge>
-                </td>
-              ) : null}
+              ))}
             </tr>
           ))}
         </tbody>

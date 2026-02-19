@@ -27,6 +27,7 @@ type Employee = {
   date_of_birth: string;
   salary_grade: number;
   salary: number | null;
+  age: number | null;
   employment_status: string;
   tin: string;
   place_of_birth: string;

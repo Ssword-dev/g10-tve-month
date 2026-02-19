@@ -1,5 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { Plus, X } from "lucide-react";
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 
 import type {
   AnyFieldFilter,
@@ -28,6 +42,7 @@ import {
 } from "./filterBuilderShared";
 import { defaultEmployeeFilter } from "../queries";
 import { SortField } from "./SortField";
+import { SortableItem } from "./SortableItem";
 
 type NullMode = "is_not_null" | "is_null" | "nullable";
 
@@ -46,6 +61,12 @@ type ColumnFilterState = {
   rules: RuleState[];
 };
 
+type SortRuleState = {
+  id: string;
+  basis: keyof Employee;
+  direction: "asc" | "desc";
+};
+
 interface FilterModalProps {
   open: boolean;
   onClose: () => void;
@@ -56,18 +77,42 @@ interface FilterModalProps {
 
 const createRule = (fieldType: EmployeeFieldType): RuleState => {
   if (fieldType === "number") {
-    return { id: crypto.randomUUID(), operator: "gte", value: "", valueTo: "", valuesCsv: "" };
+    return {
+      id: crypto.randomUUID(),
+      operator: "gte",
+      value: "",
+      valueTo: "",
+      valuesCsv: "",
+    };
   }
 
   if (fieldType === "date") {
-    return { id: crypto.randomUUID(), operator: "gte", value: "", valueTo: "", valuesCsv: "" };
+    return {
+      id: crypto.randomUUID(),
+      operator: "gte",
+      value: "",
+      valueTo: "",
+      valuesCsv: "",
+    };
   }
 
   if (fieldType === "boolean") {
-    return { id: crypto.randomUUID(), operator: "eq", value: "true", valueTo: "", valuesCsv: "" };
+    return {
+      id: crypto.randomUUID(),
+      operator: "eq",
+      value: "true",
+      valueTo: "",
+      valuesCsv: "",
+    };
   }
 
-  return { id: crypto.randomUUID(), operator: "startsWith", value: "", valueTo: "", valuesCsv: "" };
+  return {
+    id: crypto.randomUUID(),
+    operator: "startsWith",
+    value: "",
+    valueTo: "",
+    valuesCsv: "",
+  };
 };
 
 const getFieldMeta = (field: keyof Employee) =>
@@ -121,7 +166,17 @@ function toComparison(rule: RuleState, fieldType: EmployeeFieldType) {
   return { type: rule.operator, operand: rule.value.trim() };
 }
 
-const defaultFields: FilterEmployeesPayload["fields"] = defaultEmployeeFilter.fields;
+const defaultFields: FilterEmployeesPayload["fields"] =
+  defaultEmployeeFilter.fields;
+
+const normalizeSortRules = (
+  rules: NonNullable<FilterEmployeesPayload["sort"]>,
+): SortRuleState[] =>
+  rules.map((rule) => ({
+    id: crypto.randomUUID(),
+    basis: rule.basis,
+    direction: rule.direction,
+  }));
 
 export function FilterModal({
   open,
@@ -134,8 +189,14 @@ export function FilterModal({
     initialFilter?.fields ?? defaultFields,
   );
   const [columnFilters, setColumnFilters] = useState<ColumnFilterState[]>([]);
-  const [sortRules, setSortRules] = useState<NonNullable<FilterEmployeesPayload["sort"]>>(
-    initialFilter?.sort ?? defaultEmployeeFilter.sort ?? [],
+  const [sortRules, setSortRules] = useState<SortRuleState[]>(
+    normalizeSortRules(initialFilter?.sort ?? defaultEmployeeFilter.sort ?? []),
+  );
+  const sortSensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
   );
   const availableFields = useMemo(() => {
     if (!allowedFields || allowedFields.length === 0) {
@@ -162,12 +223,8 @@ export function FilterModal({
         current.include === "ALL"
           ? "ALL"
           : current.include.filter((field) => allowed.has(field));
-      const nextExclude =
-        current.exclude === "NONE"
-          ? "NONE"
-          : current.exclude.filter((field) => allowed.has(field));
 
-      return { include: nextInclude, exclude: nextExclude };
+      return { include: nextInclude, exclude: "NONE" };
     });
 
     setSortRules((current) =>
@@ -200,19 +257,29 @@ export function FilterModal({
   };
 
   const removeColumnFilter = (id: string) => {
-    setColumnFilters((current) => current.filter((columnFilter) => columnFilter.id !== id));
+    setColumnFilters((current) =>
+      current.filter((columnFilter) => columnFilter.id !== id),
+    );
   };
 
-  const updateColumnFilter = (id: string, updater: (current: ColumnFilterState) => ColumnFilterState) => {
+  const updateColumnFilter = (
+    id: string,
+    updater: (current: ColumnFilterState) => ColumnFilterState,
+  ) => {
     setColumnFilters((current) =>
-      current.map((columnFilter) => (columnFilter.id === id ? updater(columnFilter) : columnFilter)),
+      current.map((columnFilter) =>
+        columnFilter.id === id ? updater(columnFilter) : columnFilter,
+      ),
     );
   };
 
   const addRule = (columnId: string) => {
     updateColumnFilter(columnId, (columnFilter) => {
       const meta = getFieldMeta(columnFilter.field);
-      return { ...columnFilter, rules: [...columnFilter.rules, createRule(meta.type)] };
+      return {
+        ...columnFilter,
+        rules: [...columnFilter.rules, createRule(meta.type)],
+      };
     });
   };
 
@@ -221,65 +288,94 @@ export function FilterModal({
       const nextRules = columnFilter.rules.filter((rule) => rule.id !== ruleId);
       return {
         ...columnFilter,
-        rules: nextRules.length > 0 ? nextRules : [createRule(getFieldMeta(columnFilter.field).type)],
+        rules:
+          nextRules.length > 0
+            ? nextRules
+            : [createRule(getFieldMeta(columnFilter.field).type)],
       };
     });
   };
 
   const addSortRule = () => {
-    const nextField = availableFields.find((field) => !usedSortFields.has(field.value));
+    const nextField = availableFields.find(
+      (field) => !usedSortFields.has(field.value),
+    );
     if (!nextField) {
       return;
     }
 
     setSortRules((current) => [
       ...current,
-      { basis: nextField.value, direction: "asc" },
+      { id: crypto.randomUUID(), basis: nextField.value, direction: "asc" },
     ]);
   };
 
   const updateSortRule = (
-    index: number,
+    id: string,
     basis: keyof Employee,
     direction: "asc" | "desc",
   ) => {
     setSortRules((current) =>
-      current.map((rule, ruleIndex) =>
-        ruleIndex === index ? { basis, direction } : rule,
+      current.map((rule) =>
+        rule.id === id ? { ...rule, basis, direction } : rule,
       ),
     );
   };
 
-  const removeSortRule = (index: number) => {
-    setSortRules((current) => current.filter((_, ruleIndex) => ruleIndex !== index));
+  const removeSortRule = (id: string) => {
+    setSortRules((current) =>
+      current.filter((rule) => rule.id !== id),
+    );
+  };
+
+  const reorderSortRules = (activeId: string, overId: string) => {
+    if (activeId === overId) return;
+
+    setSortRules((current) => {
+      const oldIndex = current.findIndex((rule) => rule.id === activeId);
+      const newIndex = current.findIndex((rule) => rule.id === overId);
+
+      if (oldIndex === -1 || newIndex === -1) {
+        return current;
+      }
+
+      return arrayMove(current, oldIndex, newIndex);
+    });
   };
 
   const toggleIncludeColumn = (field: keyof Employee) => {
-    const currentInclude = fields.include === "ALL" ? [] : fields.include;
-    const nextInclude = currentInclude.includes(field)
-      ? currentInclude.filter((item) => item !== field)
-      : [...currentInclude, field];
+    setFields((current) => {
+      const currentInclude = current.include === "ALL" ? [] : current.include;
+      const isSelected = currentInclude.includes(field);
+      const nextInclude = isSelected
+        ? currentInclude.filter((item) => item !== field)
+        : [...currentInclude, field];
 
-    setFields({ include: nextInclude.length === 0 ? "ALL" : nextInclude, exclude: "NONE" });
+      return {
+        include: nextInclude.length === 0 ? "ALL" : nextInclude,
+        exclude: "NONE",
+      };
+    });
   };
 
-  const toggleExcludeColumn = (field: keyof Employee) => {
-    const currentExclude = fields.exclude === "NONE" ? [] : fields.exclude;
-    const nextExclude = currentExclude.includes(field)
-      ? currentExclude.filter((item) => item !== field)
-      : [...currentExclude, field];
-
-    setFields({ include: "ALL", exclude: nextExclude.length === 0 ? "NONE" : nextExclude });
-  };
-
-  const buildColumnExpression = (columnFilter: ColumnFilterState): FilterExpression | null => {
+  const buildColumnExpression = (
+    columnFilter: ColumnFilterState,
+  ): FilterExpression | null => {
     const meta = getFieldMeta(columnFilter.field);
     const comparisons = columnFilter.rules
       .map((rule) => toComparison(rule, meta.type))
-      .filter((comparison): comparison is NonNullable<AnyFieldFilter["comparisons"]>[number] => comparison !== null);
+      .filter(
+        (
+          comparison,
+        ): comparison is NonNullable<AnyFieldFilter["comparisons"]>[number] =>
+          comparison !== null,
+      );
 
     if (columnFilter.nullMode === "is_null") {
-      return { field: columnFilter.field, null: { is_null: true } } as AnyFieldFilter;
+      return {
+        field: columnFilter.field,
+        null: { is_null: true },
+      } as AnyFieldFilter;
     }
 
     if (columnFilter.nullMode === "nullable") {
@@ -289,13 +385,19 @@ export function FilterModal({
         type: "or",
         filters: [
           { field: columnFilter.field, comparisons } as AnyFieldFilter,
-          { field: columnFilter.field, null: { is_null: true } } as AnyFieldFilter,
+          {
+            field: columnFilter.field,
+            null: { is_null: true },
+          } as AnyFieldFilter,
         ],
       };
     }
 
     if (comparisons.length === 0) {
-      return { field: columnFilter.field, null: { is_null: false } } as AnyFieldFilter;
+      return {
+        field: columnFilter.field,
+        null: { is_null: false },
+      } as AnyFieldFilter;
     }
 
     return {
@@ -308,7 +410,9 @@ export function FilterModal({
   const handleApply = () => {
     const expressions = columnFilters
       .map(buildColumnExpression)
-      .filter((expression): expression is FilterExpression => expression !== null);
+      .filter(
+        (expression): expression is FilterExpression => expression !== null,
+      );
 
     const where =
       expressions.length === 0
@@ -319,13 +423,8 @@ export function FilterModal({
 
     const normalizedFields: FilterEmployeesPayload["fields"] = {
       include:
-        fields.include === "ALL"
-          ? "ALL"
-          : Array.from(new Set(["employee_number", ...fields.include])),
-      exclude:
-        fields.exclude === "NONE"
-          ? "NONE"
-          : fields.exclude.filter((field) => field !== "employee_number"),
+        fields.include === "ALL" ? "ALL" : Array.from(new Set(fields.include)),
+      exclude: "NONE",
     };
 
     onApply({
@@ -333,7 +432,7 @@ export function FilterModal({
       where,
       page: initialFilter?.page ?? 1,
       limit: initialFilter?.limit ?? 50,
-      sort: sortRules,
+      sort: sortRules.map(({ basis, direction }) => ({ basis, direction })),
     });
     onClose();
   };
@@ -341,7 +440,7 @@ export function FilterModal({
   const handleReset = () => {
     setFields(defaultFields);
     setColumnFilters([]);
-    setSortRules(defaultEmployeeFilter.sort ?? []);
+    setSortRules(normalizeSortRules(defaultEmployeeFilter.sort ?? []));
   };
 
   return (
@@ -349,45 +448,31 @@ export function FilterModal({
       <DialogContent className="h-[92vh] w-[96vw] max-w-6xl overflow-y-auto p-0">
         <Card className="flex h-full min-h-0 flex-col border-border bg-card p-0">
           <CardHeader className="border-b border-border px-6 py-4">
-            <CardTitle className="text-xl font-semibold text-foreground">Filters</CardTitle>
+            <CardTitle className="text-xl font-semibold text-foreground">
+              Filters
+            </CardTitle>
           </CardHeader>
 
           <CardContent className="grid min-h-0 flex-1 grid-cols-1 gap-4 overflow-y-auto px-6 py-4">
-            <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <section className="grid grid-cols-1 gap-4">
               <div className="rounded-lg border border-border bg-muted/20 p-3">
                 <Text size="sm" weight="semibold" className="mb-2">
                   Include Columns
                 </Text>
                 <div className="grid max-h-52 grid-cols-2 gap-2 overflow-y-auto">
                   {availableFields.map((field) => {
-                    const selected = fields.include !== "ALL" && fields.include.includes(field.value);
+                    const selected =
+                      fields.include !== "ALL" &&
+                      fields.include.includes(field.value);
                     return (
-                      <label key={`include-${field.value}`} className="flex items-center gap-2 rounded-md p-2 hover:bg-muted/50">
+                      <label
+                        key={`include-${field.value}`}
+                        className="flex items-center gap-2 rounded-md p-2 hover:bg-muted/50"
+                      >
                         <input
                           type="checkbox"
                           checked={selected}
                           onChange={() => toggleIncludeColumn(field.value)}
-                        />
-                        <span className="text-xs">{field.label}</span>
-                      </label>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="rounded-lg border border-border bg-muted/20 p-3">
-                <Text size="sm" weight="semibold" className="mb-2">
-                  Exclude Columns
-                </Text>
-                <div className="grid max-h-52 grid-cols-2 gap-2 overflow-y-auto">
-                  {availableFields.map((field) => {
-                    const selected = fields.exclude !== "NONE" && fields.exclude.includes(field.value);
-                    return (
-                      <label key={`exclude-${field.value}`} className="flex items-center gap-2 rounded-md p-2 hover:bg-muted/50">
-                        <input
-                          type="checkbox"
-                          checked={selected}
-                          onChange={() => toggleExcludeColumn(field.value)}
                         />
                         <span className="text-xs">{field.label}</span>
                       </label>
@@ -400,7 +485,13 @@ export function FilterModal({
             <section className="rounded-lg border border-border bg-card p-4">
               <div className="mb-3 flex items-center justify-between">
                 <Text weight="semibold">Column Filters (AND)</Text>
-                <Button type="button" size="sm" onClick={addColumnFilter} disabled={usedFields.size >= availableFields.length}>
+                <Button
+                  type="button"
+                  size="sm"
+                  className="px-2 py-1"
+                  onClick={addColumnFilter}
+                  disabled={usedFields.size >= availableFields.length}
+                >
                   <Plus className="mr-1 h-4 w-4" />
                   Add Column
                 </Button>
@@ -417,12 +508,16 @@ export function FilterModal({
                     const operators = getOperators(meta.type);
 
                     return (
-                      <div key={columnFilter.id} className="space-y-3 rounded-md border border-border bg-muted/15 p-3">
+                      <div
+                        key={columnFilter.id}
+                        className="space-y-3 rounded-md border border-border bg-muted/15 p-3"
+                      >
                         <div className="flex flex-wrap items-center gap-2">
                           <select
                             value={columnFilter.field}
                             onChange={(event) => {
-                              const nextField = event.target.value as keyof Employee;
+                              const nextField = event.target
+                                .value as keyof Employee;
                               updateColumnFilter(columnFilter.id, () => {
                                 const nextMeta = getFieldMeta(nextField);
                                 return {
@@ -436,9 +531,15 @@ export function FilterModal({
                             className="rounded-md border border-border bg-background px-3 py-1.5 text-sm"
                           >
                             {availableFields.map((field) => {
-                              const usedByOther = usedFields.has(field.value) && field.value !== columnFilter.field;
+                              const usedByOther =
+                                usedFields.has(field.value) &&
+                                field.value !== columnFilter.field;
                               return (
-                                <option key={field.value} value={field.value} disabled={usedByOther}>
+                                <option
+                                  key={field.value}
+                                  value={field.value}
+                                  disabled={usedByOther}
+                                >
                                   {field.label}
                                 </option>
                               );
@@ -448,23 +549,34 @@ export function FilterModal({
                           <select
                             value={columnFilter.nullMode}
                             onChange={(event) =>
-                              updateColumnFilter(columnFilter.id, (current) => ({
-                                ...current,
-                                nullMode: event.target.value as NullMode,
-                              }))
+                              updateColumnFilter(
+                                columnFilter.id,
+                                (current) => ({
+                                  ...current,
+                                  nullMode: event.target.value as NullMode,
+                                }),
+                              )
                             }
                             className="rounded-md border border-border bg-background px-3 py-1.5 text-sm"
                           >
-                            <option value="is_not_null">is not null (default)</option>
-                            {meta.nullable && <option value="nullable">nullable (allow unknown)</option>}
-                            {meta.nullable && <option value="is_null">is null only</option>}
+                            <option value="is_not_null">
+                              is not null (default)
+                            </option>
+                            {meta.nullable && (
+                              <option value="nullable">
+                                nullable (allow unknown)
+                              </option>
+                            )}
+                            {meta.nullable && (
+                              <option value="is_null">is null only</option>
+                            )}
                           </select>
 
                           <Button
                             type="button"
                             variant="ghost"
                             size="sm"
-                            className="ml-auto text-muted-foreground hover:text-destructive"
+                            className="ml-auto px-2 py-1 text-muted-foreground hover:text-destructive"
                             onClick={() => removeColumnFilter(columnFilter.id)}
                           >
                             <X className="h-4 w-4" />
@@ -472,29 +584,38 @@ export function FilterModal({
                         </div>
 
                         {columnFilter.rules.map((rule) => (
-                          <div key={rule.id} className="flex flex-wrap items-center gap-2">
+                          <div
+                            key={rule.id}
+                            className="flex flex-wrap items-center gap-2"
+                          >
                             <select
                               value={rule.operator}
                               onChange={(event) =>
-                                updateColumnFilter(columnFilter.id, (current) => ({
-                                  ...current,
-                                  rules: current.rules.map((entry) =>
-                                    entry.id === rule.id
-                                      ? {
-                                          ...entry,
-                                          operator: event.target.value,
-                                          value: "",
-                                          valueTo: "",
-                                          valuesCsv: "",
-                                        }
-                                      : entry,
-                                  ),
-                                }))
+                                updateColumnFilter(
+                                  columnFilter.id,
+                                  (current) => ({
+                                    ...current,
+                                    rules: current.rules.map((entry) =>
+                                      entry.id === rule.id
+                                        ? {
+                                            ...entry,
+                                            operator: event.target.value,
+                                            value: "",
+                                            valueTo: "",
+                                            valuesCsv: "",
+                                          }
+                                        : entry,
+                                    ),
+                                  }),
+                                )
                               }
                               className="rounded-md border border-border bg-background px-3 py-1.5 text-sm"
                             >
                               {operators.map((operator) => (
-                                <option key={operator.value} value={operator.value}>
+                                <option
+                                  key={operator.value}
+                                  value={operator.value}
+                                >
                                   {operator.label}
                                 </option>
                               ))}
@@ -503,28 +624,48 @@ export function FilterModal({
                             {rule.operator === "between" ? (
                               <>
                                 <Input
-                                  type={meta.type === "date" ? "date" : "number"}
+                                  type={
+                                    meta.type === "date" ? "date" : "number"
+                                  }
                                   value={rule.value}
                                   onChange={(event) =>
-                                    updateColumnFilter(columnFilter.id, (current) => ({
-                                      ...current,
-                                      rules: current.rules.map((entry) =>
-                                        entry.id === rule.id ? { ...entry, value: event.target.value } : entry,
-                                      ),
-                                    }))
+                                    updateColumnFilter(
+                                      columnFilter.id,
+                                      (current) => ({
+                                        ...current,
+                                        rules: current.rules.map((entry) =>
+                                          entry.id === rule.id
+                                            ? {
+                                                ...entry,
+                                                value: event.target.value,
+                                              }
+                                            : entry,
+                                        ),
+                                      }),
+                                    )
                                   }
                                   className="w-36"
                                 />
                                 <Input
-                                  type={meta.type === "date" ? "date" : "number"}
+                                  type={
+                                    meta.type === "date" ? "date" : "number"
+                                  }
                                   value={rule.valueTo}
                                   onChange={(event) =>
-                                    updateColumnFilter(columnFilter.id, (current) => ({
-                                      ...current,
-                                      rules: current.rules.map((entry) =>
-                                        entry.id === rule.id ? { ...entry, valueTo: event.target.value } : entry,
-                                      ),
-                                    }))
+                                    updateColumnFilter(
+                                      columnFilter.id,
+                                      (current) => ({
+                                        ...current,
+                                        rules: current.rules.map((entry) =>
+                                          entry.id === rule.id
+                                            ? {
+                                                ...entry,
+                                                valueTo: event.target.value,
+                                              }
+                                            : entry,
+                                        ),
+                                      }),
+                                    )
                                   }
                                   className="w-36"
                                 />
@@ -533,12 +674,20 @@ export function FilterModal({
                               <Input
                                 value={rule.valuesCsv}
                                 onChange={(event) =>
-                                  updateColumnFilter(columnFilter.id, (current) => ({
-                                    ...current,
-                                    rules: current.rules.map((entry) =>
-                                      entry.id === rule.id ? { ...entry, valuesCsv: event.target.value } : entry,
-                                    ),
-                                  }))
+                                  updateColumnFilter(
+                                    columnFilter.id,
+                                    (current) => ({
+                                      ...current,
+                                      rules: current.rules.map((entry) =>
+                                        entry.id === rule.id
+                                          ? {
+                                              ...entry,
+                                              valuesCsv: event.target.value,
+                                            }
+                                          : entry,
+                                      ),
+                                    }),
+                                  )
                                 }
                                 placeholder="value1, value2"
                                 className="min-w-56"
@@ -547,12 +696,20 @@ export function FilterModal({
                               <select
                                 value={rule.value}
                                 onChange={(event) =>
-                                  updateColumnFilter(columnFilter.id, (current) => ({
-                                    ...current,
-                                    rules: current.rules.map((entry) =>
-                                      entry.id === rule.id ? { ...entry, value: event.target.value } : entry,
-                                    ),
-                                  }))
+                                  updateColumnFilter(
+                                    columnFilter.id,
+                                    (current) => ({
+                                      ...current,
+                                      rules: current.rules.map((entry) =>
+                                        entry.id === rule.id
+                                          ? {
+                                              ...entry,
+                                              value: event.target.value,
+                                            }
+                                          : entry,
+                                      ),
+                                    }),
+                                  )
                                 }
                                 className="rounded-md border border-border bg-background px-3 py-1.5 text-sm"
                               >
@@ -561,15 +718,29 @@ export function FilterModal({
                               </select>
                             ) : (
                               <Input
-                                type={meta.type === "number" ? "number" : meta.type === "date" ? "date" : "text"}
+                                type={
+                                  meta.type === "number"
+                                    ? "number"
+                                    : meta.type === "date"
+                                      ? "date"
+                                      : "text"
+                                }
                                 value={rule.value}
                                 onChange={(event) =>
-                                  updateColumnFilter(columnFilter.id, (current) => ({
-                                    ...current,
-                                    rules: current.rules.map((entry) =>
-                                      entry.id === rule.id ? { ...entry, value: event.target.value } : entry,
-                                    ),
-                                  }))
+                                  updateColumnFilter(
+                                    columnFilter.id,
+                                    (current) => ({
+                                      ...current,
+                                      rules: current.rules.map((entry) =>
+                                        entry.id === rule.id
+                                          ? {
+                                              ...entry,
+                                              value: event.target.value,
+                                            }
+                                          : entry,
+                                      ),
+                                    }),
+                                  )
                                 }
                                 className="w-56"
                               />
@@ -579,8 +750,10 @@ export function FilterModal({
                               type="button"
                               variant="ghost"
                               size="sm"
-                              className="text-muted-foreground hover:text-destructive"
-                              onClick={() => removeRule(columnFilter.id, rule.id)}
+                              className="px-2 py-1 text-muted-foreground hover:text-destructive"
+                              onClick={() =>
+                                removeRule(columnFilter.id, rule.id)
+                              }
                             >
                               <X className="h-4 w-4" />
                             </Button>
@@ -591,6 +764,7 @@ export function FilterModal({
                           type="button"
                           size="sm"
                           variant="outline"
+                          className="px-2 py-1"
                           onClick={() => addRule(columnFilter.id)}
                         >
                           <Plus className="mr-1 h-4 w-4" />
@@ -610,6 +784,7 @@ export function FilterModal({
                   type="button"
                   size="sm"
                   variant="outline"
+                  className="px-2 py-1"
                   onClick={addSortRule}
                   disabled={usedSortFields.size >= availableFields.length}
                 >
@@ -624,18 +799,37 @@ export function FilterModal({
                     No sort rules added. Backend default ordering will be used.
                   </Text>
                 ) : (
-                  sortRules.map((rule, index) => (
-                    <SortField
-                      key={`${rule.basis}-${index}`}
-                      allowedFields={availableFields.map((field) => field.value)}
-                      basis={rule.basis}
-                      direction={rule.direction}
-                      onChange={(basis, direction) =>
-                        updateSortRule(index, basis, direction)
-                      }
-                      onRemove={() => removeSortRule(index)}
-                    />
-                  ))
+                  <DndContext
+                    sensors={sortSensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={({ active, over }) => {
+                      if (!over) return;
+                      reorderSortRules(String(active.id), String(over.id));
+                    }}
+                  >
+                    <SortableContext
+                      items={sortRules.map((rule) => rule.id)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      <div className="space-y-2">
+                        {sortRules.map((rule) => (
+                          <SortableItem key={rule.id} id={rule.id}>
+                            <SortField
+                              allowedFields={availableFields.map(
+                                (field) => field.value,
+                              )}
+                              basis={rule.basis}
+                              direction={rule.direction}
+                              onChange={(basis, direction) =>
+                                updateSortRule(rule.id, basis, direction)
+                              }
+                              onRemove={() => removeSortRule(rule.id)}
+                            />
+                          </SortableItem>
+                        ))}
+                      </div>
+                    </SortableContext>
+                  </DndContext>
                 )}
               </div>
             </section>
@@ -643,10 +837,15 @@ export function FilterModal({
 
           <CardAction className="border-t border-border px-6 py-4">
             <div className="ml-auto flex items-center gap-3">
-              <Button type="button" variant="outline" onClick={handleReset}>
+              <Button
+                type="button"
+                variant="outline"
+                className="px-2 py-1"
+                onClick={handleReset}
+              >
                 Reset
               </Button>
-              <Button type="button" onClick={handleApply}>
+              <Button type="button" className="px-2 py-1" onClick={handleApply}>
                 Apply Filters
               </Button>
             </div>

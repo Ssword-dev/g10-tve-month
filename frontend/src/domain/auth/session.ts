@@ -59,6 +59,7 @@ function getFilterableEmployeeFields(role: AuthRole): EmployeeField[] {
       "date_of_birth",
       "salary_grade",
       "salary",
+      "age",
       "employment_status",
       "tin",
       "place_of_birth",

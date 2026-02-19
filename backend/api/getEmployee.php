@@ -34,10 +34,27 @@ if ($employee_number <= 0) {
 
 // fetch employee
 $employeeStatement = $db->prepare("
-    SELECT 
+    SELECT
         e.employee_number,
         e.first_name,
-        e.last_name
+        e.middle_name,
+        e.last_name,
+        e.deped_email,
+        e.designation,
+        e.date_joined,
+        e.date_of_latest_promotion,
+        e.contact_number,
+        e.plantilla_number,
+        e.date_of_original_appointment,
+        e.bp_number,
+        e.address,
+        e.civil_status,
+        e.date_of_birth,
+        e.salary_grade,
+        e.salary,
+        e.employment_status,
+        e.tin,
+        e.place_of_birth
     FROM employees_table e
     WHERE e.employee_number = ?
     LIMIT 1

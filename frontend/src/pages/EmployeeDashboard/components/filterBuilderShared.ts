@@ -82,6 +82,7 @@ export const employeeFields: EmployeeFieldMeta[] = [
     nullable: true,
   },
   { value: "salary", label: "Salary", type: "number", nullable: true },
+  { value: "age", label: "Age", type: "number", nullable: true },
   {
     value: "employment_status",
     label: "Employment Status",

@@ -53,9 +53,14 @@ final class FilterParser
         'date_of_birth' => 'date',
         'salary_grade' => 'int',
         'salary' => 'int',
+        'age' => 'int',
         'employment_status' => 'string',
         'tin' => 'string',
         'place_of_birth' => 'string',
+    ];
+
+    private array $fieldSqlMap = [
+        'age' => 'TIMESTAMPDIFF(YEAR, date_of_birth, CURDATE())',
     ];
 
     public function __construct(array $allowedFields)
@@ -67,6 +72,11 @@ final class FilterParser
     public function getAllowedFields(): array
     {
         return $this->allowedFields;
+    }
+
+    public function resolveFieldSql(string $field): string
+    {
+        return $this->fieldSqlMap[$field] ?? $field;
     }
 
     public function parse(array $payload): ?array
@@ -139,13 +149,14 @@ final class FilterParser
         }
 
         $fieldType = $this->fieldTypes[$field] ?? 'string';
+        $sqlField = $this->resolveFieldSql($field);
 
         $parts = [];
         $params = [];
         $types = '';
 
         if (isset($filter['null']) && is_array($filter['null']) && array_key_exists('is_null', $filter['null'])) {
-            $parts[] = $field . ((bool)$filter['null']['is_null'] ? ' IS NULL' : ' IS NOT NULL');
+            $parts[] = $sqlField . ((bool)$filter['null']['is_null'] ? ' IS NULL' : ' IS NOT NULL');
         }
 
         if (isset($filter['comparisons']) && is_array($filter['comparisons'])) {
@@ -154,7 +165,7 @@ final class FilterParser
                     continue;
                 }
 
-                $parsed = $this->buildComparison($field, $fieldType, $comparison);
+                $parsed = $this->buildComparison($sqlField, $fieldType, $comparison);
                 if (!$parsed) {
                     continue;
                 }
@@ -176,7 +187,7 @@ final class FilterParser
         ];
     }
 
-    private function buildComparison(string $field, string $fieldType, array $comparison): ?array
+    private function buildComparison(string $sqlField, string $fieldType, array $comparison): ?array
     {
         $type = $comparison['type'] ?? null;
         if (!is_string($type)) {
@@ -192,7 +203,7 @@ final class FilterParser
                 }
 
                 return [
-                    'sql' => "$field BETWEEN ? AND ?",
+                    'sql' => "$sqlField BETWEEN ? AND ?",
                     'params' => [$from, $to],
                     'types' => 'ss',
                 ];
@@ -206,14 +217,14 @@ final class FilterParser
 
             if ($fieldType === 'int') {
                 return [
-                    'sql' => "$field BETWEEN ? AND ?",
+                    'sql' => "$sqlField BETWEEN ? AND ?",
                     'params' => [(int)$min, (int)$max],
                     'types' => 'ii',
                 ];
             }
 
             return [
-                'sql' => "$field BETWEEN ? AND ?",
+                'sql' => "$sqlField BETWEEN ? AND ?",
                 'params' => [(string)$min, (string)$max],
                 'types' => 'ss',
             ];
@@ -226,7 +237,7 @@ final class FilterParser
             }
 
             $placeholders = implode(', ', array_fill(0, count($operands), '?'));
-            $sql = "$field IN ($placeholders)";
+            $sql = "$sqlField IN ($placeholders)";
             $params = [];
             $types = '';
 
@@ -278,7 +289,7 @@ final class FilterParser
             };
 
             return [
-                'sql' => "$field $sqlOperator ?",
+                'sql' => "$sqlField $sqlOperator ?",
                 'params' => [$pattern],
                 'types' => 's',
             ];
@@ -290,7 +301,7 @@ final class FilterParser
             }
 
             return [
-                'sql' => "$field $sqlOperator ?",
+                'sql' => "$sqlField $sqlOperator ?",
                 'params' => [(int)$operand],
                 'types' => 'i',
             ];
@@ -298,14 +309,14 @@ final class FilterParser
 
         if ($fieldType === 'date') {
             return [
-                'sql' => "$field $sqlOperator ?",
+                'sql' => "$sqlField $sqlOperator ?",
                 'params' => [(string)$operand],
                 'types' => 's',
             ];
         }
 
         return [
-            'sql' => "$field $sqlOperator ?",
+            'sql' => "$sqlField $sqlOperator ?",
             'params' => [(string)$operand],
             'types' => 's',
         ];
@@ -316,12 +327,12 @@ $parser = new FilterParser($role === 'admin' ? [
     'employee_number', 'first_name', 'middle_name', 'last_name', 'deped_email',
     'designation', 'date_joined', 'date_of_latest_promotion', 'contact_number',
     'plantilla_number', 'date_of_original_appointment', 'bp_number', 'address',
-    'civil_status', 'date_of_birth', 'salary_grade', 'salary', 'employment_status',
+    'civil_status', 'date_of_birth', 'salary_grade', 'salary', 'age', 'employment_status',
     'tin', 'place_of_birth',
 ] : $guestAllowedFields);
 $parsedWhere = $parser->parse($input);
 
-$sql = 'SELECT * FROM employees_table';
+$sql = 'SELECT employees_table.*, TIMESTAMPDIFF(YEAR, date_of_birth, CURDATE()) AS age FROM employees_table';
 $params = [];
 $types = '';
 
@@ -350,7 +361,7 @@ if (isset($input['sort']) && is_array($input['sort']) && count($input['sort']) >
             $direction = 'ASC';
         }
 
-        $orderBy[] = "$basis $direction";
+        $orderBy[] = $parser->resolveFieldSql($basis) . ' ' . $direction;
     }
 
     if ($orderBy) {
@@ -415,6 +426,8 @@ $include = $fieldsInput['include'] ?? ($role === 'admin' ? 'ALL' : $allowed);
 $exclude = $fieldsInput['exclude'] ?? 'NONE';
 
 $employees = array_map(function (array $employee) use ($include, $exclude, $allowed, $role): array {
+    $employeeNumber = $employee['employee_number'] ?? null;
+
     // Guest users can only ever receive fields in the allowed subset.
     if ($role !== 'admin') {
         $employee = array_intersect_key($employee, array_flip($allowed));
@@ -432,6 +445,11 @@ $employees = array_map(function (array $employee) use ($include, $exclude, $allo
         foreach ($validExclude as $key) {
             unset($employee[$key]);
         }
+    }
+
+    // Always keep employee_number so row actions can resolve the selected employee.
+    if ($employeeNumber !== null) {
+        $employee['employee_number'] = $employeeNumber;
     }
 
     return $employee;
