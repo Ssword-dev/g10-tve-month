@@ -53,6 +53,7 @@ CREATE TABLE `admin_users_table` (
     FOREIGN KEY (`employee_number`) REFERENCES `employees_table`(`employee_number`)
 );
 
+-- Admin users view.
 CREATE OR REPLACE VIEW `admin_users_view` AS
 SELECT
     -- admin_users_table
@@ -82,3 +83,68 @@ SELECT
 FROM admin_users_table AS A
 INNER JOIN employees_table AS E
     ON E.employee_number = A.employee_number;
+
+-- Employee computed fields view.
+-- Contains persisted employee columns plus SQL-computed fields
+-- used by filtering/sorting APIs.
+CREATE OR REPLACE VIEW `employees_with_computed_view` AS
+SELECT
+    E.*,
+    TRIM(CONCAT_WS(' ', E.first_name, E.middle_name, E.last_name)) AS `full_name`
+FROM `employees_table` AS E;
+
+-- Designation Frequency Table (view)
+CREATE OR REPLACE VIEW `designation_frequency_table_view` AS
+SELECT `designation`, COUNT(*)
+FROM `employees_table`
+GROUP BY `designation`
+ORDER BY `designation`;
+
+-- Employment Status Distribution Table (view)
+CREATE OR REPLACE VIEW `employment_status_distribution_table_view` AS
+SELECT
+    COALESCE(NULLIF(`employment_status`, ''), 'Unspecified') AS `employment_status`,
+    COUNT(*) AS `occurrence`
+FROM `employees_table`
+GROUP BY COALESCE(NULLIF(`employment_status`, ''), 'Unspecified')
+ORDER BY `occurrence` DESC, `employment_status` ASC;
+
+-- Teaching employees summary view.
+CREATE OR REPLACE VIEW `teaching_employees_summary_view` AS
+SELECT
+    SUM(CASE WHEN E.designation LIKE '%Teacher%' THEN 1 ELSE 0 END) AS `teaching_staff`,
+    SUM(CASE WHEN E.designation LIKE '%Teacher%' AND E.designation LIKE '%JHS%' THEN 1 ELSE 0 END) AS `no_jhs_teachers`,
+    SUM(CASE WHEN E.designation LIKE '%Teacher%' AND E.designation LIKE '%SHS%' THEN 1 ELSE 0 END) AS `no_shs_teachers`,
+    SUM(CASE WHEN E.designation LIKE '%Teacher%' AND M.achiever_employee_number IS NOT NULL THEN 1 ELSE 0 END) AS `no_teachers_with_masters_degree`,
+    SUM(CASE WHEN E.designation LIKE '%Teacher%' AND D.achiever_employee_number IS NOT NULL THEN 1 ELSE 0 END) AS `no_teachers_with_doctorate_degree`
+FROM `employees_table` AS E
+LEFT JOIN (
+    SELECT DISTINCT `achiever_employee_number`
+    FROM `courses_table`
+    WHERE `degree_level` = 'master' AND `is_finished` = TRUE
+) AS M
+    ON M.achiever_employee_number = E.employee_number
+LEFT JOIN (
+    SELECT DISTINCT `achiever_employee_number`
+    FROM `courses_table`
+    WHERE `degree_level` = 'doctorate' AND `is_finished` = TRUE
+) AS D
+    ON D.achiever_employee_number = E.employee_number;
+
+CREATE OR REPLACE VIEW `non_teaching_employees_summary_view` AS
+SELECT
+    SUM(CASE WHEN E.designation NOT LIKE '%Teacher%' THEN 1 ELSE 0 END) AS `non_teaching_staff`,
+    SUM(CASE WHEN E.designation NOT LIKE '%Teacher%' AND E.designation LIKE '%JHS%' THEN 1 ELSE 0 END) AS `no_jhs_non_teaching_staff`,
+    SUM(CASE WHEN E.designation NOT LIKE '%Teacher%' AND E.designation LIKE '%SHS%' THEN 1 ELSE 0 END) AS `no_shs_non_teaching_staff`,
+    SUM(CASE WHEN E.designation NOT LIKE '%Teacher%' AND C.has_master = 1 THEN 1 ELSE 0 END) AS `no_non_teaching_staff_with_masters_degree`,
+    SUM(CASE WHEN E.designation NOT LIKE '%Teacher%' AND C.has_doctorate = 1 THEN 1 ELSE 0 END) AS `no_non_teaching_staff_with_doctorate_degree`
+FROM `employees_table` AS E
+LEFT JOIN (
+    SELECT
+        `achiever_employee_number`,
+        MAX(CASE WHEN `degree_level` = 'master' AND `is_finished` = TRUE THEN 1 ELSE 0 END) AS `has_master`,
+        MAX(CASE WHEN `degree_level` = 'doctorate' AND `is_finished` = TRUE THEN 1 ELSE 0 END) AS `has_doctorate`
+    FROM `courses_table`
+    GROUP BY `achiever_employee_number`
+) AS C
+    ON C.achiever_employee_number = E.employee_number;

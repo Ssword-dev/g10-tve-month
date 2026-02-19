@@ -23,6 +23,7 @@ $role = $isAuthenticatedAdmin ? 'admin' : 'guest';
 
 $guestAllowedFields = [
     'employee_number',
+    'full_name',
     'first_name',
     'middle_name',
     'last_name',
@@ -37,6 +38,7 @@ final class FilterParser
 
     private array $fieldTypes = [
         'employee_number' => 'int',
+        'full_name' => 'string',
         'first_name' => 'string',
         'middle_name' => 'string',
         'last_name' => 'string',
@@ -61,6 +63,7 @@ final class FilterParser
 
     private array $fieldSqlMap = [
         'age' => 'TIMESTAMPDIFF(YEAR, date_of_birth, CURDATE())',
+        'full_name' => 'full_name',
     ];
 
     public function __construct(array $allowedFields)
@@ -323,23 +326,131 @@ final class FilterParser
     }
 }
 
+function buildCourseFiltersClause(array $input): array
+{
+    $rawCourseFilters = $input['course_filters'] ?? null;
+    if (!is_array($rawCourseFilters) || count($rawCourseFilters) === 0) {
+        return ['sql' => '', 'params' => [], 'types' => ''];
+    }
+
+    $allowedModes = ['has_specific', 'has_any', 'only_has'];
+    $allowedDegreeLevels = ['bachelor', 'master', 'doctorate'];
+    $parts = [];
+    $params = [];
+    $types = '';
+    $employeeReference = 'employees_with_computed_view.employee_number';
+
+    foreach ($rawCourseFilters as $courseFilter) {
+        if (!is_array($courseFilter)) {
+            continue;
+        }
+
+        $mode = $courseFilter['mode'] ?? null;
+        $degreeLevel = $courseFilter['degree_level'] ?? null;
+        $courseName = trim((string)($courseFilter['course_name'] ?? ''));
+
+        if (!is_string($mode) || !in_array($mode, $allowedModes, true)) {
+            continue;
+        }
+
+        if (!is_string($degreeLevel) || !in_array($degreeLevel, $allowedDegreeLevels, true)) {
+            continue;
+        }
+
+        if ($mode === 'has_specific') {
+            if ($courseName === '') {
+                continue;
+            }
+
+            $parts[] = "
+                EXISTS (
+                    SELECT 1
+                    FROM courses_table c
+                    WHERE c.achiever_employee_number = $employeeReference
+                      AND c.degree_level = ?
+                      AND c.course_name LIKE ?
+                )
+            ";
+            $params[] = $degreeLevel;
+            $params[] = '%' . $courseName . '%';
+            $types .= 'ss';
+            continue;
+        }
+
+        if ($mode === 'has_any') {
+            $parts[] = "
+                EXISTS (
+                    SELECT 1
+                    FROM courses_table c
+                    WHERE c.achiever_employee_number = $employeeReference
+                      AND c.degree_level = ?
+                )
+            ";
+            $params[] = $degreeLevel;
+            $types .= 's';
+            continue;
+        }
+
+        $parts[] = "
+            EXISTS (
+                SELECT 1
+                FROM courses_table c_required
+                WHERE c_required.achiever_employee_number = $employeeReference
+                  AND c_required.degree_level = ?
+            )
+            AND NOT EXISTS (
+                SELECT 1
+                FROM courses_table c_other
+                WHERE c_other.achiever_employee_number = $employeeReference
+                  AND c_other.degree_level <> ?
+            )
+        ";
+        $params[] = $degreeLevel;
+        $params[] = $degreeLevel;
+        $types .= 'ss';
+    }
+
+    if (count($parts) === 0) {
+        return ['sql' => '', 'params' => [], 'types' => ''];
+    }
+
+    return [
+        'sql' => implode(' AND ', array_map(fn ($part) => '(' . trim($part) . ')', $parts)),
+        'params' => $params,
+        'types' => $types,
+    ];
+}
+
 $parser = new FilterParser($role === 'admin' ? [
-    'employee_number', 'first_name', 'middle_name', 'last_name', 'deped_email',
+    'employee_number', 'full_name', 'first_name', 'middle_name', 'last_name', 'deped_email',
     'designation', 'date_joined', 'date_of_latest_promotion', 'contact_number',
     'plantilla_number', 'date_of_original_appointment', 'bp_number', 'address',
     'civil_status', 'date_of_birth', 'salary_grade', 'salary', 'age', 'employment_status',
     'tin', 'place_of_birth',
 ] : $guestAllowedFields);
 $parsedWhere = $parser->parse($input);
+$courseFiltersClause = buildCourseFiltersClause($input);
 
-$sql = 'SELECT employees_table.*, TIMESTAMPDIFF(YEAR, date_of_birth, CURDATE()) AS age FROM employees_table';
+$sql = 'SELECT employees_with_computed_view.* FROM employees_with_computed_view';
 $params = [];
 $types = '';
 
-if ($parsedWhere) {
-    $sql .= ' WHERE ' . $parsedWhere['sql'];
-    $params = $parsedWhere['params'];
-    $types = $parsedWhere['types'];
+if ($parsedWhere || $courseFiltersClause['sql'] !== '') {
+    $whereParts = [];
+
+    if ($parsedWhere) {
+        $whereParts[] = '(' . $parsedWhere['sql'] . ')';
+        $params = array_merge($params, $parsedWhere['params']);
+        $types .= $parsedWhere['types'];
+    }
+
+    if ($courseFiltersClause['sql'] !== '') {
+        $whereParts[] = '(' . $courseFiltersClause['sql'] . ')';
+        $params = array_merge($params, $courseFiltersClause['params']);
+        $types .= $courseFiltersClause['types'];
+    }
+
+    $sql .= ' WHERE ' . implode(' AND ', $whereParts);
 }
 
 if (isset($input['sort']) && is_array($input['sort']) && count($input['sort']) > 0) {
@@ -415,7 +526,7 @@ while ($row = $result->fetch_assoc()) {
 $stmt->close();
 
 try {
-    $employees = with_employee_courses($db, $employees);
+    $employees = withComputed($db, $employees);
 } catch (RuntimeException $exception) {
     respond(type: 'error', message: $exception->getMessage(), statusCode: 500);
 }

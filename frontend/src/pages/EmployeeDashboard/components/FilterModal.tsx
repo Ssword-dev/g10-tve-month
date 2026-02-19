@@ -17,7 +17,9 @@ import {
 
 import type {
   AnyFieldFilter,
+  DegreeLevel,
   Employee,
+  CourseDegreeFilter,
   FilterEmployeesPayload,
   FilterExpression,
 } from "@/domain/employees/types";
@@ -43,6 +45,8 @@ import {
 import { defaultEmployeeFilter } from "../queries";
 import { SortField } from "./SortField";
 import { SortableItem } from "./SortableItem";
+import { FilterModalIncludeColumnsSection } from "./FilterModalIncludeColumnsSection";
+import { FilterModalCourseDegreeFiltersSection } from "./FilterModalCourseDegreeFiltersSection";
 
 type NullMode = "is_not_null" | "is_null" | "nullable";
 
@@ -65,6 +69,15 @@ type SortRuleState = {
   id: string;
   basis: keyof Employee;
   direction: "asc" | "desc";
+};
+
+type CourseFilterMode = "has_specific" | "has_any" | "only_has";
+
+type CourseFilterState = {
+  id: string;
+  mode: CourseFilterMode;
+  degree_level: DegreeLevel;
+  course_name: string;
 };
 
 interface FilterModalProps {
@@ -178,6 +191,18 @@ const normalizeSortRules = (
     direction: rule.direction,
   }));
 
+const normalizeCourseFilters = (
+  filters: NonNullable<FilterEmployeesPayload["course_filters"]>,
+): CourseFilterState[] =>
+  filters.map((filter) => ({
+    id: crypto.randomUUID(),
+    mode: filter.mode,
+    degree_level: filter.degree_level,
+    course_name: filter.course_name ?? "",
+  }));
+
+const degreeLevelOptions: DegreeLevel[] = ["bachelor", "master", "doctorate"];
+
 export function FilterModal({
   open,
   onClose,
@@ -191,6 +216,9 @@ export function FilterModal({
   const [columnFilters, setColumnFilters] = useState<ColumnFilterState[]>([]);
   const [sortRules, setSortRules] = useState<SortRuleState[]>(
     normalizeSortRules(initialFilter?.sort ?? defaultEmployeeFilter.sort ?? []),
+  );
+  const [courseFilters, setCourseFilters] = useState<CourseFilterState[]>(
+    normalizeCourseFilters(initialFilter?.course_filters ?? []),
   );
   const sortSensors = useSensors(
     useSensor(PointerSensor),
@@ -323,8 +351,35 @@ export function FilterModal({
   };
 
   const removeSortRule = (id: string) => {
-    setSortRules((current) =>
-      current.filter((rule) => rule.id !== id),
+    setSortRules((current) => current.filter((rule) => rule.id !== id));
+  };
+
+  const addCourseFilter = () => {
+    setCourseFilters((current) => [
+      ...current,
+      {
+        id: crypto.randomUUID(),
+        mode: "has_any",
+        degree_level: "bachelor",
+        course_name: "",
+      },
+    ]);
+  };
+
+  const updateCourseFilter = (
+    id: string,
+    updater: (current: CourseFilterState) => CourseFilterState,
+  ) => {
+    setCourseFilters((current) =>
+      current.map((courseFilter) =>
+        courseFilter.id === id ? updater(courseFilter) : courseFilter,
+      ),
+    );
+  };
+
+  const removeCourseFilter = (id: string) => {
+    setCourseFilters((current) =>
+      current.filter((courseFilter) => courseFilter.id !== id),
     );
   };
 
@@ -427,12 +482,41 @@ export function FilterModal({
       exclude: "NONE",
     };
 
+    const normalizedCourseFilters: CourseDegreeFilter[] = [];
+    for (const courseFilter of courseFilters) {
+      const mode = courseFilter.mode;
+      const degree_level = courseFilter.degree_level;
+      const courseName = courseFilter.course_name.trim();
+
+      if (mode === "has_specific") {
+        if (!courseName) {
+          continue;
+        }
+
+        normalizedCourseFilters.push({
+          mode,
+          degree_level,
+          course_name: courseName,
+        });
+        continue;
+      }
+
+      normalizedCourseFilters.push({
+        mode,
+        degree_level,
+      });
+    }
+
     onApply({
       fields: normalizedFields,
       where,
       page: initialFilter?.page ?? 1,
       limit: initialFilter?.limit ?? 50,
       sort: sortRules.map(({ basis, direction }) => ({ basis, direction })),
+      course_filters:
+        normalizedCourseFilters.length > 0
+          ? normalizedCourseFilters
+          : undefined,
     });
     onClose();
   };
@@ -441,46 +525,26 @@ export function FilterModal({
     setFields(defaultFields);
     setColumnFilters([]);
     setSortRules(normalizeSortRules(defaultEmployeeFilter.sort ?? []));
+    setCourseFilters([]);
   };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="h-[92vh] w-[96vw] max-w-6xl overflow-y-auto p-0">
-        <Card className="flex h-full min-h-0 flex-col border-border bg-card p-0">
+      <DialogContent className="h-[92vh] w-[96vw] max-w-6xl overflow-y-auto p-0 no-scrollbar">
+        <Card className="flex h-full min-h-0 flex-col border-border bg-card p-0 no-scrollbar">
           <CardHeader className="border-b border-border px-6 py-4">
             <CardTitle className="text-xl font-semibold text-foreground">
               Filters
             </CardTitle>
           </CardHeader>
 
-          <CardContent className="grid min-h-0 flex-1 grid-cols-1 gap-4 overflow-y-auto px-6 py-4">
-            <section className="grid grid-cols-1 gap-4">
-              <div className="rounded-lg border border-border bg-muted/20 p-3">
-                <Text size="sm" weight="semibold" className="mb-2">
-                  Include Columns
-                </Text>
-                <div className="grid max-h-52 grid-cols-2 gap-2 overflow-y-auto">
-                  {availableFields.map((field) => {
-                    const selected =
-                      fields.include !== "ALL" &&
-                      fields.include.includes(field.value);
-                    return (
-                      <label
-                        key={`include-${field.value}`}
-                        className="flex items-center gap-2 rounded-md p-2 hover:bg-muted/50"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selected}
-                          onChange={() => toggleIncludeColumn(field.value)}
-                        />
-                        <span className="text-xs">{field.label}</span>
-                      </label>
-                    );
-                  })}
-                </div>
-              </div>
-            </section>
+          {/* scrollbar looks ugly in this container and has niche uses. */}
+          <CardContent className="grid min-h-0 flex-1 grid-cols-1 gap-4 overflow-y-auto px-6 py-4 no-scrollbar">
+            <FilterModalIncludeColumnsSection
+              availableFields={availableFields}
+              include={fields.include}
+              onToggle={toggleIncludeColumn}
+            />
 
             <section className="rounded-lg border border-border bg-card p-4">
               <div className="mb-3 flex items-center justify-between">
@@ -763,7 +827,6 @@ export function FilterModal({
                         <Button
                           type="button"
                           size="sm"
-                          variant="outline"
                           className="px-2 py-1"
                           onClick={() => addRule(columnFilter.id)}
                         >
@@ -777,13 +840,34 @@ export function FilterModal({
               </div>
             </section>
 
+            <FilterModalCourseDegreeFiltersSection
+              courseFilters={courseFilters}
+              degreeLevelOptions={degreeLevelOptions}
+              onAdd={addCourseFilter}
+              onRemove={removeCourseFilter}
+              onUpdateMode={(id, mode) =>
+                updateCourseFilter(id, (current) => ({ ...current, mode }))
+              }
+              onUpdateDegreeLevel={(id, degreeLevel) =>
+                updateCourseFilter(id, (current) => ({
+                  ...current,
+                  degree_level: degreeLevel,
+                }))
+              }
+              onUpdateCourseName={(id, courseName) =>
+                updateCourseFilter(id, (current) => ({
+                  ...current,
+                  course_name: courseName,
+                }))
+              }
+            />
+
             <section className="rounded-lg border border-border bg-card p-4">
               <div className="mb-3 flex items-center justify-between">
                 <Text weight="semibold">Sort</Text>
                 <Button
                   type="button"
                   size="sm"
-                  variant="outline"
                   className="px-2 py-1"
                   onClick={addSortRule}
                   disabled={usedSortFields.size >= availableFields.length}
@@ -838,15 +922,19 @@ export function FilterModal({
           <CardAction className="border-t border-border px-6 py-4">
             <div className="ml-auto flex items-center gap-3">
               <Button
+                variant="primary"
+                className="px-2 py-1"
+                onClick={handleApply}
+              >
+                Apply Filters
+              </Button>
+              <Button
                 type="button"
                 variant="outline"
                 className="px-2 py-1"
                 onClick={handleReset}
               >
                 Reset
-              </Button>
-              <Button type="button" className="px-2 py-1" onClick={handleApply}>
-                Apply Filters
               </Button>
             </div>
           </CardAction>

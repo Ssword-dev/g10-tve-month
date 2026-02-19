@@ -7,9 +7,7 @@ const defaultEmployeeFilter: FilterEmployeesPayload = {
   fields: {
     include: [
       "employee_number",
-      "first_name",
-      "middle_name",
-      "last_name",
+      "full_name",
       "deped_email",
       "designation",
       "employment_status",

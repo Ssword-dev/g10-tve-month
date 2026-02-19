@@ -4,6 +4,7 @@ import unsafeCast from "@/utils/unsafeCast";
 import {
   addCourseAction,
   deleteCourseAction,
+  deleteEmployeeAction,
   updateCourseAction,
   updateEmployeeAction,
 } from "@/domain/employees/actions";
@@ -11,7 +12,11 @@ import type { Course, Employee } from "@/domain/employees/types";
 import Card from "@/components/Card";
 import Text from "@/components/Text";
 
-import type { CourseFormState, EmployeeFormState, FieldErrorMap } from "../types";
+import type {
+  CourseFormState,
+  EmployeeFormState,
+  FieldErrorMap,
+} from "../types";
 import {
   courseKey,
   emptyCourseForm,
@@ -33,14 +38,26 @@ interface AdminActionsModalProps {
   onSaved: () => Promise<void>;
 }
 
-export function AdminActionsModal({ employee, open, onClose, onSaved }: AdminActionsModalProps) {
+export function UpdateActionsModal({
+  employee,
+  open,
+  onClose,
+  onSaved,
+}: AdminActionsModalProps) {
   const [form, setForm] = useState<EmployeeFormState | null>(null);
-  const [newCourse, setNewCourse] = useState<CourseFormState>(emptyCourseForm());
+  const [newCourse, setNewCourse] =
+    useState<CourseFormState>(emptyCourseForm());
   const [editKey, setEditKey] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<CourseFormState>(emptyCourseForm());
-  const [employeeErrors, setEmployeeErrors] = useState<FieldErrorMap>({} as FieldErrorMap);
-  const [newCourseErrors, setNewCourseErrors] = useState<FieldErrorMap>({} as FieldErrorMap);
-  const [editCourseErrors, setEditCourseErrors] = useState<FieldErrorMap>({} as FieldErrorMap);
+  const [employeeErrors, setEmployeeErrors] = useState<FieldErrorMap>(
+    {} as FieldErrorMap,
+  );
+  const [newCourseErrors, setNewCourseErrors] = useState<FieldErrorMap>(
+    {} as FieldErrorMap,
+  );
+  const [editCourseErrors, setEditCourseErrors] = useState<FieldErrorMap>(
+    {} as FieldErrorMap,
+  );
   const [busyAction, setBusyAction] = useState<string | null>(null);
   const [feedback, setFeedback] = useState("");
   const [errorText, setErrorText] = useState("");
@@ -80,7 +97,9 @@ export function AdminActionsModal({ employee, open, onClose, onSaved }: AdminAct
       setBusyAction("saveEmployee");
       setFeedback("");
       setErrorText("");
-      const result = await updateEmployeeAction(toEmployeePayload(employee, form));
+      const result = await updateEmployeeAction(
+        toEmployeePayload(employee, form),
+      );
       result.unwrap();
       await onSaved();
       setFeedback("Employee record updated successfully.");
@@ -99,7 +118,9 @@ export function AdminActionsModal({ employee, open, onClose, onSaved }: AdminAct
       setBusyAction("addCourse");
       setFeedback("");
       setErrorText("");
-      const result = await addCourseAction(toCoursePayload(employee.employee_number, newCourse));
+      const result = await addCourseAction(
+        toCoursePayload(employee.employee_number, newCourse),
+      );
       result.unwrap();
       await onSaved();
       setNewCourse(emptyCourseForm());
@@ -141,7 +162,12 @@ export function AdminActionsModal({ employee, open, onClose, onSaved }: AdminAct
   };
 
   const deleteCourse = async (course: Course) => {
-    if (!window.confirm(`Delete "${course.course_name}" (${course.degree_level})?`)) return;
+    if (
+      !window.confirm(
+        `Delete "${course.course_name}" (${course.degree_level})?`,
+      )
+    )
+      return;
 
     try {
       const currentKey = courseKey(course);
@@ -164,10 +190,30 @@ export function AdminActionsModal({ employee, open, onClose, onSaved }: AdminAct
     }
   };
 
+  const deleteEmployee = async () => {
+    if (!window.confirm("Delete this employee record permanently?")) return;
+
+    try {
+      setBusyAction("deleteEmployee");
+      setFeedback("");
+      setErrorText("");
+      const result = await deleteEmployeeAction({
+        employee_number: employee.employee_number,
+      });
+      result.unwrap();
+      await onSaved();
+      onClose();
+    } catch (error) {
+      setErrorText((error as Error).message);
+    } finally {
+      setBusyAction(null);
+    }
+  };
+
   return (
     <ModalShell
       open={open}
-      title={`Admin Actions - ${employee.last_name}, ${employee.first_name}`}
+      title={`Update Actions - ${employee.last_name}, ${employee.first_name}`}
       onRequestClose={tryClose}
       disableClose={Boolean(busyAction)}
       zClass="z-70"
@@ -210,10 +256,19 @@ export function AdminActionsModal({ employee, open, onClose, onSaved }: AdminAct
         onSaveEdit={saveCourseEdit}
         editBusy={busyAction === "saveCourseEdit"}
         onDeleteCourse={deleteCourse}
-        deleteBusyKey={busyAction?.startsWith("delete:") ? busyAction.replace("delete:", "") : null}
+        deleteBusyKey={
+          busyAction?.startsWith("delete:")
+            ? busyAction.replace("delete:", "")
+            : null
+        }
       />
 
-      <DangerousActionSection employeeNumber={employee.employee_number} />
+      <div className="border-t border-border pt-4">
+        <DangerousActionSection
+          onDeleteEmployee={deleteEmployee}
+          isDeleting={busyAction === "deleteEmployee"}
+        />
+      </div>
     </ModalShell>
   );
 }

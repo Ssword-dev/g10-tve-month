@@ -48,7 +48,8 @@ function normalize_boolean(mixed $value): int {
     return in_array($normalized, ['1', 'true', 'yes', 'y', 'on'], true) ? 1 : 0;
 }
 
-function with_employee_courses(mysqli $db, array $employees): array {
+// Computed / Virtual fields.
+function withEmployeeCourses(mysqli $db, array $employees): array {
     if (!$employees) {
         return $employees;
     }
@@ -119,5 +120,35 @@ function with_employee_courses(mysqli $db, array $employees): array {
         $employee['courses'] = $coursesByEmployee[$employeeNumber] ?? [];
     }
 
+    return $employees;
+}
+
+function withEmployeeAge(array $employees): array {
+    foreach ($employees as &$employee) {
+        $dateOfBirthRaw = $employee['date_of_birth'] ?? null;
+        $dateOfBirth = is_string($dateOfBirthRaw) ? trim($dateOfBirthRaw) : '';
+
+        if ($dateOfBirth === '') {
+            $employee['age'] = null;
+            continue;
+        }
+
+        $today = new DateTimeImmutable('today');
+        $birthDate = DateTimeImmutable::createFromFormat('Y-m-d', $dateOfBirth);
+
+        if (!$birthDate || $birthDate->format('Y-m-d') !== $dateOfBirth) {
+            $employee['age'] = null;
+            continue;
+        }
+
+        $employee['age'] = $birthDate->diff($today)->y;
+    }
+
+    return $employees;
+}
+
+function withComputed(mysqli $db, array $employees): array {
+    $employees = withEmployeeCourses($db, $employees);
+    $employees = withEmployeeAge($employees);
     return $employees;
 }

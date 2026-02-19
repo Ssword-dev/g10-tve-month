@@ -66,6 +66,7 @@ type FilterEmployeePayload = {
 };
 
 type GetAllEmployeesPayload = Record<string, never>;
+type GetEmployeeDashboardSummariesPayload = Record<string, never>;
 
 export type {
   // Course
@@ -81,4 +82,5 @@ export type {
   GetEmployeePayload,
   FilterEmployeePayload,
   GetAllEmployeesPayload,
+  GetEmployeeDashboardSummariesPayload,
 };

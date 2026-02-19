@@ -15,6 +15,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 $isAuthenticatedAdmin = is_array($_SESSION['auth_user'] ?? null) && is_numeric($_SESSION['employee_number'] ?? null);
 $allowedGuestFields = [
     'employee_number',
+    'full_name',
     'first_name',
     'middle_name',
     'last_name',
@@ -23,7 +24,9 @@ $allowedGuestFields = [
     'date_joined',
 ];
 
-$stmt = $db->prepare('SELECT * FROM employees_table ORDER BY last_name ASC, first_name ASC;');
+$readSelect = employeeReadSelectSql($db);
+$readTable = employeeReadTable($db);
+$stmt = $db->prepare("SELECT $readSelect FROM $readTable ORDER BY last_name ASC, first_name ASC;");
 
 if (!$stmt) {
     respond(type: 'error', message: 'Failed to prepare statement.', statusCode: 500);
@@ -48,7 +51,7 @@ while ($employee = $result->fetch_assoc()) {
 $stmt->close();
 
 try {
-    $employees = with_employee_courses($db, $employees);
+    $employees = withComputed($db, $employees);
 } catch (RuntimeException $exception) {
     respond(type: 'error', message: $exception->getMessage(), statusCode: 500);
 }

@@ -10,6 +10,7 @@ type EmployeeFieldMeta = {
 };
 
 export const employeeFields: EmployeeFieldMeta[] = [
+  { value: "full_name", label: "Full Name", type: "string", nullable: false },
   { value: "first_name", label: "First Name", type: "string", nullable: false },
   {
     value: "middle_name",

@@ -7,6 +7,7 @@ type EmployeeField = keyof Employee;
 
 const guestEmployeeFields: EmployeeField[] = [
   "employee_number",
+  "full_name",
   "first_name",
   "middle_name",
   "last_name",
@@ -43,6 +44,7 @@ function getFilterableEmployeeFields(role: AuthRole): EmployeeField[] {
   if (role === "admin") {
     return [
       "employee_number",
+      "full_name",
       "first_name",
       "middle_name",
       "last_name",

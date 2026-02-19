@@ -43,7 +43,7 @@ type ServiceLinkContent = {
 
 const heroContent: HeroContent = {
   eyebrow: "About Us",
-  title: "School Employee Management System",
+  title: "SPRCNHS School Employee Management System",
   description:
     "We help schools organize employee information with a secure, searchable, and role-based system built for daily operations.",
 };

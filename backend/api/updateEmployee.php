@@ -100,7 +100,7 @@ if (!$statement->execute()) {
 
 $statement->close();
 
-$employeeStatement = $db->prepare('SELECT * FROM employees_table WHERE employee_number = ? LIMIT 1');
+$employeeStatement = $db->prepare('SELECT * FROM employees_with_computed_view WHERE employee_number = ? LIMIT 1');
 if (!$employeeStatement) {
     respond(type: 'error', message: 'Unable to prepare employee lookup request.', statusCode: 500);
 }
@@ -120,6 +120,6 @@ if (!$employee) {
     respond(type: 'error', message: 'Employee not found after update.', statusCode: 404);
 }
 
-$employees = with_employee_courses($db, [$employee]);
+$employees = withComputed($db, [$employee]);
 
 respond(type: 'data', data: $employees[0]);

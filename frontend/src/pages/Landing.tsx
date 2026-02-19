@@ -3,12 +3,17 @@ import Card from "@/components/Card";
 import CardContent from "@/components/CardContent";
 import CardHeader from "@/components/CardHeader";
 import CardTitle from "@/components/CardTitle";
+import Collapsible from "@/components/Collapsible";
+import CollapsibleContent from "@/components/CollapsibleContent";
+import CollapsibleTrigger from "@/components/CollapsibleTrigger";
 import Text from "@/components/Text";
 import { motion } from "framer-motion";
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import landingPageHeroBannerImageSource from "../assets/landing_page_hero_banner_image.png";
+import { cn } from "@_ssword/classes";
+import { Menu, Navigation, X, type Hamburger } from "lucide-react";
 
 type MotionDivProps = React.ComponentProps<typeof motion.div>;
 
@@ -245,8 +250,7 @@ const testimonials = [
     school: "Regional Secondary Campus",
   },
   {
-    quote:
-      "We onboard new teachers faster and with fewer errors than before.",
+    quote: "We onboard new teachers faster and with fewer errors than before.",
     person: "HR Lead",
     school: "Multi-Campus School Group",
   },
@@ -309,7 +313,7 @@ function HeroSection() {
   return (
     <section
       id="home"
-      className="min-h-screen bg-[linear-gradient(135deg,#f8fff9_0%,#eafcf1_52%,#ffffff_100%)] pt-24"
+      className="min-h-screen bg-[linear-gradient(135deg,#f8fff9_0%,#eafcf1_52%,#ffffff_100%)]"
     >
       <div className="grid w-full grid-cols-1 items-center lg:grid-cols-2">
         <motion.div
@@ -326,8 +330,9 @@ function HeroSection() {
               Better Staff Management.
             </Text>
             <Text className="max-w-xl text-lg text-muted-foreground">
-              A complete system for staff records, daily operations, security, and
-              reporting, built for principals, HR teams, and school administrators.
+              A complete system for staff records, daily operations, security,
+              and reporting, built for principals, HR teams, and school
+              administrators.
             </Text>
           </div>
           <div className="flex flex-wrap gap-2 pt-2">
@@ -340,7 +345,11 @@ function HeroSection() {
             <Button
               variant="outline"
               className="px-7 py-3 text-base"
-              onClick={() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" })}
+              onClick={() =>
+                document
+                  .getElementById("features")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
             >
               Explore Features
             </Button>
@@ -393,7 +402,10 @@ function PostHeroSection() {
       className="px-6 py-20 md:px-10 lg:px-16 bg-[linear-gradient(180deg,#f4fef8_0%,#ffffff_100%)]"
     >
       <div className="mx-auto w-full max-w-7xl space-y-10">
-        <motion.div className="space-y-2 flex flex-col gap-2" {...animationPresets.slideInX()}>
+        <motion.div
+          className="space-y-2 flex flex-col gap-2"
+          {...animationPresets.slideInX()}
+        >
           <Text size="4xl" className="font-bold">
             Core features for modern school operations
           </Text>
@@ -439,7 +451,10 @@ function WorkflowSection() {
       className="px-6 py-20 md:px-10 lg:px-16 bg-[linear-gradient(180deg,#ffffff_0%,#eefdf4_100%)]"
     >
       <div className="mx-auto w-full max-w-7xl space-y-10">
-        <motion.div className="space-y-2 flex flex-col gap-2" {...animationPresets.slideInX()}>
+        <motion.div
+          className="space-y-2 flex flex-col gap-2"
+          {...animationPresets.slideInX()}
+        >
           <Text size="4xl" className="font-bold">
             How the platform works
           </Text>
@@ -488,7 +503,10 @@ function ModulesSection() {
       className="px-6 py-20 md:px-10 lg:px-16 bg-[linear-gradient(180deg,#f7fff9_0%,#ffffff_100%)]"
     >
       <div className="mx-auto w-full max-w-7xl space-y-10">
-        <motion.div className="space-y-2 flex flex-col gap-2" {...animationPresets.fadeUp()}>
+        <motion.div
+          className="space-y-2 flex flex-col gap-2"
+          {...animationPresets.fadeUp()}
+        >
           <Text size="4xl" className="font-bold">
             Full module coverage
           </Text>
@@ -533,7 +551,10 @@ function OutcomesSection() {
       className="px-6 py-20 md:px-10 lg:px-16 bg-[linear-gradient(180deg,#ebfcf2_0%,#ffffff_100%)]"
     >
       <div className="mx-auto w-full max-w-7xl space-y-10">
-        <motion.div className="space-y-2 flex flex-col gap-2" {...animationPresets.fadeUp()}>
+        <motion.div
+          className="space-y-2 flex flex-col gap-2"
+          {...animationPresets.fadeUp()}
+        >
           <Text size="4xl" className="font-bold">
             Outcomes schools can measure
           </Text>
@@ -571,7 +592,10 @@ function TrustSection() {
       className="px-6 py-20 md:px-10 lg:px-16 bg-[linear-gradient(180deg,#ffffff_0%,#effdf5_100%)]"
     >
       <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 lg:grid-cols-2">
-        <motion.div className="space-y-2 flex flex-col gap-2" {...animationPresets.fadeUp()}>
+        <motion.div
+          className="space-y-2 flex flex-col gap-2"
+          {...animationPresets.fadeUp()}
+        >
           <Text size="4xl" className="font-bold">
             Built for secure and dependable school administration
           </Text>
@@ -593,18 +617,21 @@ function TrustSection() {
           className="grid gap-4 sm:grid-cols-2"
           {...animationPresets.staggerContainer()}
         >
-          {["Data Privacy", "Compliance-Ready", "Audit Logs", "Reliable Uptime"].map(
-            (item) => (
-              <motion.div key={item} {...animationPresets.staggerItem()}>
-                <Card className="rounded-xl border border-emerald-100 bg-white p-5 shadow-sm">
-                  <Text className="font-semibold">{item}</Text>
-                  <Text className="mt-2 text-sm text-muted-foreground">
-                    Enterprise-grade controls tailored for school environments.
-                  </Text>
-                </Card>
-              </motion.div>
-            ),
-          )}
+          {[
+            "Data Privacy",
+            "Compliance-Ready",
+            "Audit Logs",
+            "Reliable Uptime",
+          ].map((item) => (
+            <motion.div key={item} {...animationPresets.staggerItem()}>
+              <Card className="rounded-xl border border-emerald-100 bg-white p-5 shadow-sm">
+                <Text className="font-semibold">{item}</Text>
+                <Text className="mt-2 text-sm text-muted-foreground">
+                  Enterprise-grade controls tailored for school environments.
+                </Text>
+              </Card>
+            </motion.div>
+          ))}
         </motion.div>
       </div>
     </section>
@@ -615,7 +642,10 @@ function TestimonialsSection() {
   return (
     <section className="px-6 py-20 md:px-10 lg:px-16 bg-[linear-gradient(180deg,#f8fff9_0%,#ffffff_100%)]">
       <div className="mx-auto w-full max-w-7xl space-y-10">
-        <motion.div className="space-y-2 flex flex-col gap-2" {...animationPresets.slideInX()}>
+        <motion.div
+          className="space-y-2 flex flex-col gap-2"
+          {...animationPresets.slideInX()}
+        >
           <Text size="4xl" className="font-bold">
             What schools are saying
           </Text>
@@ -633,7 +663,9 @@ function TestimonialsSection() {
               <Card className="h-full rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
                 <Text className="text-muted-foreground">"{item.quote}"</Text>
                 <Text className="mt-5 font-semibold">{item.person}</Text>
-                <Text className="text-sm text-muted-foreground">{item.school}</Text>
+                <Text className="text-sm text-muted-foreground">
+                  {item.school}
+                </Text>
               </Card>
             </motion.div>
           ))}
@@ -719,7 +751,9 @@ function CallToAction() {
             </div>
 
             <Card className="rounded-xl border border-emerald-100 bg-[linear-gradient(180deg,#f6fff9_0%,#ffffff_100%)] p-6 shadow-sm">
-              <Text className="font-semibold">Implementation support includes</Text>
+              <Text className="font-semibold">
+                Implementation support includes
+              </Text>
               <BulletList
                 points={[
                   "Guided setup for administrators",
@@ -740,7 +774,9 @@ function FooterSection() {
   return (
     <footer className="border-t border-emerald-100 bg-white/80 px-6 py-8 md:px-10 lg:px-16">
       <div className="mx-auto flex w-full max-w-7xl flex-col items-start justify-between gap-3 md:flex-row md:items-center">
-        <Text className="font-semibold">School Staff Management System</Text>
+        <Text className="font-semibold">
+          SPRCNHS School Employee Management System
+        </Text>
         <Text className="text-sm text-muted-foreground">
           Built for schools that want structured operations, secure records, and
           confident leadership decisions.
@@ -752,6 +788,7 @@ function FooterSection() {
 
 function TopRightNavigation() {
   const navigate = useNavigate();
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const scrollToSection = (sectionId: string) => {
     if (sectionId === "home") {
@@ -768,32 +805,60 @@ function TopRightNavigation() {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
     >
-      <div className="flex flex-wrap items-center justify-center gap-2 rounded-2xl border border-emerald-200 bg-white/90 p-3 shadow-lg backdrop-blur md:justify-end">
-        {navItems.map((item) => (
+      <Collapsible
+        open={!isCollapsed}
+        onOpenChange={(open) => setIsCollapsed(!open)}
+        className="flex items-center justify-end gap-2 rounded-2xl border border-emerald-200 bg-white/90 p-3 shadow-lg backdrop-blur"
+      >
+        <CollapsibleTrigger asChild>
           <Button
-            key={item.id}
             variant="ghost"
-            className="px-3 text-sm transition-transform duration-200 hover:scale-105 md:px-4 md:text-base"
-            onClick={() => scrollToSection(item.id)}
+            aria-expanded={!isCollapsed}
+            aria-label={
+              isCollapsed ? "Expand navigation" : "Collapse navigation"
+            }
+            className="px-3 text-sm md:px-4 md:text-base"
           >
-            {item.label}
+            {isCollapsed ? <Menu /> : <X />}
           </Button>
-        ))}
-        <Button
-          variant="ghost"
-          className="px-3 text-sm transition-transform duration-200 hover:scale-105 md:px-4 md:text-base"
-          onClick={() => navigate("/login")}
+        </CollapsibleTrigger>
+        <div
+          className={`grid min-w-0 transition-[grid-template-columns,opacity] duration-300 ease-out ${
+            isCollapsed
+              ? "grid-cols-[0fr] opacity-0"
+              : "grid-cols-[1fr] opacity-100"
+          }`}
         >
-          Login
-        </Button>
-        <Button
-          variant="ghost"
-          className="px-3 text-sm transition-transform duration-200 hover:scale-105 md:px-4 md:text-base"
-          onClick={() => navigate("/signup")}
-        >
-          Sign up
-        </Button>
-      </div>
+          <CollapsibleContent forceMount className="min-w-0 overflow-hidden">
+            <div className="flex flex-nowrap items-center gap-2 whitespace-nowrap">
+              {navItems.map((item) => (
+                <Button
+                  key={item.id}
+                  variant="ghost"
+                  className="px-3 text-sm transition-transform duration-200 hover:scale-105 md:px-4 md:text-base"
+                  onClick={() => scrollToSection(item.id)}
+                >
+                  {item.label}
+                </Button>
+              ))}
+              <Button
+                variant="ghost"
+                className="px-3 text-sm transition-transform duration-200 hover:scale-105 md:px-4 md:text-base"
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </Button>
+              <Button
+                variant="ghost"
+                className="px-3 text-sm transition-transform duration-200 hover:scale-105 md:px-4 md:text-base"
+                onClick={() => navigate("/signup")}
+              >
+                Sign up
+              </Button>
+            </div>
+          </CollapsibleContent>
+        </div>
+      </Collapsible>
     </motion.nav>
   );
 }

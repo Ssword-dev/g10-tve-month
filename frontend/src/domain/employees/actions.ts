@@ -9,8 +9,10 @@ import {
   type GetEmployeePayload,
   type AddEmployeePayload,
   type GetAllEmployeesPayload,
+  type GetEmployeeDashboardSummariesPayload,
 } from "./payloads";
-import type { Employee, Course } from "./types";
+import type { Employee, Course, EmployeeDashboardSummaries } from "./types";
+import { createServerQuery } from "@/infrastructure/ServerQuery";
 
 export const getAllEmployeesAction = createServerAction<
   GetAllEmployeesPayload,
@@ -89,3 +91,17 @@ export const deleteCourseAction = createServerAction<
   apiUrl: "/api/deleteCourse",
   method: "POST",
 });
+
+export const getEmployeeDashboardSummariesAction = createServerAction<
+  GetEmployeeDashboardSummariesPayload,
+  EmployeeDashboardSummaries
+>({
+  name: "getEmployeeDashboardSummaries",
+  apiUrl: "/api/getEmployeeDashboardSummaries",
+});
+
+export const employeeDashboardSummariesQuery = createServerQuery(
+  "EmployeeDashboard:getEmployeeDashboardSummaries",
+  () => getEmployeeDashboardSummariesAction({}),
+  [],
+);

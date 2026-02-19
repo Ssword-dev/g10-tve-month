@@ -3,25 +3,23 @@ import { Filter } from "lucide-react";
 
 import type { Employee, FilterEmployeesPayload } from "@/domain/employees/types";
 
-import { defaultEmployeeFilter, filterEmployeesQuery } from "../queries";
 import { FilterModal } from "./FilterModal";
 import { TableToolButton } from "./TableToolButton";
 
 interface FilterEmployeesButtonProps {
   allowedFields?: Array<keyof Employee>;
+  activeFilter: FilterEmployeesPayload;
   onFilterApply?: (filter: FilterEmployeesPayload) => void;
 }
 
 export function FilterEmployeesButton({
   allowedFields,
+  activeFilter,
   onFilterApply,
 }: FilterEmployeesButtonProps) {
   const [open, setOpen] = useState(false);
-  const [activeFilter, setActiveFilter] = useState<FilterEmployeesPayload>(defaultEmployeeFilter);
 
   const handleApplyFilter = (filter: FilterEmployeesPayload) => {
-    setActiveFilter(filter);
-    filterEmployeesQuery.refresh(filter);
     onFilterApply?.(filter);
     setOpen(false);
   };

@@ -10,6 +10,7 @@ type Course = {
 };
 
 type Employee = {
+  full_name?: string;
   first_name: string;
   middle_name: string;
   last_name: string;
@@ -34,7 +35,49 @@ type Employee = {
   courses: Course[];
 };
 
-export type { Course, DegreeLevel, Employee };
+type TeachingEmployeesSummary = {
+  teachingStaff: number;
+  noJhsTeachers: number;
+  noShsTeachers: number;
+  noTeachersWithMastersDegree: number;
+  noTeachersWithDoctorateDegree: number;
+};
+
+type NonTeachingEmployeesSummary = {
+  nonTeachingStaff: number;
+  noJhsNonTeachingStaff: number;
+  noShsNonTeachingStaff: number;
+  noNonTeachingStaffWithMastersDegree: number;
+  noNonTeachingStaffWithDoctorateDegree: number;
+};
+
+type DesignationFrequency = {
+  designation: string;
+  occurrence: number;
+};
+
+type EmploymentStatusDistribution = {
+  employmentStatus: string;
+  occurrence: number;
+};
+
+type EmployeeDashboardSummaries = {
+  teachingEmployeesSummary: TeachingEmployeesSummary;
+  nonTeachingEmployeesSummary: NonTeachingEmployeesSummary;
+  designationFrequencyTable: DesignationFrequency[];
+  employmentStatusDistributionTable: EmploymentStatusDistribution[];
+};
+
+export type {
+  Course,
+  DegreeLevel,
+  Employee,
+  TeachingEmployeesSummary,
+  NonTeachingEmployeesSummary,
+  DesignationFrequency,
+  EmployeeDashboardSummaries,
+  EmploymentStatusDistribution,
+};
 // #endregion Entities
 
 // #region Filters
@@ -150,6 +193,13 @@ interface NotFilter {
 type FilterExpression = AnyFieldFilter | AndFilter | OrFilter | NotFilter;
 
 type Order = "asc" | "desc";
+type CourseDegreeFilterMode = "has_specific" | "has_any" | "only_has";
+
+interface CourseDegreeFilter {
+  mode: CourseDegreeFilterMode;
+  degree_level: DegreeLevel;
+  course_name?: string;
+}
 
 interface Fields {
   include: (keyof Employee)[] | "ALL";
@@ -169,6 +219,9 @@ interface FilterEmployeesPayload {
     basis: keyof Employee;
     direction: Order;
   }>;
+
+  // Course-degree filters are always conjunctive (AND).
+  course_filters?: CourseDegreeFilter[];
 
   // Select fields to show.
   //
@@ -229,4 +282,8 @@ export type {
 
   // Main payload
   FilterEmployeesPayload,
+
+  // Course degree filter
+  CourseDegreeFilter,
+  CourseDegreeFilterMode,
 };

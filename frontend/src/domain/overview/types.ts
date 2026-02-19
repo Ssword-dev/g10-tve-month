@@ -13,6 +13,7 @@ type OverviewActivityEmployee = Pick<
 type OverviewDashboardStats = {
   totalEmployees: number;
   permanentCount: number;
+  nonPermanentCount: number;
   teacherCount: number;
   principalCount: number;
   averageSalaryGrade: number;

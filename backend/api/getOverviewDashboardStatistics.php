@@ -16,6 +16,7 @@ $statsQuery = "
     SELECT
         COUNT(*) AS total_employees,
         SUM(CASE WHEN employment_status = 'Permanent' THEN 1 ELSE 0 END) AS permanent_count,
+        SUM(CASE WHEN employment_status <> 'Permanent' OR employment_status IS NULL THEN 1 ELSE 0 END) AS non_permanent_count,
         SUM(CASE WHEN LOWER(COALESCE(designation, '')) LIKE '%teacher%' THEN 1 ELSE 0 END) AS teacher_count,
         SUM(CASE WHEN LOWER(COALESCE(designation, '')) LIKE '%principal%' THEN 1 ELSE 0 END) AS principal_count,
         COALESCE(ROUND(AVG(salary_grade)), 0) AS average_salary_grade
@@ -163,6 +164,7 @@ respond(
     data: [
         'totalEmployees' => (int)($statsRow['total_employees'] ?? 0),
         'permanentCount' => (int)($statsRow['permanent_count'] ?? 0),
+        'nonPermanentCount' => (int)($statsRow['non_permanent_count'] ?? 0),
         'teacherCount' => (int)($statsRow['teacher_count'] ?? 0),
         'principalCount' => (int)($statsRow['principal_count'] ?? 0),
         'averageSalaryGrade' => (int)($statsRow['average_salary_grade'] ?? 0),

@@ -1,5 +1,6 @@
 <?php
 require dirname(__DIR__) . '/vendor/autoload.php';
+require_once dirname(__DIR__) . '/helpers/employees.php';
 
 $db = db();
 
@@ -34,29 +35,9 @@ if ($employee_number <= 0) {
 
 // fetch employee
 $employeeStatement = $db->prepare("
-    SELECT
-        e.employee_number,
-        e.first_name,
-        e.middle_name,
-        e.last_name,
-        e.deped_email,
-        e.designation,
-        e.date_joined,
-        e.date_of_latest_promotion,
-        e.contact_number,
-        e.plantilla_number,
-        e.date_of_original_appointment,
-        e.bp_number,
-        e.address,
-        e.civil_status,
-        e.date_of_birth,
-        e.salary_grade,
-        e.salary,
-        e.employment_status,
-        e.tin,
-        e.place_of_birth
-    FROM employees_table e
-    WHERE e.employee_number = ?
+    SELECT *
+    FROM employees_with_computed_view
+    WHERE employee_number = ?
     LIMIT 1
 ");
 
@@ -83,41 +64,15 @@ if (!$employee) {
     );
 }
 
-// fetch courses
-$coursesStatement = $db->prepare("
-    SELECT 
-        c.course_name,
-        c.degree_level,
-        c.units_completed,
-        c.is_finished
-    FROM courses_table c
-    WHERE c.achiever_employee_number = ?
-");
-
-if (!$coursesStatement) {
-    $employeeStatement->close();
-
-    respond(
-        type: 'error',
-        message: 'Failed to prepare courses query.'
-    );
-}
-
-$coursesStatement->bind_param("i", $employee_number);
-$coursesStatement->execute();
-
-$coursesResult = $coursesStatement->get_result();
-
-$employee['courses'] = [];
-
-while ($course = $coursesResult->fetch_assoc()) {
-    $employee['courses'][] = $course;
-}
-
 $employeeStatement->close();
-$coursesStatement->close();
+
+try {
+    $employees = withComputed($db, [$employee]);
+} catch (RuntimeException $exception) {
+    respond(type: 'error', message: $exception->getMessage(), statusCode: 500);
+}
 
 respond(
     type: 'data',
-    data: $employee
+    data: $employees[0]
 );
