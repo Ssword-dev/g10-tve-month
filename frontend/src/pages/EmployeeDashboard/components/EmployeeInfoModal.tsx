@@ -171,7 +171,7 @@ export function EmployeeInfoModal({
                 key={courseKey(course)}
                 className="rounded-md border border-border px-3 py-2"
               >
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <Text weight="semibold">{course.course_name}</Text>
                   <Badge>{course.degree_level}</Badge>
                 </div>
@@ -184,10 +184,10 @@ export function EmployeeInfoModal({
           </CardContent>
         </Card>
         {canManageEmployees && (
-          <div className="flex flex-row justify-end gap-4">
+          <div className="flex flex-wrap justify-end gap-2 sm:gap-4">
             {!isAdminLoading && isAdmin ? (
               <Button
-                className="px-2 py-1"
+                className="w-full px-2 py-1 sm:w-auto"
                 variant="outline"
                 disabled={isRevokingAdminRole}
                 onClick={() => void revokeAdminRole()}
@@ -198,13 +198,13 @@ export function EmployeeInfoModal({
               </Button>
             ) : null}
             <Button
-              className="text-primary-foreground bg-primary px-2 py-1"
+              className="w-full bg-primary px-2 py-1 text-primary-foreground sm:w-auto"
               onClick={onOpenAdmin}
             >
               Update Record
             </Button>
             <Button
-              className="text-destructive-foreground bg-destructive px-2 py-1"
+              className="w-full bg-destructive px-2 py-1 text-destructive-foreground sm:w-auto"
               onClick={() => {
                 setDeleteErrorText("");
                 setConfirmDeleteOpen(true);

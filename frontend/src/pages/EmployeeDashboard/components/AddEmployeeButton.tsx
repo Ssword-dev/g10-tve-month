@@ -21,7 +21,7 @@ export function AddEmployeeButton() {
           <Plus className="h-5 w-5" />
         </TableToolButton>
       </DialogTrigger>
-      <DialogContent className="w-[80vw] h-[80vh] border-border bg-background p-0 shadow-2xl">
+      <DialogContent className="h-[92vh] w-[96vw] border-border bg-background p-0 shadow-2xl sm:h-[88vh] sm:w-[90vw] lg:h-[82vh] lg:w-[80vw]">
         <AddEmployeeForm closeModal={closeModal} />
       </DialogContent>
     </Dialog>

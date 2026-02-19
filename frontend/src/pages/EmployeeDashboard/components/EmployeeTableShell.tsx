@@ -20,7 +20,7 @@ export function EmployeeTableShell({
   onFilterApply,
 }: EmployeeTableShellProps) {
   return (
-    <div className="relative h-full min-h-0 w-full overflow-auto bg-background">
+    <div className="relative h-full min-h-0 w-full overflow-hidden bg-background pb-16 sm:pb-20">
       {children}
       <TableTools>
         {canManageEmployees ? <AddEmployeeButton /> : null}

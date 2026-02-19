@@ -38,18 +38,18 @@ export function ModalShell({
 
   return (
     <div
-      className={`fixed inset-0 ${zClass} flex items-center justify-center bg-black/50 p-4`}
+      className={`fixed inset-0 ${zClass} flex items-center justify-center bg-black/50 p-2 sm:p-4`}
       onClick={() => {
         if (!disableClose) onRequestClose();
       }}
     >
       <Card
-        className="h-[90vh] w-full max-w-6xl overflow-y-auto no-scrollbar border-border bg-card p-0"
+        className="h-[94vh] w-full max-w-6xl overflow-y-auto no-scrollbar border-border bg-card p-0 sm:h-[90vh]"
         onClick={(event) => event.stopPropagation()}
       >
-        <CardHeader className="sticky top-0 z-10 flex flex-row items-center justify-between border-b border-border bg-card px-5 py-3">
+        <CardHeader className="sticky top-0 z-10 flex flex-row items-center justify-between gap-3 border-b border-border bg-card px-3 py-3 sm:px-5">
           <CardTitle>
-            <Text size="xl" weight="bold">
+            <Text size="lg" weight="bold" className="sm:text-xl">
               {title}
             </Text>
           </CardTitle>
@@ -62,7 +62,9 @@ export function ModalShell({
             <X className="size-4" />
           </Button>
         </CardHeader>
-        <CardContent className="space-y-4 px-5 py-5">{children}</CardContent>
+        <CardContent className="space-y-4 px-3 py-4 sm:px-5 sm:py-5">
+          {children}
+        </CardContent>
       </Card>
     </div>
   );

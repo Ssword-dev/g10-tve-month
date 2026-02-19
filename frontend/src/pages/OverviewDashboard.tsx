@@ -1,4 +1,3 @@
-import Badge from "@/components/Badge";
 import Button from "@/components/Button";
 import Card from "@/components/Card";
 import CardAction from "@/components/CardAction";
@@ -42,10 +41,14 @@ function StatCard({ title, value }: { title: string; value: number }) {
   return (
     <Card className="border-border">
       <CardContent className="flex flex-col space-y-1 px-5 py-5">
-        <Text size="3xl" weight="bold">
+        <Text size="2xl" weight="bold" className="md:text-3xl">
           {value}
         </Text>
-        <Text size="2xl" weight="semibold" className="text-muted-foreground">
+        <Text
+          size="lg"
+          weight="semibold"
+          className="text-muted-foreground md:text-2xl"
+        >
           {title}
         </Text>
       </CardContent>
@@ -71,7 +74,7 @@ function ActivityCard({
         {employees.map((employee) => (
           <div
             key={employee.employee_number}
-            className="flex items-center justify-between text-sm"
+            className="flex flex-col gap-1 text-sm sm:flex-row sm:items-center sm:justify-between"
           >
             <div className="flex flex-row items-center gap-1">
               <Text weight="medium">
@@ -96,7 +99,6 @@ function ActivityCard({
 export default function OverviewDashboard() {
   const {
     data: stats,
-    isLoading,
     refresh,
     error,
   } = useServerQuery(overviewDashboardStatsQuery);
@@ -122,14 +124,18 @@ export default function OverviewDashboard() {
   return (
     <main className="min-w-0 space-y-8 p-4 md:p-8">
       <Card className="gap-0 border-border p-0">
-        <CardHeader className="flex flex-row items-center justify-between px-4 py-2">
+        <CardHeader className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle>
-            <Text size="2xl" weight="bold" className="px-2 py-1 leading-none">
+            <Text
+              size="lg"
+              weight="bold"
+              className="px-2 py-1 leading-tight sm:text-2xl"
+            >
               SPRCNHS School Employee Management Overview
             </Text>
           </CardTitle>
           <CardAction>
-            <Button className="px-3 py-2" onClick={() => refresh()}>
+            <Button className="w-full px-3 py-2 sm:w-auto" onClick={() => refresh()}>
               Refresh
             </Button>
           </CardAction>

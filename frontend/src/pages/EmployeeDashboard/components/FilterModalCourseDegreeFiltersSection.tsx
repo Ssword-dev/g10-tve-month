@@ -34,12 +34,12 @@ export function FilterModalCourseDegreeFiltersSection({
 }: FilterModalCourseDegreeFiltersSectionProps) {
   return (
     <section className="rounded-lg border border-border bg-card p-4">
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <Text weight="semibold">Course Degree Filters (AND)</Text>
         <Button
           type="button"
           size="sm"
-          className="px-2 py-1"
+          className="w-full px-2 py-1 sm:w-auto"
           onClick={onAdd}
         >
           <Plus className="mr-1 h-4 w-4" />
@@ -67,7 +67,7 @@ export function FilterModalCourseDegreeFiltersSection({
                       event.target.value as CourseFilterMode,
                     )
                   }
-                  className="rounded-md border border-border bg-background px-3 py-1.5 text-sm"
+                  className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm sm:w-auto"
                 >
                   <option value="has_specific">has specific</option>
                   <option value="has_any">has any</option>
@@ -82,7 +82,7 @@ export function FilterModalCourseDegreeFiltersSection({
                       event.target.value as DegreeLevel,
                     )
                   }
-                  className="rounded-md border border-border bg-background px-3 py-1.5 text-sm"
+                  className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm sm:w-auto"
                 >
                   {degreeLevelOptions.map((degreeLevel) => (
                     <option key={degreeLevel} value={degreeLevel}>
@@ -95,7 +95,7 @@ export function FilterModalCourseDegreeFiltersSection({
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="ml-auto px-2 py-1 text-muted-foreground hover:text-destructive"
+                  className="px-2 py-1 text-muted-foreground hover:text-destructive sm:ml-auto"
                   onClick={() => onRemove(courseFilter.id)}
                 >
                   <X className="h-4 w-4" />

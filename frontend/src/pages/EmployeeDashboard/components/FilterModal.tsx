@@ -530,16 +530,16 @@ export function FilterModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="h-[92vh] w-[96vw] max-w-6xl overflow-y-auto p-0 no-scrollbar">
+      <DialogContent className="h-[94vh] w-[98vw] max-w-6xl overflow-y-auto p-0 no-scrollbar sm:h-[92vh] sm:w-[96vw]">
         <Card className="flex h-full min-h-0 flex-col border-border bg-card p-0 no-scrollbar">
-          <CardHeader className="border-b border-border px-6 py-4">
+          <CardHeader className="border-b border-border px-4 py-4 sm:px-6">
             <CardTitle className="text-xl font-semibold text-foreground">
               Filters
             </CardTitle>
           </CardHeader>
 
           {/* scrollbar looks ugly in this container and has niche uses. */}
-          <CardContent className="grid min-h-0 flex-1 grid-cols-1 gap-4 overflow-y-auto px-6 py-4 no-scrollbar">
+          <CardContent className="grid min-h-0 flex-1 grid-cols-1 gap-4 overflow-y-auto px-3 py-4 no-scrollbar sm:px-6">
             <FilterModalIncludeColumnsSection
               availableFields={availableFields}
               include={fields.include}
@@ -547,12 +547,12 @@ export function FilterModal({
             />
 
             <section className="rounded-lg border border-border bg-card p-4">
-              <div className="mb-3 flex items-center justify-between">
+              <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <Text weight="semibold">Column Filters (AND)</Text>
                 <Button
                   type="button"
                   size="sm"
-                  className="px-2 py-1"
+                  className="w-full px-2 py-1 sm:w-auto"
                   onClick={addColumnFilter}
                   disabled={usedFields.size >= availableFields.length}
                 >
@@ -592,7 +592,7 @@ export function FilterModal({
                                 };
                               });
                             }}
-                            className="rounded-md border border-border bg-background px-3 py-1.5 text-sm"
+                            className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm sm:w-auto"
                           >
                             {availableFields.map((field) => {
                               const usedByOther =
@@ -621,7 +621,7 @@ export function FilterModal({
                                 }),
                               )
                             }
-                            className="rounded-md border border-border bg-background px-3 py-1.5 text-sm"
+                            className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm sm:w-auto"
                           >
                             <option value="is_not_null">
                               is not null (default)
@@ -640,7 +640,7 @@ export function FilterModal({
                             type="button"
                             variant="ghost"
                             size="sm"
-                            className="ml-auto px-2 py-1 text-muted-foreground hover:text-destructive"
+                            className="px-2 py-1 text-muted-foreground hover:text-destructive sm:ml-auto"
                             onClick={() => removeColumnFilter(columnFilter.id)}
                           >
                             <X className="h-4 w-4" />
@@ -673,7 +673,7 @@ export function FilterModal({
                                   }),
                                 )
                               }
-                              className="rounded-md border border-border bg-background px-3 py-1.5 text-sm"
+                              className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm sm:w-auto"
                             >
                               {operators.map((operator) => (
                                 <option
@@ -708,7 +708,7 @@ export function FilterModal({
                                       }),
                                     )
                                   }
-                                  className="w-36"
+                                  className="w-full sm:w-36"
                                 />
                                 <Input
                                   type={
@@ -731,7 +731,7 @@ export function FilterModal({
                                       }),
                                     )
                                   }
-                                  className="w-36"
+                                  className="w-full sm:w-36"
                                 />
                               </>
                             ) : rule.operator === "in" ? (
@@ -754,7 +754,7 @@ export function FilterModal({
                                   )
                                 }
                                 placeholder="value1, value2"
-                                className="min-w-56"
+                                className="w-full sm:min-w-56"
                               />
                             ) : meta.type === "boolean" ? (
                               <select
@@ -775,7 +775,7 @@ export function FilterModal({
                                     }),
                                   )
                                 }
-                                className="rounded-md border border-border bg-background px-3 py-1.5 text-sm"
+                                className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm sm:w-auto"
                               >
                                 <option value="true">true</option>
                                 <option value="false">false</option>
@@ -806,7 +806,7 @@ export function FilterModal({
                                     }),
                                   )
                                 }
-                                className="w-56"
+                                className="w-full sm:w-56"
                               />
                             )}
 
@@ -827,7 +827,7 @@ export function FilterModal({
                         <Button
                           type="button"
                           size="sm"
-                          className="px-2 py-1"
+                          className="w-full px-2 py-1 sm:w-auto"
                           onClick={() => addRule(columnFilter.id)}
                         >
                           <Plus className="mr-1 h-4 w-4" />
@@ -863,12 +863,12 @@ export function FilterModal({
             />
 
             <section className="rounded-lg border border-border bg-card p-4">
-              <div className="mb-3 flex items-center justify-between">
+              <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <Text weight="semibold">Sort</Text>
                 <Button
                   type="button"
                   size="sm"
-                  className="px-2 py-1"
+                  className="w-full px-2 py-1 sm:w-auto"
                   onClick={addSortRule}
                   disabled={usedSortFields.size >= availableFields.length}
                 >
@@ -919,11 +919,11 @@ export function FilterModal({
             </section>
           </CardContent>
 
-          <CardAction className="border-t border-border px-6 py-4">
-            <div className="ml-auto flex items-center gap-3">
+          <CardAction className="border-t border-border px-3 py-4 sm:px-6">
+            <div className="ml-auto flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
               <Button
                 variant="primary"
-                className="px-2 py-1"
+                className="w-full px-2 py-1 sm:w-auto"
                 onClick={handleApply}
               >
                 Apply Filters
@@ -931,7 +931,7 @@ export function FilterModal({
               <Button
                 type="button"
                 variant="outline"
-                className="px-2 py-1"
+                className="w-full px-2 py-1 sm:w-auto"
                 onClick={handleReset}
               >
                 Reset

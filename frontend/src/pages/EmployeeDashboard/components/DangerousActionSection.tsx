@@ -13,7 +13,6 @@ export function DangerousActionSection({
   onDeleteEmployee,
   isDeleting,
 }: DangerousActionSectionProps) {
-
   return (
     <Card className="gap-3 border-border p-4">
       <CardTitle>
@@ -24,7 +23,7 @@ export function DangerousActionSection({
           This action permanently removes the employee record.
         </Text>
         <Button
-          className="text-destructive-foreground bg-destructive"
+          className="w-full bg-destructive text-destructive-foreground sm:w-auto"
           variant="destructive"
           disabled={isDeleting}
           onClick={() => void onDeleteEmployee()}

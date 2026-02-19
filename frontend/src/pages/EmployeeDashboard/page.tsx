@@ -158,9 +158,9 @@ export default function EmployeeDashboard() {
   }, [employees, selectedEmployeeNumber]);
 
   return (
-    <main className="flex h-full min-h-0 min-w-0 flex-col gap-6 overflow-hidden p-4 md:p-8">
+    <main className="flex h-full min-h-0 min-w-0 flex-col gap-4 overflow-hidden p-3 md:gap-6 md:p-6 xl:p-8">
       <Card className="border-border p-4">
-        <CardContent className="flex flex-col gap-3 md:flex-row md:items-center">
+        <CardContent className="flex flex-col gap-3 p-0 md:flex-row md:items-center">
           <Input
             placeholder="Search full name..."
             value={fullNameSearchInput}
@@ -171,11 +171,11 @@ export default function EmployeeDashboard() {
               }
             }}
           />
-          <div className="flex items-center gap-2">
+          <div className="grid grid-cols-2 gap-2 md:flex md:items-center">
             <Button
               type="button"
               variant="outline"
-              className="px-3 py-1.5 text-sm"
+              className="w-full px-3 py-1.5 text-sm md:w-auto"
               onClick={() => applyFilter(activeFilter, fullNameSearchInput)}
             >
               Search
@@ -183,7 +183,7 @@ export default function EmployeeDashboard() {
             <Button
               type="button"
               variant="outline"
-              className="px-3 py-1.5 text-sm"
+              className="w-full px-3 py-1.5 text-sm md:w-auto"
               onClick={() => {
                 setFullNameSearchInput("");
                 applyFilter(activeFilter, "");
@@ -195,7 +195,7 @@ export default function EmployeeDashboard() {
         </CardContent>
       </Card>
       <Card className="min-h-0 w-full flex-1 gap-0 overflow-hidden border-border py-0">
-        <CardContent className="min-h-0 w-full flex-1 px-5 py-3">
+        <CardContent className="min-h-0 w-full flex-1 px-2 py-2 sm:px-3 sm:py-3 md:px-5">
           <EmployeeTableShell
             canManageEmployees={canManage}
             allowedFilterFields={allowedFilterFields}

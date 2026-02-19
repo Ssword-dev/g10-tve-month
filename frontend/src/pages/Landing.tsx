@@ -12,8 +12,7 @@ import { useLayoutEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import landingPageHeroBannerImageSource from "../assets/landing_page_hero_banner_image.png";
-import { cn } from "@_ssword/classes";
-import { Menu, Navigation, X, type Hamburger } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 type MotionDivProps = React.ComponentProps<typeof motion.div>;
 
@@ -361,7 +360,7 @@ function HeroSection() {
           {...animationPresets.fadeUp({ delay: 0.15 })}
         >
           <img
-            className="h-full min-h-[520px] w-full object-cover"
+            className="h-full min-h-[320px] w-full object-cover md:min-h-[420px] lg:min-h-[520px]"
             src={landingPageHeroBannerImageSource}
             alt="School staff management dashboard preview"
           />
@@ -830,7 +829,7 @@ function TopRightNavigation() {
           }`}
         >
           <CollapsibleContent forceMount className="min-w-0 overflow-hidden">
-            <div className="flex flex-nowrap items-center gap-2 whitespace-nowrap">
+            <div className="flex max-w-[75vw] flex-nowrap items-center gap-2 overflow-x-auto whitespace-nowrap pr-1 md:max-w-[70vw] lg:max-w-none">
               {navItems.map((item) => (
                 <Button
                   key={item.id}

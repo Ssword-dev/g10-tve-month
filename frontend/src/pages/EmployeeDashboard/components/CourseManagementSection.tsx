@@ -66,7 +66,7 @@ export function CourseManagementSection({
           <div className="space-y-1">
             <Label>Degree Level</Label>
             <select
-              className="bg-card border-border rounded-lg border px-2.5 py-1 text-sm"
+              className="w-full rounded-lg border border-border bg-card px-2.5 py-1 text-sm"
               value={newCourse.degree_level}
               onChange={(event) =>
                 setNewCourse((s) => ({
@@ -108,7 +108,7 @@ export function CourseManagementSection({
           </div>
         </CardContent>
         <CardAction>
-          <Button disabled={addBusy} onClick={() => void onAddCourse()}>
+          <Button className="w-full sm:w-auto" disabled={addBusy} onClick={() => void onAddCourse()}>
             Add Course
           </Button>
         </CardAction>
@@ -130,7 +130,7 @@ export function CourseManagementSection({
             return (
               <div key={currentKey} className="rounded-md border border-border p-3">
                 {!isEditing && (
-                  <div className="flex items-start justify-between gap-2">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div>
                       <Text weight="semibold">{course.course_name}</Text>
                       <Text size="sm" className="text-muted-foreground">
@@ -138,7 +138,7 @@ export function CourseManagementSection({
                         Finished: {course.is_finished ? "Yes" : "No"}
                       </Text>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 self-end sm:self-auto">
                       <Button
                         className="px-2 py-2"
                         onClick={() => {
@@ -178,7 +178,7 @@ export function CourseManagementSection({
                       <div className="space-y-1">
                         <Label>Degree Level</Label>
                         <select
-                          className="bg-card border-border rounded-lg border px-2.5 py-1 text-sm"
+                          className="w-full rounded-lg border border-border bg-card px-2.5 py-1 text-sm"
                           value={editForm.degree_level}
                           onChange={(event) =>
                             setEditForm((s) => ({
@@ -221,11 +221,11 @@ export function CourseManagementSection({
                         </Label>
                       </div>
                     </div>
-                    <div className="flex gap-2">
-                      <Button disabled={editBusy} onClick={() => void onSaveEdit()}>
+                    <div className="flex flex-col gap-2 sm:flex-row">
+                      <Button className="w-full sm:w-auto" disabled={editBusy} onClick={() => void onSaveEdit()}>
                         Save Course
                       </Button>
-                      <Button variant="glass" disabled={editBusy} onClick={() => setEditKey(null)}>
+                      <Button className="w-full sm:w-auto" variant="glass" disabled={editBusy} onClick={() => setEditKey(null)}>
                         Cancel
                       </Button>
                     </div>

@@ -10,7 +10,7 @@ export function TableToolButton({
   return (
     <Button
       className={cn(
-        "h-12 w-12 rounded-full bg-primary p-0 text-primary-foreground shadow-md",
+        "h-10 w-10 rounded-full bg-primary p-0 text-primary-foreground shadow-md sm:h-12 sm:w-12",
         "hover:bg-primary/90 hover:shadow-lg active:scale-95",
         "transition-all duration-200",
         className,

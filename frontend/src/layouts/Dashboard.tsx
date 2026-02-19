@@ -7,8 +7,8 @@ import {
 } from "@/domain/auth/actions";
 import { getAuthRole } from "@/domain/auth/session";
 import useServerQuery from "@/hooks/useServerQuery";
-import { Info, LogOut, Settings } from "lucide-react";
-import { Outlet, useMatch, useNavigate } from "react-router-dom";
+import { Info, LogOut, Menu, Settings, X } from "lucide-react";
+import { Link, Outlet, useMatch, useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@_ssword/classes";
 import websiteIconSource from "../assets/website_icon.png";
@@ -24,6 +24,7 @@ export default function Dashboard() {
   );
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const settingsMenuRef = useRef<HTMLDivElement | null>(null);
   const role = getAuthRole(sessionData);
 
@@ -70,6 +71,10 @@ export default function Dashboard() {
     resolvedProfilePictureUrl ?? currentUser?.avatar_url ?? defaultAvatarUrl;
 
   useEffect(() => {
+    setMobileNavOpen(false);
+  }, [subRoute]);
+
+  useEffect(() => {
     if (!settingsOpen) {
       return;
     }
@@ -92,14 +97,60 @@ export default function Dashboard() {
 
   return (
     <div className="grid h-screen w-screen overflow-x-hidden grid-cols-1 bg-background text-foreground lg:grid-cols-[250px_1fr]">
-      <aside className="border-border/70 bg-card/90 p-6 lg:border-r flex flex-col">
+      <div className="sticky top-0 z-40 flex items-center justify-between border-b border-border/70 bg-card/95 px-4 py-3 backdrop-blur lg:hidden">
+        <div className="flex items-center gap-2">
+          <div className="rounded-lg bg-accent/35 p-1.5">
+            <img src={websiteIconSource} className="size-4" />
+          </div>
+          <Link to="/dashboard/overview">
+            <Text size="sm" weight="semibold">
+              SPRCNHS SEMS
+            </Text>
+          </Link>
+        </div>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="px-2 py-1"
+          onClick={() => setMobileNavOpen((current) => !current)}
+          aria-label={
+            mobileNavOpen ? "Close navigation menu" : "Open navigation menu"
+          }
+        >
+          {mobileNavOpen ? (
+            <X className="size-4" />
+          ) : (
+            <Menu className="size-4" />
+          )}
+        </Button>
+      </div>
+
+      {mobileNavOpen ? (
+        <div
+          className="fixed inset-0 z-30 bg-black/40 lg:hidden"
+          onClick={() => setMobileNavOpen(false)}
+        />
+      ) : null}
+
+      <aside
+        className={cn(
+          "fixed left-0 top-0 z-40 flex h-full w-[260px] flex-col border-r border-border/70 bg-card/95 p-5 backdrop-blur transition-transform duration-200 lg:static lg:w-auto lg:translate-x-0 lg:border-r lg:bg-card/90 lg:p-6",
+          {
+            "translate-x-0": mobileNavOpen,
+            "-translate-x-full": !mobileNavOpen,
+          },
+        )}
+      >
         <div className="mb-8 flex items-center gap-3">
           <div className="rounded-xl bg-accent/35 p-2">
             <img src={websiteIconSource} className="size-5" />
           </div>
-          <Text size="lg" weight="semibold">
-            Dashboard
-          </Text>
+          <Link to="/dashboard/overview">
+            <Text size="lg" weight="semibold">
+              Dashboard
+            </Text>
+          </Link>
         </div>
 
         <nav className="space-y-2">
@@ -188,7 +239,7 @@ export default function Dashboard() {
         </div>
       </aside>
 
-      <main className="overflow-y-auto">
+      <main className="min-h-0 overflow-y-auto">
         <Outlet />
       </main>
     </div>

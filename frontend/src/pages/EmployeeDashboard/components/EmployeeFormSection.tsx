@@ -151,7 +151,7 @@ export function EmployeeFormSection({
       </CardContent>
       <CardAction className="sticky bottom-0 bg-card/95 py-3">
         <Button
-          className="text-primary-foreground bg-primary px-2 py-1"
+          className="w-full bg-primary px-2 py-1 text-primary-foreground sm:w-auto"
           disabled={isSaving}
           onClick={() => void onSave()}
         >

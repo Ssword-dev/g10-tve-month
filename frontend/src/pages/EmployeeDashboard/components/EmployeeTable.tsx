@@ -114,8 +114,8 @@ export function EmployeeTable({
   };
 
   return (
-    <div className="h-full min-h-0 min-w-0 overflow-x-scroll overflow-y-scroll">
-      <table className="w-full text-left text-sm">
+    <div className="h-full min-h-0 min-w-0 overflow-auto rounded-md border border-border/70">
+      <table className="w-full min-w-[780px] text-left text-sm">
         <thead>
           <tr className="border-border/70 border-b text-muted-foreground">
             {visibleFields.map((field) => (

@@ -2,31 +2,19 @@
 
 import { Accordion as AccordionPrimitive } from "radix-ui";
 import { cn } from "@_ssword/classes";
-import { forwardRef } from "react";
-import type { ClassProps, Props, RefType } from "./types";
+import type { ComponentPropsWithoutRef } from "react";
 
-const base = AccordionPrimitive.Root;
+type AccordionProps = ComponentPropsWithoutRef<typeof AccordionPrimitive.Root> & {
+  className?: string;
+};
 
-type ComponentBase = typeof base;
-
-interface AccordionProps extends Props<ComponentBase>, ClassProps {}
-
-const Accordion = forwardRef<RefType<ComponentBase>, AccordionProps>(
-  ({ className, ...props }, forwardedRef) => {
-    const Comp = base;
-
-    return (
-      <Comp
-        data-slot="accordion"
-        className={cn("w-full", className)}
-        ref={forwardedRef}
-        {...props}
-      />
-    );
-  },
+const Accordion = ({ className, ...props }: AccordionProps) => (
+  <AccordionPrimitive.Root
+    data-slot="accordion"
+    className={cn("w-full", className)}
+    {...props}
+  />
 );
-
-Accordion.displayName = "Accordion";
 
 export default Accordion;
 export type { AccordionProps as Props };
