@@ -37,25 +37,6 @@ const emptySummaries: EmployeeDashboardSummaries = {
   employmentStatusDistributionTable: [],
 };
 
-function StatCard({ title, value }: { title: string; value: number }) {
-  return (
-    <Card className="border-border">
-      <CardContent className="flex flex-col space-y-1 px-5 py-5">
-        <Text size="2xl" weight="bold" className="md:text-3xl">
-          {value}
-        </Text>
-        <Text
-          size="lg"
-          weight="semibold"
-          className="text-muted-foreground md:text-2xl"
-        >
-          {title}
-        </Text>
-      </CardContent>
-    </Card>
-  );
-}
-
 function ActivityCard({
   title,
   employees,
@@ -135,7 +116,10 @@ export default function OverviewDashboard() {
             </Text>
           </CardTitle>
           <CardAction>
-            <Button className="w-full px-3 py-2 sm:w-auto" onClick={() => refresh()}>
+            <Button
+              className="w-full px-3 py-2 sm:w-auto"
+              onClick={() => refresh()}
+            >
               Refresh
             </Button>
           </CardAction>
@@ -153,37 +137,12 @@ export default function OverviewDashboard() {
         </Card>
       )}
 
-      <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <StatCard
-          title="Total Employees"
-          value={resolvedStats.totalEmployees}
-        />
-        <StatCard title="Permanent" value={resolvedStats.permanentCount} />
-        <StatCard
-          title="Non-Permanent"
-          value={resolvedStats.nonPermanentCount}
-        />
-        <StatCard
-          title="Avg Salary Grade"
-          value={resolvedStats.averageSalaryGrade}
-        />
-      </section>
-
-      <section className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-        <ActivityCard
-          title="Recently Promoted"
-          employees={resolvedStats.recentlyPromoted}
-        />
-        <ActivityCard
-          title="Recently Joined"
-          employees={resolvedStats.recentlyJoined}
-        />
-      </section>
-
       <Card className="border-border py-0">
         <CardHeader className="px-5 py-3">
           <CardTitle>
-            <Text weight="semibold">Employee Summary</Text>
+            <Text size="3xl" weight="bold">
+              Employee Summary
+            </Text>
           </CardTitle>
         </CardHeader>
         <CardContent className="px-5 py-0">
@@ -200,107 +159,119 @@ export default function OverviewDashboard() {
               </Button>
             </div>
           ) : (
-            <Accordion type="single" defaultValue="teaching-employees">
-              <AccordionItem value="teaching-employees">
-                <AccordionTrigger>Teaching Employees</AccordionTrigger>
+            <Accordion type="single" defaultValue="staff-summary-table">
+              <AccordionItem value="staff-summary-table">
+                <AccordionTrigger>
+                  <Text weight="semibold" size="base">
+                    Teaching and Non-Teaching Summary
+                  </Text>
+                </AccordionTrigger>
                 <AccordionContent>
                   {isDashboardSummariesLoading ? (
                     <Text size="sm" className="text-muted-foreground">
                       Loading summary...
                     </Text>
                   ) : (
-                    <div className="flex flex-col gap-2 space-y-1">
-                      <Text size="sm">
-                        Teaching Staff:{" "}
-                        {
-                          dashboardSummaries.teachingEmployeesSummary
-                            .teachingStaff
-                        }
-                      </Text>
-                      <Text size="sm">
-                        No. JHS Teachers:{" "}
-                        {
-                          dashboardSummaries.teachingEmployeesSummary
-                            .noJhsTeachers
-                        }
-                      </Text>
-                      <Text size="sm">
-                        No. SHS Teachers:{" "}
-                        {
-                          dashboardSummaries.teachingEmployeesSummary
-                            .noShsTeachers
-                        }
-                      </Text>
-                      <Text size="sm">
-                        No. w/ Masters:{" "}
-                        {
-                          dashboardSummaries.teachingEmployeesSummary
-                            .noTeachersWithMastersDegree
-                        }
-                      </Text>
-                      <Text size="sm">
-                        No. w/ Doctorate:{" "}
-                        {
-                          dashboardSummaries.teachingEmployeesSummary
-                            .noTeachersWithDoctorateDegree
-                        }
-                      </Text>
-                    </div>
-                  )}
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="non-teaching-employees">
-                <AccordionTrigger>Non Teaching Employees</AccordionTrigger>
-                <AccordionContent className="flex flex-col gap-2">
-                  {isDashboardSummariesLoading ? (
-                    <Text size="sm" className="text-muted-foreground">
-                      Loading summary...
-                    </Text>
-                  ) : (
-                    <div className="space-y-1">
-                      <Text size="sm">
-                        Non-Teaching Staff:{" "}
-                        {
-                          dashboardSummaries.nonTeachingEmployeesSummary
-                            .nonTeachingStaff
-                        }
-                      </Text>
-                      <Text size="sm">
-                        No. JHS Non-Teaching:{" "}
-                        {
-                          dashboardSummaries.nonTeachingEmployeesSummary
-                            .noJhsNonTeachingStaff
-                        }
-                      </Text>
-                      <Text size="sm">
-                        No. SHS Non-Teaching:{" "}
-                        {
-                          dashboardSummaries.nonTeachingEmployeesSummary
-                            .noShsNonTeachingStaff
-                        }
-                      </Text>
-                      <Text size="sm">
-                        No. w/ Masters:{" "}
-                        {
-                          dashboardSummaries.nonTeachingEmployeesSummary
-                            .noNonTeachingStaffWithMastersDegree
-                        }
-                      </Text>
-                      <Text size="sm">
-                        No. w/ Doctorate:{" "}
-                        {
-                          dashboardSummaries.nonTeachingEmployeesSummary
-                            .noNonTeachingStaffWithDoctorateDegree
-                        }
-                      </Text>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left text-sm">
+                        <thead>
+                          <tr className="border-border/70 border-b text-muted-foreground">
+                            <th className="py-2 pr-4 font-medium">Metric</th>
+                            <th className="py-2 pr-4 font-medium">Teaching</th>
+                            <th className="py-2 pr-4 font-medium">
+                              Non-Teaching
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr className="border-border/70 border-b">
+                            <td className="py-2 pr-4">Total Staff</td>
+                            <td className="py-2 pr-4">
+                              {
+                                dashboardSummaries.teachingEmployeesSummary
+                                  .teachingStaff
+                              }
+                            </td>
+                            <td className="py-2 pr-4">
+                              {
+                                dashboardSummaries.nonTeachingEmployeesSummary
+                                  .nonTeachingStaff
+                              }
+                            </td>
+                          </tr>
+                          <tr className="border-border/70 border-b">
+                            <td className="py-2 pr-4">JHS</td>
+                            <td className="py-2 pr-4">
+                              {
+                                dashboardSummaries.teachingEmployeesSummary
+                                  .noJhsTeachers
+                              }
+                            </td>
+                            <td className="py-2 pr-4">
+                              {
+                                dashboardSummaries.nonTeachingEmployeesSummary
+                                  .noJhsNonTeachingStaff
+                              }
+                            </td>
+                          </tr>
+                          <tr className="border-border/70 border-b">
+                            <td className="py-2 pr-4">SHS</td>
+                            <td className="py-2 pr-4">
+                              {
+                                dashboardSummaries.teachingEmployeesSummary
+                                  .noShsTeachers
+                              }
+                            </td>
+                            <td className="py-2 pr-4">
+                              {
+                                dashboardSummaries.nonTeachingEmployeesSummary
+                                  .noShsNonTeachingStaff
+                              }
+                            </td>
+                          </tr>
+                          <tr className="border-border/70 border-b">
+                            <td className="py-2 pr-4">With Masters</td>
+                            <td className="py-2 pr-4">
+                              {
+                                dashboardSummaries.teachingEmployeesSummary
+                                  .noTeachersWithMastersDegree
+                              }
+                            </td>
+                            <td className="py-2 pr-4">
+                              {
+                                dashboardSummaries.nonTeachingEmployeesSummary
+                                  .noNonTeachingStaffWithMastersDegree
+                              }
+                            </td>
+                          </tr>
+                          <tr className="border-border/70 border-b last:border-b-0">
+                            <td className="py-2 pr-4">With Doctorate</td>
+                            <td className="py-2 pr-4">
+                              {
+                                dashboardSummaries.teachingEmployeesSummary
+                                  .noTeachersWithDoctorateDegree
+                              }
+                            </td>
+                            <td className="py-2 pr-4">
+                              {
+                                dashboardSummaries.nonTeachingEmployeesSummary
+                                  .noNonTeachingStaffWithDoctorateDegree
+                              }
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
                   )}
                 </AccordionContent>
               </AccordionItem>
 
               <AccordionItem value="designation-frequency-table">
-                <AccordionTrigger>Designation Frequency Table</AccordionTrigger>
+                <AccordionTrigger>
+                  <Text weight="semibold" size="base">
+                    Designation Frequency Table
+                  </Text>
+                </AccordionTrigger>
                 <AccordionContent>
                   {isDashboardSummariesLoading ? (
                     <Text size="sm" className="text-muted-foreground">
@@ -353,7 +324,9 @@ export default function OverviewDashboard() {
 
               <AccordionItem value="employment-status-distribution-table">
                 <AccordionTrigger>
-                  Employment Status Distribution Table
+                  <Text weight="semibold" size="base">
+                    Employment Status Distribution Table
+                  </Text>
                 </AccordionTrigger>
                 <AccordionContent>
                   {isDashboardSummariesLoading ? (
@@ -404,10 +377,68 @@ export default function OverviewDashboard() {
                   )}
                 </AccordionContent>
               </AccordionItem>
+
+              <AccordionItem value="number-of-permanent-and-non-permanent-employees">
+                <AccordionTrigger>
+                  <Text weight="semibold" size="base">
+                    Total number of permanent, non-permanent, and all employees.
+                  </Text>
+                </AccordionTrigger>
+
+                <AccordionContent>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm">
+                      <thead>
+                        <tr className="border-border/70 border-b text-muted-foreground">
+                          <th className="py-2 pr-4 font-medium">Metric</th>
+                          <th className="py-2 pr-4 font-medium">Value</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="border-border/70 border-b">
+                          <td className="py-2 pr-4">Permanent</td>
+                          <td className="py-2 pr-4">
+                            {resolvedStats.permanentCount}
+                          </td>
+                        </tr>
+                        <tr className="border-border/70 border-b">
+                          <td className="py-2 pr-4">Non-Permanent</td>
+                          <td className="py-2 pr-4">
+                            {resolvedStats.nonPermanentCount}
+                          </td>
+                        </tr>
+                        <tr className="border-border/70 border-b">
+                          <td className="py-2 pr-4">Total Employees</td>
+                          <td className="py-2 pr-4">
+                            {resolvedStats.totalEmployees}
+                          </td>
+                        </tr>
+                        <tr className="border-border/70 border-b last:border-b-0">
+                          <td className="py-2 pr-4">Avg Salary Grade</td>
+                          <td className="py-2 pr-4">
+                            {resolvedStats.averageSalaryGrade}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
             </Accordion>
           )}
         </CardContent>
       </Card>
+
+      <section className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <ActivityCard
+          title="Recently Promoted"
+          employees={resolvedStats.recentlyPromoted}
+        />
+        <ActivityCard
+          title="Recently Joined"
+          employees={resolvedStats.recentlyJoined}
+        />
+      </section>
     </main>
   );
 }
