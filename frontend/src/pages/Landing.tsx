@@ -310,9 +310,9 @@ function HeroSection() {
   const navigate = useNavigate();
   return (
     <section id="home" className="min-h-screen bg-background">
-      <div className="grid h-screen w-full grid-cols-1 items-center lg:grid-cols-2">
+      <div className="grid min-h-screen w-full grid-cols-1 items-center lg:grid-cols-2">
         <motion.div
-          className="space-y-2 px-4 py-8 sm:px-6 md:px-10 md:py-10 lg:px-16 lg:col-span-2 lg:flex lg:flex-col lg:items-center lg:justify-center"
+          className="space-y-2 px-4 py-8 sm:px-6 md:px-10 md:py-10 lg:px-16"
           {...animationPresets.fadeUp({ y: 28 })}
         >
           <div className="flex flex-col gap-2">
@@ -352,11 +352,11 @@ function HeroSection() {
         </motion.div>
 
         <motion.div
-          className="h-full w-full bg-transparent"
+          className="hidden h-full w-full bg-transparent lg:block"
           {...animationPresets.fadeUp({ delay: 0.15 })}
         >
           <img
-            className="h-full min-h-[260px] w-full object-cover hidden lg:block"
+            className="h-full min-h-[260px] w-full object-cover"
             src={landingPageHeroBannerImageSource}
             alt="School staff management dashboard preview"
           />
@@ -376,7 +376,7 @@ function StatsSection() {
         {quickStats.map((item) => (
           <motion.div
             key={item.label}
-            className="rounded-xl border border-border bg-card p-4 text-center"
+            className="rounded-xl border border-border bg-card p-4 flex flex-row items-center justify-center gap-3"
             {...animationPresets.staggerItem({ y: 18 })}
           >
             <Text size="3xl" className="font-bold text-primary">
@@ -804,6 +804,9 @@ function TopRightNavigation() {
     document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const navButtonClass =
+    "px-2.5 text-xs transition-transform duration-200 hover:scale-105 sm:text-sm lg:px-4 lg:text-base";
+
   return (
     <motion.nav
       className="fixed z-50 top-2 left-2 lg:top-4 lg:left-auto lg:right-4"
@@ -817,11 +820,63 @@ function TopRightNavigation() {
             variant="ghost"
             aria-expanded={!isCollapsed}
             aria-label={isCollapsed ? "Expand navigation" : "Collapse navigation"}
-            className="px-2.5 text-sm lg:px-4 lg:text-base"
+            className="px-2.5 text-sm lg:hidden"
           >
             {isCollapsed ? <Menu /> : <X />}
           </Button>
         </CollapsibleTrigger>
+
+        <div className="hidden items-center gap-2 rounded-2xl border border-border bg-card/90 p-2 shadow-lg backdrop-blur lg:flex lg:p-3">
+          <AnimatePresence initial={false}>
+            {!isCollapsed && (
+              <motion.div
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: "auto", opacity: 1 }}
+                exit={{ width: 0, opacity: 0 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                className="overflow-hidden"
+              >
+                <div className="flex flex-nowrap items-center gap-1.5">
+                  {navItems.map((item) => (
+                    <Button
+                      key={item.id}
+                      variant="ghost"
+                      className={navButtonClass}
+                      onClick={() => scrollToSection(item.id)}
+                    >
+                      {item.label}
+                    </Button>
+                  ))}
+                  <Button
+                    variant="ghost"
+                    className={navButtonClass}
+                    onClick={() => navigate("/login")}
+                  >
+                    Login
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className={navButtonClass}
+                    onClick={() => navigate("/signup")}
+                  >
+                    Sign up
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <CollapsibleTrigger asChild>
+            <Button
+              variant="ghost"
+              aria-expanded={!isCollapsed}
+              aria-label={isCollapsed ? "Expand navigation" : "Collapse navigation"}
+              className="shrink-0 px-2.5 text-sm lg:px-3"
+            >
+              {isCollapsed ? <Menu /> : <X />}
+            </Button>
+          </CollapsibleTrigger>
+        </div>
 
         <AnimatePresence>
           {!isCollapsed && (
@@ -830,14 +885,14 @@ function TopRightNavigation() {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className="mt-2 lg:mt-0 flex flex-col lg:flex-row items-start lg:items-center gap-2 rounded-2xl border border-border bg-card/90 p-2 shadow-lg backdrop-blur lg:p-3"
+              className="mt-2 flex flex-col items-start gap-2 rounded-2xl border border-border bg-card/90 p-2 shadow-lg backdrop-blur lg:hidden"
             >
-              <div className="flex flex-col lg:flex-row flex-wrap lg:flex-nowrap gap-1.5 w-full lg:w-auto">
+              <div className="flex w-full flex-col gap-1.5">
                 {navItems.map((item) => (
                   <Button
                     key={item.id}
                     variant="ghost"
-                    className="px-2.5 text-xs transition-transform duration-200 hover:scale-105 sm:text-sm lg:px-4 lg:text-base"
+                    className={navButtonClass}
                     onClick={() => scrollToSection(item.id)}
                   >
                     {item.label}
@@ -845,14 +900,14 @@ function TopRightNavigation() {
                 ))}
                 <Button
                   variant="ghost"
-                  className="px-2.5 text-xs transition-transform duration-200 hover:scale-105 sm:text-sm lg:px-4 lg:text-base"
+                  className={navButtonClass}
                   onClick={() => navigate("/login")}
                 >
                   Login
                 </Button>
                 <Button
                   variant="ghost"
-                  className="px-2.5 text-xs transition-transform duration-200 hover:scale-105 sm:text-sm lg:px-4 lg:text-base"
+                  className={navButtonClass}
                   onClick={() => navigate("/signup")}
                 >
                   Sign up
