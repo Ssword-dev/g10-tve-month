@@ -48,6 +48,16 @@ function normalize_boolean(mixed $value): int {
     return in_array($normalized, ['1', 'true', 'yes', 'y', 'on'], true) ? 1 : 0;
 }
 
+function employeeReadTable(mysqli $db): string {
+    return 'employees_table';
+}
+
+function employeeReadSelectSql(mysqli $db): string {
+    $table = employeeReadTable($db);
+
+    return "$table.*, TRIM(CONCAT_WS(' ', $table.first_name, $table.middle_name, $table.last_name)) AS full_name";
+}
+
 // Computed / Virtual fields.
 function withEmployeeCourses(mysqli $db, array $employees): array {
     if (!$employees) {

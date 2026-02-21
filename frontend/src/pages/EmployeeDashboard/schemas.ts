@@ -39,13 +39,10 @@ const employeeFormSchema = z.object({
   contact_number: z.string().optional().default(""),
   plantilla_number: z.string().optional().default(""),
   date_of_original_appointment: dateSchema.optional().default(""),
-  bp_number: numericStringSchema(
-    z
-      .number()
-      .int()
-      .min(1000000000, "BP number must be 10 digits")
-      .max(9999999999, "BP number must be 10 digits"),
-  ),
+  bp_number: z
+    .string()
+    .default("")
+    .refine((val) => val.length <= 30, "BP number must be at most 30 characters."),
   address: z.string().optional().default(""),
   civil_status: z.string().optional().default(""),
   date_of_birth: dateSchema.optional().default(""),

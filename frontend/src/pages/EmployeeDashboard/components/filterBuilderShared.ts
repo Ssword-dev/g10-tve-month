@@ -62,7 +62,7 @@ export const employeeFields: EmployeeFieldMeta[] = [
     type: "date",
     nullable: true,
   },
-  { value: "bp_number", label: "BP #", type: "number", nullable: true },
+  { value: "bp_number", label: "BP #", type: "string", nullable: true },
   { value: "address", label: "Address", type: "string", nullable: true },
   {
     value: "civil_status",

@@ -16,7 +16,7 @@ import {
   getFilterableEmployeeFields,
 } from "@/domain/auth/session";
 import useServerQuery from "@/hooks/useServerQuery";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import {
   EmployeeTableShell,
   EmployeeTable,
@@ -26,6 +26,7 @@ import {
 import { defaultEmployeeFilter, filterEmployeesQuery } from "./queries";
 
 export default function EmployeeDashboard() {
+  const NAME_SEARCH_DEBOUNCE_MS = 200;
   const [selectedEmployeeNumber, setSelectedEmployeeNumber] = useState<
     number | null
   >(null);
@@ -39,6 +40,7 @@ export default function EmployeeDashboard() {
   const [activeModal, setActiveModal] = useState<"none" | "info" | "admin">(
     "none",
   );
+  const didRunNameSearchDebounceRef = useRef(false);
 
   const { data: sessionData } = useServerQuery(currentAdminSessionQuery);
   const { data, isLoading, error } = useServerQuery(filterEmployeesQuery);
@@ -110,6 +112,21 @@ export default function EmployeeDashboard() {
     );
     filterEmployeesQuery.refresh(nextFilter);
   };
+
+  useEffect(() => {
+    if (!didRunNameSearchDebounceRef.current) {
+      didRunNameSearchDebounceRef.current = true;
+      return;
+    }
+
+    const debounceTimer = window.setTimeout(() => {
+      applyFilter(activeFilter, fullNameSearchInput);
+    }, NAME_SEARCH_DEBOUNCE_MS);
+
+    return () => {
+      window.clearTimeout(debounceTimer);
+    };
+  }, [fullNameSearchInput, activeFilter]);
 
   useEffect(() => {
     if (selectedEmployeeNumber == null) {
@@ -194,8 +211,8 @@ export default function EmployeeDashboard() {
           </div>
         </CardContent>
       </Card>
-      <Card className="min-h-0 w-full flex-1 gap-0 overflow-hidden border-border py-0">
-        <CardContent className="min-h-0 w-full flex-1 px-2 py-2 sm:px-3 sm:py-3 md:px-5">
+      <Card className="min-h-0 w-full flex-1 gap-0 overflow-hidden border-border px-0 py-0">
+        <CardContent className="min-h-0 w-full flex-1 px-0 py-0">
           <EmployeeTableShell
             canManageEmployees={canManage}
             allowedFilterFields={allowedFilterFields}

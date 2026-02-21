@@ -26,6 +26,16 @@ function nullable_int(string $value): ?int
     return $parsed === false ? null : (int) $parsed;
 }
 
+function nullable_bp_number(string $value): ?string
+{
+    $trimmed = trim($value);
+    if ($trimmed === '') {
+        return null;
+    }
+
+    return strlen($trimmed) > 30 ? null : $trimmed;
+}
+
 function nullable_date(string $value): ?string
 {
     $trimmed = trim($value);
@@ -56,7 +66,7 @@ $form_data = [
     'contact_number' => nullable_string((string)($payload['contact_number'] ?? '')),
     'plantilla_number' => nullable_string((string)($payload['plantilla_number'] ?? '')),
     'date_of_original_appointment' => nullable_date((string)($payload['date_of_original_appointment'] ?? '')),
-    'bp_number' => nullable_int((string)($payload['bp_number'] ?? '')),
+    'bp_number' => nullable_bp_number((string)($payload['bp_number'] ?? '')),
     'address' => nullable_string((string)($payload['address'] ?? '')),
     'civil_status' => nullable_string((string)($payload['civil_status'] ?? '')),
     'date_of_birth' => nullable_date((string)($payload['date_of_birth'] ?? '')),
@@ -91,8 +101,11 @@ if ($form_data['password'] !== $form_data['confirm_password']) {
 if ($form_data['deped_email'] !== null && !filter_var($form_data['deped_email'], FILTER_VALIDATE_EMAIL)) {
     $errors[] = 'deped_email must be a valid email address.';
 }
-if ($form_data['tin'] !== null && strlen($form_data['tin']) > 11) {
-    $errors[] = 'tin must be 11 characters or less.';
+if ($form_data['tin'] !== null && strlen($form_data['tin']) > 60) {
+    $errors[] = 'tin must be 60 characters or less.';
+}
+if (($payload['bp_number'] ?? '') !== '' && $form_data['bp_number'] === null) {
+    $errors[] = 'bp_number must be at most 30 characters.';
 }
 
 $avatarUpload = $_FILES['avatar'] ?? null;
@@ -186,7 +199,7 @@ try {
 
     bind_params(
         $stmt,
-        'ssssissssssisssiisss',
+        'ssssisssssssisssiisss',
         [
             $form_data['first_name'],
             $form_data['middle_name'],

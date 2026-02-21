@@ -42,7 +42,7 @@ type UpdateEmployeePayload = {
   contact_number: string;
   plantilla_number: string;
   date_of_original_appointment: string | null;
-  bp_number: number | null;
+  bp_number: string | null;
   address: string;
   civil_status: string;
   date_of_birth: string | null;

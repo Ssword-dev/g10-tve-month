@@ -4,10 +4,9 @@ import CardContent from "@/components/CardContent";
 import CardHeader from "@/components/CardHeader";
 import CardTitle from "@/components/CardTitle";
 import Collapsible from "@/components/Collapsible";
-import CollapsibleContent from "@/components/CollapsibleContent";
 import CollapsibleTrigger from "@/components/CollapsibleTrigger";
 import Text from "@/components/Text";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useLayoutEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -299,7 +298,7 @@ function BulletList({ points }: { points: string[] }) {
     <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
       {points.map((point) => (
         <li key={point} className="flex items-start gap-2">
-          <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500" />
+          <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
           <span>{point}</span>
         </li>
       ))}
@@ -310,40 +309,37 @@ function BulletList({ points }: { points: string[] }) {
 function HeroSection() {
   const navigate = useNavigate();
   return (
-    <section
-      id="home"
-      className="min-h-screen bg-[linear-gradient(135deg,#f8fff9_0%,#eafcf1_52%,#ffffff_100%)]"
-    >
-      <div className="grid w-full grid-cols-1 items-center lg:grid-cols-2">
+    <section id="home" className="min-h-screen bg-background">
+      <div className="grid h-screen w-full grid-cols-1 items-center lg:grid-cols-2">
         <motion.div
-          className="space-y-2 px-6 py-10 md:px-10 lg:px-16"
+          className="space-y-2 px-4 py-8 sm:px-6 md:px-10 md:py-10 lg:px-16 lg:col-span-2 lg:flex lg:flex-col lg:items-center lg:justify-center"
           {...animationPresets.fadeUp({ y: 28 })}
         >
           <div className="flex flex-col gap-2">
             <Text
               size="2xl"
-              className="max-w-2xl text-[clamp(1.0rem,4.0vw,3.5rem)] font-extrabold leading-[1.05] tracking-[-0.01em] text-emerald-950"
+              className="max-w-2xl text-[clamp(1.8rem,7.2vw,3.5rem)] font-extrabold leading-[1.05] tracking-[-0.01em] text-foreground"
             >
               Smarter School Operations.
               <br />
               Better Staff Management.
             </Text>
-            <Text className="max-w-xl text-lg text-muted-foreground">
+            <Text className="max-w-xl text-base text-muted-foreground sm:text-lg">
               A complete system for staff records, daily operations, security,
               and reporting, built for principals, HR teams, and school
               administrators.
             </Text>
           </div>
-          <div className="flex flex-wrap gap-2 pt-2">
+          <div className="flex flex-col gap-2 pt-2 sm:flex-row sm:flex-wrap">
             <Button
-              className="px-7 py-3 text-base"
+              className="w-full px-6 py-3 text-base sm:w-auto sm:px-7"
               onClick={() => navigate("/signup")}
             >
               Get Started
             </Button>
             <Button
               variant="outline"
-              className="px-7 py-3 text-base"
+              className="w-full px-6 py-3 text-base sm:w-auto sm:px-7"
               onClick={() =>
                 document
                   .getElementById("features")
@@ -360,7 +356,7 @@ function HeroSection() {
           {...animationPresets.fadeUp({ delay: 0.15 })}
         >
           <img
-            className="h-full min-h-[320px] w-full object-cover md:min-h-[420px] lg:min-h-[520px]"
+            className="h-full min-h-[260px] w-full object-cover hidden lg:block"
             src={landingPageHeroBannerImageSource}
             alt="School staff management dashboard preview"
           />
@@ -372,18 +368,18 @@ function HeroSection() {
 
 function StatsSection() {
   return (
-    <section className="px-6 py-10 md:px-10 lg:px-16">
+    <section className="px-4 py-10 sm:px-6 md:px-10 lg:px-16">
       <motion.div
-        className="mx-auto grid w-full max-w-7xl gap-4 rounded-2xl border border-emerald-100 bg-white/80 p-5 shadow-sm md:grid-cols-2 lg:grid-cols-4"
+        className="mx-auto grid w-full max-w-7xl gap-4 rounded-2xl border border-border bg-card/80 p-5 shadow-sm md:grid-cols-2 lg:grid-cols-4"
         {...animationPresets.staggerContainer()}
       >
         {quickStats.map((item) => (
           <motion.div
             key={item.label}
-            className="rounded-xl border border-emerald-50 bg-[linear-gradient(180deg,#ffffff_0%,#f1fdf5_100%)] p-4 text-center"
+            className="rounded-xl border border-border bg-card p-4 text-center"
             {...animationPresets.staggerItem({ y: 18 })}
           >
-            <Text size="3xl" className="font-bold text-emerald-700">
+            <Text size="3xl" className="font-bold text-primary">
               {item.value}
             </Text>
             <Text className="text-sm text-muted-foreground">{item.label}</Text>
@@ -398,14 +394,14 @@ function PostHeroSection() {
   return (
     <section
       id="features"
-      className="px-6 py-20 md:px-10 lg:px-16 bg-[linear-gradient(180deg,#f4fef8_0%,#ffffff_100%)]"
+      className="bg-background px-4 py-14 sm:px-6 md:px-10 md:py-20 lg:px-16"
     >
       <div className="mx-auto w-full max-w-7xl space-y-10">
         <motion.div
           className="space-y-2 flex flex-col gap-2"
           {...animationPresets.slideInX()}
         >
-          <Text size="4xl" className="font-bold">
+          <Text size="4xl" className="text-3xl font-bold md:text-4xl">
             Core features for modern school operations
           </Text>
           <Text className="text-muted-foreground">
@@ -420,7 +416,7 @@ function PostHeroSection() {
         >
           {features.map((feature) => (
             <motion.div key={feature.title} {...animationPresets.staggerItem()}>
-              <Card className="h-full rounded-2xl border border-emerald-100 bg-white/90 p-6 shadow-sm transition-shadow hover:shadow-lg">
+              <Card className="h-full rounded-2xl border border-border bg-card/90 p-4 shadow-sm transition-shadow hover:shadow-lg sm:p-6">
                 <CardHeader className="px-0 pt-0">
                   <CardTitle asChild>
                     <Text size="xl" className="font-semibold">
@@ -447,14 +443,14 @@ function WorkflowSection() {
   return (
     <section
       id="workflow"
-      className="px-6 py-20 md:px-10 lg:px-16 bg-[linear-gradient(180deg,#ffffff_0%,#eefdf4_100%)]"
+      className="bg-background px-4 py-14 sm:px-6 md:px-10 md:py-20 lg:px-16"
     >
       <div className="mx-auto w-full max-w-7xl space-y-10">
         <motion.div
           className="space-y-2 flex flex-col gap-2"
           {...animationPresets.slideInX()}
         >
-          <Text size="4xl" className="font-bold">
+          <Text size="4xl" className="text-3xl font-bold md:text-4xl">
             How the platform works
           </Text>
           <Text className="text-muted-foreground">
@@ -469,11 +465,9 @@ function WorkflowSection() {
         >
           {workflowSteps.map((step, index) => (
             <motion.div key={step.title} {...animationPresets.staggerItem()}>
-              <Card className="h-full rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
+              <Card className="h-full rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-6">
                 <CardHeader className="px-0 pt-0">
-                  <Text className="text-sm text-emerald-700">
-                    Step {index + 1}
-                  </Text>
+                  <Text className="text-sm text-primary">Step {index + 1}</Text>
                   <CardTitle asChild>
                     <Text size="xl" className="font-semibold">
                       {step.title}
@@ -499,14 +493,14 @@ function ModulesSection() {
   return (
     <section
       id="modules"
-      className="px-6 py-20 md:px-10 lg:px-16 bg-[linear-gradient(180deg,#f7fff9_0%,#ffffff_100%)]"
+      className="bg-background px-4 py-14 sm:px-6 md:px-10 md:py-20 lg:px-16"
     >
       <div className="mx-auto w-full max-w-7xl space-y-10">
         <motion.div
           className="space-y-2 flex flex-col gap-2"
           {...animationPresets.fadeUp()}
         >
-          <Text size="4xl" className="font-bold">
+          <Text size="4xl" className="text-3xl font-bold md:text-4xl">
             Full module coverage
           </Text>
           <Text className="text-muted-foreground">
@@ -521,7 +515,7 @@ function ModulesSection() {
         >
           {modules.map((module) => (
             <motion.div key={module.title} {...animationPresets.staggerItem()}>
-              <Card className="h-full rounded-xl border border-emerald-100 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+              <Card className="h-full rounded-xl border border-border bg-card p-4 shadow-sm transition-shadow hover:shadow-md sm:p-5">
                 <CardHeader className="px-0 pt-0">
                   <CardTitle asChild>
                     <Text size="lg" className="font-semibold">
@@ -547,14 +541,14 @@ function OutcomesSection() {
   return (
     <section
       id="impact"
-      className="px-6 py-20 md:px-10 lg:px-16 bg-[linear-gradient(180deg,#ebfcf2_0%,#ffffff_100%)]"
+      className="bg-background px-4 py-14 sm:px-6 md:px-10 md:py-20 lg:px-16"
     >
       <div className="mx-auto w-full max-w-7xl space-y-10">
         <motion.div
           className="space-y-2 flex flex-col gap-2"
           {...animationPresets.fadeUp()}
         >
-          <Text size="4xl" className="font-bold">
+          <Text size="4xl" className="text-3xl font-bold md:text-4xl">
             Outcomes schools can measure
           </Text>
           <Text className="text-muted-foreground">
@@ -569,8 +563,8 @@ function OutcomesSection() {
         >
           {outcomes.map((item) => (
             <motion.div key={item.label} {...animationPresets.staggerItem()}>
-              <Card className="h-full rounded-2xl border border-emerald-100 bg-white/95 p-6 shadow-sm">
-                <Text size="4xl" className="font-bold text-emerald-700">
+              <Card className="h-full rounded-2xl border border-border bg-card/95 p-4 shadow-sm sm:p-6">
+                <Text size="4xl" className="font-bold text-primary">
                   {item.value}
                 </Text>
                 <Text className="mt-2 font-medium">{item.label}</Text>
@@ -588,14 +582,14 @@ function TrustSection() {
   return (
     <section
       id="security"
-      className="px-6 py-20 md:px-10 lg:px-16 bg-[linear-gradient(180deg,#ffffff_0%,#effdf5_100%)]"
+      className="bg-background px-4 py-14 sm:px-6 md:px-10 md:py-20 lg:px-16"
     >
       <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 lg:grid-cols-2">
         <motion.div
           className="space-y-2 flex flex-col gap-2"
           {...animationPresets.fadeUp()}
         >
-          <Text size="4xl" className="font-bold">
+          <Text size="4xl" className="text-3xl font-bold md:text-4xl">
             Built for secure and dependable school administration
           </Text>
           <Text className="text-muted-foreground">
@@ -623,7 +617,7 @@ function TrustSection() {
             "Reliable Uptime",
           ].map((item) => (
             <motion.div key={item} {...animationPresets.staggerItem()}>
-              <Card className="rounded-xl border border-emerald-100 bg-white p-5 shadow-sm">
+              <Card className="rounded-xl border border-border bg-card p-5 shadow-sm">
                 <Text className="font-semibold">{item}</Text>
                 <Text className="mt-2 text-sm text-muted-foreground">
                   Enterprise-grade controls tailored for school environments.
@@ -639,13 +633,13 @@ function TrustSection() {
 
 function TestimonialsSection() {
   return (
-    <section className="px-6 py-20 md:px-10 lg:px-16 bg-[linear-gradient(180deg,#f8fff9_0%,#ffffff_100%)]">
+    <section className="bg-background px-4 py-14 sm:px-6 md:px-10 md:py-20 lg:px-16">
       <div className="mx-auto w-full max-w-7xl space-y-10">
         <motion.div
           className="space-y-2 flex flex-col gap-2"
           {...animationPresets.slideInX()}
         >
-          <Text size="4xl" className="font-bold">
+          <Text size="4xl" className="text-3xl font-bold md:text-4xl">
             What schools are saying
           </Text>
           <Text className="text-muted-foreground">
@@ -659,7 +653,7 @@ function TestimonialsSection() {
         >
           {testimonials.map((item) => (
             <motion.div key={item.person} {...animationPresets.staggerItem()}>
-              <Card className="h-full rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
+              <Card className="h-full rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-6">
                 <Text className="text-muted-foreground">"{item.quote}"</Text>
                 <Text className="mt-5 font-semibold">{item.person}</Text>
                 <Text className="text-sm text-muted-foreground">
@@ -678,11 +672,11 @@ function FAQSection() {
   return (
     <section
       id="faq"
-      className="px-6 py-20 md:px-10 lg:px-16 bg-[linear-gradient(180deg,#f4fef8_0%,#ffffff_100%)]"
+      className="bg-background px-4 py-14 sm:px-6 md:px-10 md:py-20 lg:px-16"
     >
       <div className="mx-auto w-full max-w-7xl space-y-10">
         <motion.div {...animationPresets.slideInX()}>
-          <Text size="4xl" className="font-bold">
+          <Text size="4xl" className="text-3xl font-bold md:text-4xl">
             Frequently asked questions
           </Text>
         </motion.div>
@@ -693,7 +687,7 @@ function FAQSection() {
         >
           {faqs.map((item) => (
             <motion.div key={item.question} {...animationPresets.staggerItem()}>
-              <Card className="h-full rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
+              <Card className="h-full rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-6">
                 <CardHeader className="px-0 pt-0">
                   <CardTitle asChild>
                     <Text size="lg" className="font-semibold">
@@ -717,15 +711,15 @@ function FAQSection() {
 function CallToAction() {
   const navigate = useNavigate();
   return (
-    <section className="px-6 py-20 md:px-10 lg:px-16 bg-[linear-gradient(180deg,#ffffff_0%,#eafcf1_100%)]">
+    <section className="bg-background px-4 py-14 sm:px-6 md:px-10 md:py-20 lg:px-16">
       <div className="mx-auto w-full max-w-7xl">
         <motion.div
-          className="rounded-2xl border border-emerald-200 bg-white p-8 shadow-lg md:p-12"
+          className="rounded-2xl border border-border bg-card p-5 shadow-lg sm:p-8 md:p-12"
           {...animationPresets.fadeUp()}
         >
           <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-center">
             <div className="space-y-2 flex flex-col gap-2">
-              <Text size="2xl" className="font-bold">
+              <Text size="2xl" className="text-2xl font-bold md:text-3xl">
                 Ready to modernize your school management system?
               </Text>
               <Text className="text-muted-foreground">
@@ -734,14 +728,14 @@ function CallToAction() {
               </Text>
               <div className="flex flex-wrap gap-3">
                 <Button
-                  className="px-8 py-3 text-lg"
+                  className="w-full px-8 py-3 text-base sm:w-auto sm:text-lg"
                   onClick={() => navigate("/signup")}
                 >
                   Sign up
                 </Button>
                 <Button
                   variant="outline"
-                  className="px-8 py-3 text-lg"
+                  className="w-full px-8 py-3 text-base sm:w-auto sm:text-lg"
                   onClick={() => navigate("/login")}
                 >
                   Login
@@ -749,7 +743,7 @@ function CallToAction() {
               </div>
             </div>
 
-            <Card className="rounded-xl border border-emerald-100 bg-[linear-gradient(180deg,#f6fff9_0%,#ffffff_100%)] p-6 shadow-sm">
+            <Card className="rounded-xl border border-border bg-card p-6 shadow-sm">
               <Text className="font-semibold">
                 Implementation support includes
               </Text>
@@ -771,7 +765,7 @@ function CallToAction() {
 
 function FooterSection() {
   return (
-    <footer className="border-t border-emerald-100 bg-white/80 px-6 py-8 md:px-10 lg:px-16">
+    <footer className="border-t border-border bg-card/80 px-4 py-8 sm:px-6 md:px-10 lg:px-16">
       <div className="mx-auto flex w-full max-w-7xl flex-col items-start justify-between gap-3 md:flex-row md:items-center">
         <Text className="font-semibold">
           SPRCNHS School Employee Management System
@@ -784,10 +778,23 @@ function FooterSection() {
     </footer>
   );
 }
-
 function TopRightNavigation() {
   const navigate = useNavigate();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth < 1024 : false, // <lg
+  );
+
+  useLayoutEffect(() => {
+    const media = window.matchMedia("(max-width: 1023px)"); // below lg
+    const syncCollapsedState = () => setIsCollapsed(media.matches);
+
+    syncCollapsedState();
+    media.addEventListener("change", syncCollapsedState);
+
+    return () => {
+      media.removeEventListener("change", syncCollapsedState);
+    };
+  }, []);
 
   const scrollToSection = (sectionId: string) => {
     if (sectionId === "home") {
@@ -799,64 +806,61 @@ function TopRightNavigation() {
 
   return (
     <motion.nav
-      className="fixed right-4 top-4 z-50 left-4 md:left-auto"
+      className="fixed z-50 top-2 left-2 lg:top-4 lg:left-auto lg:right-4"
       initial={{ opacity: 0, y: -12, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
     >
-      <Collapsible
-        open={!isCollapsed}
-        onOpenChange={(open) => setIsCollapsed(!open)}
-        className="flex items-center justify-end gap-2 rounded-2xl border border-emerald-200 bg-white/90 p-3 shadow-lg backdrop-blur"
-      >
+      <Collapsible open={!isCollapsed} onOpenChange={(open) => setIsCollapsed(!open)}>
         <CollapsibleTrigger asChild>
           <Button
             variant="ghost"
             aria-expanded={!isCollapsed}
-            aria-label={
-              isCollapsed ? "Expand navigation" : "Collapse navigation"
-            }
-            className="px-3 text-sm md:px-4 md:text-base"
+            aria-label={isCollapsed ? "Expand navigation" : "Collapse navigation"}
+            className="px-2.5 text-sm lg:px-4 lg:text-base"
           >
             {isCollapsed ? <Menu /> : <X />}
           </Button>
         </CollapsibleTrigger>
-        <div
-          className={`grid min-w-0 transition-[grid-template-columns,opacity] duration-300 ease-out ${
-            isCollapsed
-              ? "grid-cols-[0fr] opacity-0"
-              : "grid-cols-[1fr] opacity-100"
-          }`}
-        >
-          <CollapsibleContent forceMount className="min-w-0 overflow-hidden">
-            <div className="flex max-w-[75vw] flex-nowrap items-center gap-2 overflow-x-auto whitespace-nowrap pr-1 md:max-w-[70vw] lg:max-w-none">
-              {navItems.map((item) => (
+
+        <AnimatePresence>
+          {!isCollapsed && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="mt-2 lg:mt-0 flex flex-col lg:flex-row items-start lg:items-center gap-2 rounded-2xl border border-border bg-card/90 p-2 shadow-lg backdrop-blur lg:p-3"
+            >
+              <div className="flex flex-col lg:flex-row flex-wrap lg:flex-nowrap gap-1.5 w-full lg:w-auto">
+                {navItems.map((item) => (
+                  <Button
+                    key={item.id}
+                    variant="ghost"
+                    className="px-2.5 text-xs transition-transform duration-200 hover:scale-105 sm:text-sm lg:px-4 lg:text-base"
+                    onClick={() => scrollToSection(item.id)}
+                  >
+                    {item.label}
+                  </Button>
+                ))}
                 <Button
-                  key={item.id}
                   variant="ghost"
-                  className="px-3 text-sm transition-transform duration-200 hover:scale-105 md:px-4 md:text-base"
-                  onClick={() => scrollToSection(item.id)}
+                  className="px-2.5 text-xs transition-transform duration-200 hover:scale-105 sm:text-sm lg:px-4 lg:text-base"
+                  onClick={() => navigate("/login")}
                 >
-                  {item.label}
+                  Login
                 </Button>
-              ))}
-              <Button
-                variant="ghost"
-                className="px-3 text-sm transition-transform duration-200 hover:scale-105 md:px-4 md:text-base"
-                onClick={() => navigate("/login")}
-              >
-                Login
-              </Button>
-              <Button
-                variant="ghost"
-                className="px-3 text-sm transition-transform duration-200 hover:scale-105 md:px-4 md:text-base"
-                onClick={() => navigate("/signup")}
-              >
-                Sign up
-              </Button>
-            </div>
-          </CollapsibleContent>
-        </div>
+                <Button
+                  variant="ghost"
+                  className="px-2.5 text-xs transition-transform duration-200 hover:scale-105 sm:text-sm lg:px-4 lg:text-base"
+                  onClick={() => navigate("/signup")}
+                >
+                  Sign up
+                </Button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </Collapsible>
     </motion.nav>
   );
@@ -868,7 +872,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <main className="space-y-10 md:space-y-14 overflow-x-hidden bg-[linear-gradient(180deg,#f6fef9_0%,#ffffff_100%)] text-foreground">
+    <main className="space-y-8 overflow-x-hidden bg-background text-foreground md:space-y-14">
       <TopRightNavigation />
       <HeroSection />
       <StatsSection />

@@ -34,7 +34,7 @@ $editableFields = [
     'contact_number' => 's',
     'plantilla_number' => 's',
     'date_of_original_appointment' => 's',
-    'bp_number' => 'i',
+    'bp_number' => 's',
     'address' => 's',
     'civil_status' => 's',
     'date_of_birth' => 's',
@@ -67,6 +67,9 @@ foreach ($editableFields as $field => $type) {
 
         $params[] = $normalized;
     } else {
+        if ($field === 'tin' && $value !== null && $value !== '' && strlen((string)$value) > 60) {
+            respond(type: 'error', message: 'tin must be 60 characters or less.', statusCode: 422);
+        }
         $params[] = ($value === '') ? null : $value;
     }
 

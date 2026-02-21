@@ -91,7 +91,7 @@ function toEmployeePayload(
     date_of_original_appointment: toNullableString(
       form.date_of_original_appointment,
     ),
-    bp_number: toNullableNumber(form.bp_number),
+    bp_number: toNullableString(form.bp_number),
     address: form.address.trim(),
     civil_status: form.civil_status.trim(),
     date_of_birth: toNullableString(form.date_of_birth),
@@ -118,7 +118,7 @@ function toAddEmployeePayload(form: EmployeeFormState): AddEmployeePayload {
     date_of_original_appointment: toNullableString(
       form.date_of_original_appointment,
     ),
-    bp_number: toNullableNumber(form.bp_number),
+    bp_number: toNullableString(form.bp_number),
     address: form.address.trim(),
     civil_status: form.civil_status.trim(),
     date_of_birth: toNullableString(form.date_of_birth),
@@ -154,11 +154,8 @@ function validateEmployeeForm(form: EmployeeFormState): FieldErrorMap {
   if (!form.employment_status.trim())
     errors.employment_status = "Employment status is required.";
 
-  if (
-    form.bp_number.trim() !== "" &&
-    toNullableNumber(form.bp_number) == null
-  ) {
-    errors.bp_number = "BP number must be numeric.";
+  if (form.bp_number.trim().length > 30) {
+    errors.bp_number = "BP number must be at most 30 characters.";
   }
   if (
     form.salary_grade.trim() !== "" &&

@@ -118,39 +118,7 @@ INSERT INTO `employees_table` (
     '09180000004', 'PLANT015', '2018-02-19',
     'BP015', '147 Sampalan St., Malabon', 'Single', '1990-07-14',
     11, 25000, 'Permanent', '12345678915', 'Malabon'
-),
-(
-    'admin', 'System', 'Account', 'admin@deped.gov.ph',
-    10016, 'Principal I', '2020-01-15', '2024-01-15',
-    '09180000016', 'PLANT016', '2020-01-15',
-    'BP016', '100 Admin St., Quezon City', 'Single', '1992-01-01',
-    18, 52000, 'Permanent', '12345678916', 'Quezon City'
 );
-
--- ============================================
--- ADMIN USERS TABLE (15+ records)
--- Note: password_hash uses bcrypt format examples
--- ============================================
-
-INSERT INTO `admin_users_table` (
-    `employee_number`, `password_hash`
-) VALUES
-(10001, '$2y$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcg7b3XeKeUxWdeS86E36DvhKm8'),
-(10003, '$2y$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcg7b3XeKeUxWdeS86E36DvhKm8'),
-(10005, '$2y$10$R3S7vZt5T8p9Q0W1XyZ2ba.d8xZ9K4L5M6N7O8P9Q0R1S2T3U4V5W'),
-(10008, '$2y$10$A1B2C3D4E5F6G7H8I9J0.K1L2M3N4O5P6Q7R8S9T0U1V2W3X4Y5Z'),
-(10009, '$2y$10$S5T6U7V8W9X0Y1Z2A3B4.C5D6E7F8G9H0I1J2K3L4M5N6O7P8Q9R'),
-(10012, '$2y$10$E9F0G1H2I3J4K5L6M7N8.O9P0Q1R2S3T4U5V6W7X8Y9Z0A1B2C3D'),
-(10002, '$2y$10$J3K4L5M6N7O8P9Q0R1S2.T3U4V5W6X7Y8Z9A0B1C2D3E4F5G6H'),
-(10004, '$2y$10$M7N8O9P0Q1R2S3T4U5V6.W7X8Y9Z0A1B2C3D4E5F6G7H8I9J0K'),
-(10006, '$2y$10$V1W2X3Y4Z5A6B7C8D9E0.F1G2H3I4J5K6L7M8N9O0P1Q2R3S4T'),
-(10007, '$2y$10$Y5Z6A7B8C9D0E1F2G3H4.I5J6K7L8M9N0O1P2Q3R4S5T6U7V8W'),
-(10010, '$2y$10$B9C0D1E2F3G4H5I6J7K8.L9M0N1O2P3Q4R5S6T7U8V9W0X1Y2Z'),
-(10011, '$2y$10$D4E5F6G7H8I9J0K1L2M3.N4O5P6Q7R8S9T0U1V2W3X4Y5Z6A7B'),
-(10013, '$2y$10$G8H9I0J1K2L3M4N5O6P7.Q8R9S0T1U2V3W4X5Y6Z7A8B9C0D1E'),
-(10014, '$2y$10$K2L3M4N5O6P7Q8R9S0T1.U2V3W4X5Y6Z7A8B9C0D1E2F3G4H5I'),
-(10015, '$2y$10$P6Q7R8S9T0U1V2W3X4Y5.Z6A7B8C9D0E1F2G3H4I5J6K7L8M9N'),
-(10016, '$2y$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcg7b3XeKeUxWdeS86E36DvhKm8');
 
 -- ============================================
 -- COURSES TABLE (15+ records)
@@ -224,9 +192,9 @@ INSERT INTO `employees_table` (
   'Admin',
   '',
   'Account',
-  'admin@management.deped.gov.ph',
+  'admin@employee-management.deped.gov.ph',
   20251,
-  'System Maintainer | Admin',
+  'System Maintainer',
   NULL,
   NULL,
   '+639335093594',

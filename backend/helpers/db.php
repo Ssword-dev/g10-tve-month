@@ -8,7 +8,7 @@ if (!is_callable('config')) {
     throw new Exception('Cannot set configuration variables, as `config()` is not found.');
 }
 
-config('mysql_host', 'localhost');
+config('mysql_host', '127.0.0.1');
 config('mysql_user', 'root');
 config('mysql_password', '');
 config('mysql_database', 'tve_month_db');

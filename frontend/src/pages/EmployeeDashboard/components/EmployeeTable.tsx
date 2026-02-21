@@ -26,14 +26,14 @@ export function EmployeeTable({
 }: EmployeeTableProps) {
   if (isLoading)
     return (
-      <div className="flex h-40 items-center justify-center">
+      <div className="flex h-full min-h-0 items-center justify-center rounded-md border border-border/70">
         <Text className="text-muted-foreground">Loading employees...</Text>
       </div>
     );
 
   if (error)
     return (
-      <div className="flex flex-col items-center justify-center gap-3 h-40">
+      <div className="flex h-full min-h-0 flex-col items-center justify-center gap-3 rounded-md border border-border/70">
         <Text className="text-destructive">Failed to load employees.</Text>
         <Button onClick={onRetry}>Retry</Button>
       </div>
@@ -114,7 +114,7 @@ export function EmployeeTable({
   };
 
   return (
-    <div className="h-full min-h-0 min-w-0 overflow-auto rounded-md border border-border/70">
+    <div className="px-2 py-1 h-full min-h-0 min-w-0 overflow-auto rounded-md border border-border/70">
       <table className="w-full min-w-[780px] text-left text-sm">
         <thead>
           <tr className="border-border/70 border-b text-muted-foreground">

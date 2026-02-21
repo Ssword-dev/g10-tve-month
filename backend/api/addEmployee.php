@@ -172,8 +172,17 @@ $date_of_latest_promotion = !empty($body['date_of_latest_promotion']) ? $body['d
 $date_of_original_appointment = !empty($body['date_of_original_appointment']) ? $body['date_of_original_appointment'] : null;
 $date_of_birth = !empty($body['date_of_birth']) ? $body['date_of_birth'] : null;
 
-// Handle numeric fields
-$bp_number = !empty($body['bp_number']) ? (int)$body['bp_number'] : null;
+// Handle optional fields
+$bp_number = isset($body['bp_number']) && trim((string)$body['bp_number']) !== ''
+    ? trim((string)$body['bp_number'])
+    : null;
+if ($bp_number !== null && strlen($bp_number) > 30) {
+    respond(
+        type: 'error',
+        message: "Field 'bp_number' must be at most 30 characters.",
+        statusCode: 400
+    );
+}
 $salary_grade = !empty($body['salary_grade']) ? (int)$body['salary_grade'] : null;
 
 // Bind-safe variables.
@@ -197,10 +206,17 @@ if ($salaryRaw !== null && $salaryRaw !== '' && !is_numeric($salaryRaw)) {
 $salary = ($salaryRaw === null || $salaryRaw === '') ? null : (int)$salaryRaw;
 $employment_status = (string)$body['employment_status'];
 $tin = (string)($body['tin'] ?? '');
+if ($tin !== '' && strlen($tin) > 60) {
+    respond(
+        type: 'error',
+        message: "Field 'tin' must be at most 60 characters.",
+        statusCode: 400
+    );
+}
 $place_of_birth = (string)($body['place_of_birth'] ?? '');
 
-$stmt->bind_param(
-    "issssssssssisssiisss",
+$employeeBindTypes = "issssssssssssssiisss";
+$employeeBindValues = [
     $employee_number,
     $first_name,
     $middle_name,
@@ -221,7 +237,23 @@ $stmt->bind_param(
     $employment_status,
     $tin,
     $place_of_birth
-);
+];
+
+if (strlen($employeeBindTypes) !== count($employeeBindValues)) {
+    respond(
+        type: 'error',
+        message: 'Internal configuration error while binding employee fields.',
+        statusCode: 500
+    );
+}
+
+$employeeBindRefs = [];
+foreach ($employeeBindValues as $employeeBindIndex => &$employeeBindValue) {
+    $employeeBindRefs[$employeeBindIndex] = &$employeeBindValue;
+}
+unset($employeeBindValue);
+
+$stmt->bind_param($employeeBindTypes, ...$employeeBindRefs);
 
 $courseStatement = null;
 
@@ -248,14 +280,26 @@ try {
             $unitsCompleted = $course['units_completed'];
             $isFinished = $course['is_finished'];
 
-            $courseStatement->bind_param(
-                'issii',
+            $courseBindTypes = 'issii';
+            $courseBindValues = [
                 $employee_number,
                 $courseName,
                 $degreeLevel,
                 $unitsCompleted,
                 $isFinished
-            );
+            ];
+
+            if (strlen($courseBindTypes) !== count($courseBindValues)) {
+                throw new RuntimeException('Internal configuration error while binding course fields.');
+            }
+
+            $courseBindRefs = [];
+            foreach ($courseBindValues as $courseBindIndex => &$courseBindValue) {
+                $courseBindRefs[$courseBindIndex] = &$courseBindValue;
+            }
+            unset($courseBindValue);
+
+            $courseStatement->bind_param($courseBindTypes, ...$courseBindRefs);
 
             if (!$courseStatement->execute()) {
                 throw new RuntimeException('Failed to add initial course: ' . $courseStatement->error);

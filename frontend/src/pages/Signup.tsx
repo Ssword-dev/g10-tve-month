@@ -38,6 +38,12 @@ const optionalNumeric = z
   .default("")
   .refine((value) => value === "" || /^\d+$/.test(value), "Numbers only.");
 
+const optionalBpNumber = z
+  .string()
+  .trim()
+  .default("")
+  .refine((value) => value.length <= 30, "BP number must be at most 30 characters.");
+
 const signupSchema = z
   // Main form validation schema for the multi-step signup flow.
   .object({
@@ -72,7 +78,7 @@ const signupSchema = z
     dateOfLatestPromotion: optionalDate,
     dateOfOriginalAppointment: optionalDate,
     plantillaNumber: z.string().trim().default(""),
-    bpNumber: optionalNumeric,
+    bpNumber: optionalBpNumber,
     salaryGrade: optionalNumeric,
     salary: optionalNumeric,
     tin: z
@@ -80,8 +86,8 @@ const signupSchema = z
       .trim()
       .default("")
       .refine(
-        (value) => value === "" || value.length <= 11,
-        "TIN must be 11 characters or less.",
+        (value) => value === "" || value.length <= 60,
+        "TIN must be 60 characters or less.",
       ),
     password: z.string().min(8, "Password must be at least 8 characters."),
     confirmPassword: z.string().min(8, "Confirm your password."),
@@ -202,7 +208,7 @@ const stepFieldLookup: Record<StepId, StepFieldConfig[]> = {
     { id: "civilStatus", label: "Civil Status" },
     { id: "dateOfBirth", label: "Date of Birth", type: "date" },
     { id: "placeOfBirth", label: "Place of Birth" },
-    { id: "tin", label: "TIN", placeholder: "Up to 11 chars" },
+    { id: "tin", label: "TIN", placeholder: "Up to 60 chars" },
   ],
   employment: [
     { id: "designation", label: "Designation" },
@@ -219,7 +225,7 @@ const stepFieldLookup: Record<StepId, StepFieldConfig[]> = {
       type: "date",
     },
     { id: "plantillaNumber", label: "Plantilla Number" },
-    { id: "bpNumber", label: "BP Number", type: "number" },
+    { id: "bpNumber", label: "BP Number" },
     { id: "salaryGrade", label: "Salary Grade", type: "number" },
     { id: "salary", label: "Salary", type: "number" },
   ],

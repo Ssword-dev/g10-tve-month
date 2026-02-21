@@ -3,6 +3,9 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import './tailwind.css';
 import App from './App.tsx';
+import { initializeThemeMode } from './domain/theme/settings.ts';
+
+initializeThemeMode();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

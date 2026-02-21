@@ -24,14 +24,14 @@ CREATE TABLE `employees_table` (
     `contact_number` VARCHAR(40),
     `plantilla_number` VARCHAR(80),
     `date_of_original_appointment` DATE,
-    `bp_number` INT,
+    `bp_number` VARCHAR(30) UNIQUE,
     `address` VARCHAR(120),
     `civil_status` VARCHAR(15), -- WORD sized.
     `date_of_birth` DATE,
     `salary_grade` INT,
     `salary` INT,
     `employment_status` VARCHAR(15),
-    `tin` VARCHAR(11),
+    `tin` VARCHAR(60),
     `place_of_birth` VARCHAR(120),
     PRIMARY KEY (`employee_number`)
 );

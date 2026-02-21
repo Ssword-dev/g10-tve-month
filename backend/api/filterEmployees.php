@@ -49,7 +49,7 @@ final class FilterParser
         'contact_number' => 'string',
         'plantilla_number' => 'string',
         'date_of_original_appointment' => 'date',
-        'bp_number' => 'int',
+        'bp_number' => 'string',
         'address' => 'string',
         'civil_status' => 'string',
         'date_of_birth' => 'date',

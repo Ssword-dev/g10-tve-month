@@ -7,7 +7,7 @@ import {
 } from "@/domain/auth/actions";
 import { getAuthRole } from "@/domain/auth/session";
 import useServerQuery from "@/hooks/useServerQuery";
-import { Info, LogOut, Menu, Settings, X } from "lucide-react";
+import { Code2, Info, LogOut, Menu, Settings, X } from "lucide-react";
 import { Link, Outlet, useMatch, useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@_ssword/classes";
@@ -33,8 +33,16 @@ export default function Dashboard() {
       ? [
           { name: "overview", label: "Overview" },
           { name: "employees", label: "Employees" },
+          { name: "settings", label: "Settings" },
+          { name: "developers", label: "The Developers" },
+          { name: "about-us", label: "About Us" },
         ]
-      : [{ name: "employees", label: "Employees" }];
+      : [
+          { name: "employees", label: "Employees" },
+          { name: "settings", label: "Settings" },
+          { name: "developers", label: "The Developers" },
+          { name: "about-us", label: "About Us" },
+        ];
 
   const handleNavigate = useCallback(
     (route: string) => {
@@ -45,6 +53,16 @@ export default function Dashboard() {
 
   const goToAboutUs = useCallback(
     () => handleNavigate("about-us"),
+    [handleNavigate],
+  );
+
+  const goToDevelopers = useCallback(
+    () => handleNavigate("developers"),
+    [handleNavigate],
+  );
+
+  const goToSettings = useCallback(
+    () => handleNavigate("settings"),
     [handleNavigate],
   );
 
@@ -205,6 +223,28 @@ export default function Dashboard() {
                 {settingsOpen ? (
                   <div className="absolute bottom-full right-0 z-50 mb-2 w-52 rounded-lg border border-border bg-card p-2 text-foreground shadow-lg">
                     <div className="space-y-1 text-sm">
+                      <button
+                        type="button"
+                        className="flex w-full items-center gap-2 rounded-md px-2 py-1 text-left hover:bg-muted"
+                        onClick={() => {
+                          setSettingsOpen(false);
+                          goToSettings();
+                        }}
+                      >
+                        <Settings className="size-4 text-muted-foreground" />
+                        Settings
+                      </button>
+                      <button
+                        type="button"
+                        className="flex w-full items-center gap-2 rounded-md px-2 py-1 text-left hover:bg-muted"
+                        onClick={() => {
+                          setSettingsOpen(false);
+                          goToDevelopers();
+                        }}
+                      >
+                        <Code2 className="size-4 text-muted-foreground" />
+                        The Developers
+                      </button>
                       <button
                         type="button"
                         className="flex w-full items-center gap-2 rounded-md px-2 py-1 text-left hover:bg-muted"

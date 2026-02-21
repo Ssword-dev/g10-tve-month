@@ -16,6 +16,11 @@ const LoginPage = React.lazy(() => import("@/pages/Login"));
 const SignupPage = React.lazy(() => import("@/pages/Signup"));
 const DashboardLayout = React.lazy(() => import("@/layouts/Dashboard"));
 const AboutUsPage = React.lazy(() => import("@/pages/AboutUs"));
+const DevelopersPage = React.lazy(() => import("@/pages/Developers"));
+const SettingsPage = React.lazy(() => import("@/pages/Settings"));
+const SettingsAppearancePage = React.lazy(
+  () => import("@/pages/SettingsAppearance"),
+);
 const CustomerServicePage = React.lazy(() => import("@/pages/CustomerService"));
 const OverviewDashboardPage = React.lazy(
   () => import("@/pages/OverviewDashboard"),
@@ -137,7 +142,13 @@ function App() {
               }
             />
             <Route path="employees" element={<EmployeeDashboardPage />} />
+            <Route path="settings" element={<SettingsPage />} />
+            <Route
+              path="settings/appearance"
+              element={<SettingsAppearancePage />}
+            />
             <Route path="about-us" element={<AboutUsPage />} />
+            <Route path="developers" element={<DevelopersPage />} />
             <Route path="customer-service" element={<CustomerServicePage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
