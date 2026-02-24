@@ -1,6 +1,6 @@
 import type { Employee } from "@/domain/employees/types";
 
-import Text from "@/components/Text";
+import { Text } from "@/components/ui/misc";
 
 interface EmployeeDetailsCardProps {
   employee: Employee;

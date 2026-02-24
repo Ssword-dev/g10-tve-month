@@ -1,14 +1,18 @@
-import Button from "@/components/Button";
-import Card from "@/components/Card";
-import CardAction from "@/components/CardAction";
-import CardContent from "@/components/CardContent";
-import CardHeader from "@/components/CardHeader";
-import CardTitle from "@/components/CardTitle";
-import Accordion from "@/components/Accordion";
-import AccordionContent from "@/components/AccordionContent";
-import AccordionItem from "@/components/AccordionItem";
-import AccordionTrigger from "@/components/AccordionTrigger";
-import Text from "@/components/Text";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/misc";
 import { employeeDashboardSummariesQuery } from "@/domain/employees/actions";
 import type { EmployeeDashboardSummaries } from "@/domain/employees/types";
 import { overviewDashboardStatsQuery } from "@/domain/overview/actions";

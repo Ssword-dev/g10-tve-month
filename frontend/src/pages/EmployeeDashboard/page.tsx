@@ -1,7 +1,6 @@
-import Card from "@/components/Card";
-import CardContent from "@/components/CardContent";
-import Button from "@/components/Button";
-import Input from "@/components/Input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { currentAdminSessionQuery } from "@/domain/auth/actions";
 import { deleteEmployeeAction, getEmployee } from "@/domain/employees/actions";
 import type {

@@ -2,14 +2,11 @@ import type { Dispatch, SetStateAction } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 
 import type { Course, DegreeLevel } from "@/domain/employees/types";
-import Badge from "@/components/Badge";
-import Button from "@/components/Button";
-import Card from "@/components/Card";
-import CardAction from "@/components/CardAction";
-import CardContent from "@/components/CardContent";
-import CardTitle from "@/components/CardTitle";
-import Label from "@/components/Label";
-import Text from "@/components/Text";
+import { Card, CardAction, CardContent, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Text } from "@/components/ui/misc";
 
 import type { CourseFormState, FieldErrorMap } from "../types";
 import { courseKey } from "../utils";

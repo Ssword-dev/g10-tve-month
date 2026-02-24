@@ -1,11 +1,8 @@
-import Button from "@/components/Button";
-import Card from "@/components/Card";
-import CardContent from "@/components/CardContent";
-import CardHeader from "@/components/CardHeader";
-import CardTitle from "@/components/CardTitle";
-import Input from "@/components/Input";
-import Label from "@/components/Label";
-import Text from "@/components/Text";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Text } from "@/components/ui/misc";
 import { currentAdminSessionQuery, loginAction } from "@/domain/auth/actions";
 import { LogIn } from "lucide-react";
 import { useState } from "react";

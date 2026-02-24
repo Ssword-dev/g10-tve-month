@@ -9,8 +9,8 @@ import {
   updateEmployeeAction,
 } from "@/domain/employees/actions";
 import type { Course, Employee } from "@/domain/employees/types";
-import Card from "@/components/Card";
-import Text from "@/components/Text";
+import { Card } from "@/components/ui/card";
+import { Text } from "@/components/ui/misc";
 
 import type {
   CourseFormState,

@@ -1,10 +1,12 @@
 import { useCallback, useState } from "react";
 import { Plus } from "lucide-react";
 
-import Dialog from "@/components/Dialog";
-import DialogContent from "@/components/DialogContent";
-import DialogPortal from "@/components/DialogPortal";
-import DialogTrigger from "@/components/DialogTrigger";
+import {
+  Dialog,
+  DialogContent,
+  DialogPortal,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 import { AddEmployeeForm } from "./AddEmployeeForm";
 import { TableToolButton } from "./TableToolButton";

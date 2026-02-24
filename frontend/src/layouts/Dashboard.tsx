@@ -1,5 +1,5 @@
-import Button from "@/components/Button";
-import Text from "@/components/Text";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/misc";
 import {
   currentAdminProfilePictureQuery,
   currentAdminSessionQuery,

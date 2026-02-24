@@ -1,5 +1,5 @@
-import Skeleton from "@/components/Skeleton";
-import Text from "@/components/Text";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Text } from "@/components/ui/misc";
 
 export default function Loading() {
   return (

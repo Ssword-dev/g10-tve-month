@@ -1,6 +1,6 @@
 import { cn } from "@_ssword/classes";
-import Button from "@/components/Button";
-import type { ClassProps, Props } from "@/components/types";
+import { Button } from "@/components/ui/button";
+import type { ClassProps, Props } from "@/components/ui/types";
 
 export function TableToolButton({
   children,

@@ -1,11 +1,7 @@
-import Button from "@/components/Button";
-import Card from "@/components/Card";
-import CardContent from "@/components/CardContent";
-import CardHeader from "@/components/CardHeader";
-import CardTitle from "@/components/CardTitle";
-import Collapsible from "@/components/Collapsible";
-import CollapsibleTrigger from "@/components/CollapsibleTrigger";
-import Text from "@/components/Text";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Collapsible, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/misc";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLayoutEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";

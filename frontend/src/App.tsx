@@ -5,9 +5,9 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
-import Button from "@/components/Button";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/misc";
 import Loading from "@/Loading";
-import Text from "@/components/Text";
 import { currentAdminSessionQuery } from "@/domain/auth/actions";
 import useServerQuery from "@/hooks/useServerQuery";
 import LandingPage from "@/pages/Landing";

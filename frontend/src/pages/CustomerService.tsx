@@ -1,6 +1,5 @@
-import Card from "@/components/Card";
-import CardContent from "@/components/CardContent";
-import Text from "@/components/Text";
+import { Card, CardContent } from "@/components/ui/card";
+import { Text } from "@/components/ui/misc";
 
 export default function CustomerServicePage() {
   return (

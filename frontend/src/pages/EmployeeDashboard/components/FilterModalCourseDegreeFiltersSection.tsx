@@ -1,7 +1,7 @@
 import type { DegreeLevel } from "@/domain/employees/types";
-import Button from "@/components/Button";
-import Input from "@/components/Input";
-import Text from "@/components/Text";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Text } from "@/components/ui/misc";
 import { Plus, X } from "lucide-react";
 
 type CourseFilterMode = "has_specific" | "has_any" | "only_has";

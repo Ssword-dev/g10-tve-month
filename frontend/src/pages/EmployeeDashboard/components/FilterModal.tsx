@@ -23,16 +23,11 @@ import type {
   FilterEmployeesPayload,
   FilterExpression,
 } from "@/domain/employees/types";
-import Button from "@/components/Button";
-import Card from "@/components/Card";
-import CardAction from "@/components/CardAction";
-import CardContent from "@/components/CardContent";
-import CardHeader from "@/components/CardHeader";
-import CardTitle from "@/components/CardTitle";
-import Dialog from "@/components/Dialog";
-import DialogContent from "@/components/DialogContent";
-import Input from "@/components/Input";
-import Text from "@/components/Text";
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Text } from "@/components/ui/misc";
 
 import {
   booleanOperators,

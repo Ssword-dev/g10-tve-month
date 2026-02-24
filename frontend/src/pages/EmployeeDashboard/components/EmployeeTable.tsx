@@ -1,8 +1,8 @@
 import type { Employee } from "@/domain/employees/types";
 
-import Badge from "@/components/Badge";
-import Button from "@/components/Button";
-import Text from "@/components/Text";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/misc";
 import { employeeFields } from "./filterBuilderShared";
 
 const tableFields = [

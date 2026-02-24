@@ -1,12 +1,9 @@
 import { useEffect, type ReactNode } from "react";
 import { X } from "lucide-react";
 
-import Button from "@/components/Button";
-import Card from "@/components/Card";
-import CardContent from "@/components/CardContent";
-import CardHeader from "@/components/CardHeader";
-import CardTitle from "@/components/CardTitle";
-import Text from "@/components/Text";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/misc";
 
 interface ModalShellProps {
   open: boolean;

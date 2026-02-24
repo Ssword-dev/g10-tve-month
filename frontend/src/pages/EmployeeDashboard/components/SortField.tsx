@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 
 import type { Employee } from "@/domain/employees/types";
-import Button from "@/components/Button";
+import { Button } from "@/components/ui/button";
 
 import { employeeFields } from "./filterBuilderShared";
 

@@ -1,11 +1,8 @@
 import type { Dispatch, SetStateAction } from "react";
 
-import Button from "@/components/Button";
-import Card from "@/components/Card";
-import CardAction from "@/components/CardAction";
-import CardContent from "@/components/CardContent";
-import CardTitle from "@/components/CardTitle";
-import Text from "@/components/Text";
+import { Card, CardAction, CardContent, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/misc";
 
 import type { EmployeeFormState, FieldErrorMap } from "../types";
 import { EmployeeField } from "./EmployeeField";

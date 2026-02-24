@@ -1,8 +1,8 @@
 import type { ComponentProps } from "react";
 
-import Input from "@/components/Input";
-import Label from "@/components/Label";
-import Text from "@/components/Text";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Text } from "@/components/ui/misc";
 
 interface EmployeeFieldProps {
   label: string;
