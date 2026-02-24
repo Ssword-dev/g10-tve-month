@@ -1,22 +1,249 @@
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/misc";
 import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import {
   currentAdminProfilePictureQuery,
   currentAdminSessionQuery,
   logoutAction,
 } from "@/domain/auth/actions";
 import { getAuthRole } from "@/domain/auth/session";
 import useServerQuery from "@/hooks/useServerQuery";
-import { Code2, Info, LogOut, Menu, Settings, X } from "lucide-react";
-import { Link, Outlet, useMatch, useNavigate } from "react-router-dom";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ChevronRightIcon,
+  CircleQuestionMarkIcon,
+  Code2Icon,
+  GraduationCapIcon,
+  LogOut,
+  PaletteIcon,
+  RocketIcon,
+  Settings,
+  SettingsIcon,
+  SlidersHorizontalIcon,
+  UsersIcon,
+} from "lucide-react";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { cn } from "@_ssword/classes";
 import websiteIconSource from "../assets/website_icon.png";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+
+const ParentRouteContext = React.createContext(false);
+
+function Route({
+  name,
+  label,
+  icon: Icon,
+  isActive,
+  onNavigate,
+}: {
+  name: string;
+  label: string;
+  icon?: React.ComponentType;
+  isActive: boolean;
+  onNavigate: (route: string) => void;
+}) {
+  const isInsideParentRoute = React.useContext(ParentRouteContext);
+
+  if (isInsideParentRoute) {
+    return (
+      <SidebarMenuSubItem>
+        <SidebarMenuSubButton
+          onClick={() => onNavigate(name)}
+          isActive={isActive}
+          className={cn({
+            "bg-accent text-accent-foreground": isActive,
+          })}
+        >
+          {Icon ? <Icon /> : null}
+          <Text
+            size="sm"
+            weight="medium"
+            className="text-inherit group-data-[collapsible=icon]:hidden"
+          >
+            {label}
+          </Text>
+        </SidebarMenuSubButton>
+      </SidebarMenuSubItem>
+    );
+  }
+
+  return (
+    <SidebarMenuItem>
+      <TooltipProvider>
+        <SidebarMenuButton
+          tooltip={label}
+          onClick={() => onNavigate(name)}
+          className={cn("hover:cursor-pointer", {
+            "bg-accent text-accent-foreground": isActive,
+          })}
+        >
+          {Icon ? <Icon /> : null}
+          <Text
+            size="sm"
+            weight="medium"
+            className="text-inherit group-data-[collapsible=icon]:hidden"
+          >
+            {label}
+          </Text>
+        </SidebarMenuButton>
+      </TooltipProvider>
+    </SidebarMenuItem>
+  );
+}
+
+function ParentRoute({
+  label,
+  icon: Icon,
+  isActive,
+  children,
+}: {
+  label: string;
+  icon: React.ComponentType;
+  isActive: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <Collapsible asChild className="group/collapsible" defaultOpen={isActive}>
+      <SidebarMenuItem>
+        <TooltipProvider>
+          <CollapsibleTrigger asChild>
+            <SidebarMenuButton
+              tooltip={label}
+            >
+              <Icon />
+              <Text
+                size="sm"
+                weight="medium"
+                className="text-inherit group-data-[collapsible=icon]:hidden"
+              >
+                {label}
+              </Text>
+              <ChevronRightIcon className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 group-data-[collapsible=icon]:hidden" />
+            </SidebarMenuButton>
+          </CollapsibleTrigger>
+        </TooltipProvider>
+        <CollapsibleContent className="group-data-[collapsible=icon]:hidden">
+          <ParentRouteContext.Provider value>
+            <SidebarMenuSub>{children}</SidebarMenuSub>
+          </ParentRouteContext.Provider>
+        </CollapsibleContent>
+      </SidebarMenuItem>
+    </Collapsible>
+  );
+}
+
+function DashboardSubroutes({
+  currentPath,
+  onNavigate,
+  role,
+}: {
+  currentPath: string;
+  onNavigate: (route: string) => void;
+  role: ReturnType<typeof getAuthRole>;
+}) {
+  const isSettingsActive =
+    currentPath === "/dashboard/settings" ||
+    currentPath === "/dashboard/settings/" ||
+    currentPath.startsWith("/dashboard/settings/");
+
+  const isAboutActive =
+    currentPath.startsWith("/dashboard/about/the-team") ||
+    currentPath.startsWith("/dashboard/about/the-school");
+
+  return (
+    <SidebarMenu className="flex flex-col gap-2">
+      {role === "admin" ? (
+        <Route
+          name="overview"
+          label="Overview"
+          icon={RocketIcon}
+          isActive={currentPath.startsWith("/dashboard/overview")}
+          onNavigate={onNavigate}
+        />
+      ) : null}
+
+      <Route
+        name="employees"
+        label="Employees"
+        icon={UsersIcon}
+        isActive={currentPath.startsWith("/dashboard/employees")}
+        onNavigate={onNavigate}
+      />
+
+      <ParentRoute label="Settings" icon={SettingsIcon} isActive={isSettingsActive}>
+        <Route
+          name="settings"
+          label="General"
+          icon={SlidersHorizontalIcon}
+          isActive={
+            currentPath === "/dashboard/settings" ||
+            currentPath === "/dashboard/settings/"
+          }
+          onNavigate={onNavigate}
+        />
+        <Route
+          name="settings/appearance"
+          label="Appearance"
+          icon={PaletteIcon}
+          isActive={currentPath.startsWith("/dashboard/settings/appearance")}
+          onNavigate={onNavigate}
+        />
+      </ParentRoute>
+
+      <ParentRoute
+        label="About Us"
+        icon={CircleQuestionMarkIcon}
+        isActive={isAboutActive}
+      >
+        <Route
+          name="about/the-team"
+          label="The Developers"
+          isActive={currentPath.startsWith("/dashboard/about/the-team")}
+          icon={Code2Icon}
+          onNavigate={onNavigate}
+        />
+
+        <Route
+          name="about/the-school"
+          label="The School"
+          isActive={currentPath.startsWith("/dashboard/about/the-school")}
+          icon={GraduationCapIcon}
+          onNavigate={onNavigate}
+        />
+      </ParentRoute>
+    </SidebarMenu>
+  );
+}
 
 export default function Dashboard() {
-  const match = useMatch("/dashboard/:subRoute");
-  const subRoute = useMemo(() => match?.params.subRoute ?? "overview", [match]);
-
+  const location = useLocation();
+  const currentPath = useMemo(() => location.pathname, [location.pathname]);
   const navigate = useNavigate();
   const { data: sessionData } = useServerQuery(currentAdminSessionQuery);
   const { data: profilePictureData } = useServerQuery(
@@ -24,41 +251,14 @@ export default function Dashboard() {
   );
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const settingsMenuRef = useRef<HTMLDivElement | null>(null);
   const role = getAuthRole(sessionData);
-
-  const subRoutes =
-    role === "admin"
-      ? [
-          { name: "overview", label: "Overview" },
-          { name: "employees", label: "Employees" },
-          { name: "settings", label: "Settings" },
-          { name: "developers", label: "The Developers" },
-          { name: "about-us", label: "About Us" },
-        ]
-      : [
-          { name: "employees", label: "Employees" },
-          { name: "settings", label: "Settings" },
-          { name: "developers", label: "The Developers" },
-          { name: "about-us", label: "About Us" },
-        ];
 
   const handleNavigate = useCallback(
     (route: string) => {
       navigate(`/dashboard/${route}`);
     },
     [navigate],
-  );
-
-  const goToAboutUs = useCallback(
-    () => handleNavigate("about-us"),
-    [handleNavigate],
-  );
-
-  const goToDevelopers = useCallback(
-    () => handleNavigate("developers"),
-    [handleNavigate],
   );
 
   const goToSettings = useCallback(
@@ -89,10 +289,6 @@ export default function Dashboard() {
     resolvedProfilePictureUrl ?? currentUser?.avatar_url ?? defaultAvatarUrl;
 
   useEffect(() => {
-    setMobileNavOpen(false);
-  }, [subRoute]);
-
-  useEffect(() => {
     if (!settingsOpen) {
       return;
     }
@@ -114,90 +310,33 @@ export default function Dashboard() {
   }, [settingsOpen]);
 
   return (
-    <div className="grid h-screen w-screen overflow-x-hidden grid-cols-1 bg-background text-foreground lg:grid-cols-[250px_1fr]">
-      <div className="sticky top-0 z-40 flex items-center justify-between border-b border-border/70 bg-card/95 px-4 py-3 backdrop-blur lg:hidden">
-        <div className="flex items-center gap-2">
-          <div className="rounded-lg bg-accent/35 p-1.5">
-            <img src={websiteIconSource} className="size-4" />
-          </div>
-          <Link to="/dashboard/overview">
-            <Text size="sm" weight="semibold">
-              SPRCNHS SEMS
-            </Text>
-          </Link>
-        </div>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="px-2 py-1"
-          onClick={() => setMobileNavOpen((current) => !current)}
-          aria-label={
-            mobileNavOpen ? "Close navigation menu" : "Open navigation menu"
-          }
-        >
-          {mobileNavOpen ? (
-            <X className="size-4" />
-          ) : (
-            <Menu className="size-4" />
-          )}
-        </Button>
-      </div>
-
-      {mobileNavOpen ? (
-        <div
-          className="fixed inset-0 z-30 bg-black/40 lg:hidden"
-          onClick={() => setMobileNavOpen(false)}
-        />
-      ) : null}
-
-      <aside
-        className={cn(
-          "fixed left-0 top-0 z-40 flex h-full w-[260px] flex-col border-r border-border/70 bg-card/95 p-5 backdrop-blur transition-transform duration-200 lg:static lg:w-auto lg:translate-x-0 lg:border-r lg:bg-card/90 lg:p-6",
-          {
-            "translate-x-0": mobileNavOpen,
-            "-translate-x-full": !mobileNavOpen,
-          },
-        )}
+    <SidebarProvider>
+      <Sidebar
+        variant="sidebar"
+        className="border-r border-border/70 bg-card/95 lg:bg-card/90"
       >
-        <div className="mb-8 flex items-center gap-3">
-          <div className="rounded-xl bg-accent/35 p-2">
-            <img src={websiteIconSource} className="size-5" />
+        <SidebarHeader className="mb-6 gap-0 px-5 pt-5 md:px-6 md:pt-6">
+          <div className="flex items-center gap-3">
+            <Link to="/dashboard/overview">
+              <img className="w-5 aspect-square" src={websiteIconSource} />
+            </Link>
           </div>
-          <Link to="/dashboard/overview">
-            <Text size="lg" weight="semibold">
-              Dashboard
-            </Text>
-          </Link>
-        </div>
+        </SidebarHeader>
 
-        <nav className="space-y-2">
-          {subRoutes.map((route) => {
-            const isActive = route.name === subRoute;
+        <SidebarContent>
+          {/** padding here makes a better fit. */}
+          <SidebarGroup className="px-3 md:px-4">
+            <DashboardSubroutes
+              currentPath={currentPath}
+              onNavigate={handleNavigate}
+              role={role}
+            />
+          </SidebarGroup>
+        </SidebarContent>
 
-            return (
-              <Button
-                key={route.name}
-                variant="glass"
-                className={cn("px-2 py-1", {
-                  "w-full justify-start gap-3 bg-primary text-primary-foreground hover:bg-primary/90":
-                    isActive,
-                  "w-full justify-start gap-3 bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground":
-                    !isActive,
-                })}
-                onClick={() => handleNavigate(route.name)}
-              >
-                <Text size="sm" weight="medium" className="text-inherit">
-                  {route.label}
-                </Text>
-              </Button>
-            );
-          })}
-        </nav>
-
-        <div className="mt-auto space-y-3 pt-6">
+        <SidebarFooter className="px-3 pb-5 pt-6 md:px-4 md:pb-6">
           {currentUser ? (
-            <div className="flex items-center gap-3 rounded-lg border border-border/70 bg-muted/35 px-3 py-2">
+            <div className="flex items-center gap-3 rounded-lg border border-border/70 bg-muted/35 px-3 py-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:border-transparent group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:px-0">
               <img
                 src={avatarUrl}
                 alt="Profile"
@@ -206,10 +345,17 @@ export default function Dashboard() {
                   event.currentTarget.src = defaultAvatarUrl;
                 }}
               />
-              <Text size="sm" weight="semibold" className="truncate">
+              <Text
+                size="sm"
+                weight="semibold"
+                className="truncate group-data-[collapsible=icon]:hidden"
+              >
                 {currentUser.first_name} {currentUser.last_name}
               </Text>
-              <div className="relative ml-auto" ref={settingsMenuRef}>
+              <div
+                className="relative ml-auto group-data-[collapsible=icon]:hidden"
+                ref={settingsMenuRef}
+              >
                 <Button
                   type="button"
                   size="sm"
@@ -234,28 +380,6 @@ export default function Dashboard() {
                         <Settings className="size-4 text-muted-foreground" />
                         Settings
                       </button>
-                      <button
-                        type="button"
-                        className="flex w-full items-center gap-2 rounded-md px-2 py-1 text-left hover:bg-muted"
-                        onClick={() => {
-                          setSettingsOpen(false);
-                          goToDevelopers();
-                        }}
-                      >
-                        <Code2 className="size-4 text-muted-foreground" />
-                        The Developers
-                      </button>
-                      <button
-                        type="button"
-                        className="flex w-full items-center gap-2 rounded-md px-2 py-1 text-left hover:bg-muted"
-                        onClick={() => {
-                          setSettingsOpen(false);
-                          goToAboutUs();
-                        }}
-                      >
-                        <Info className="size-4 text-muted-foreground" />
-                        About Us
-                      </button>
                       {role === "admin" ? (
                         <button
                           type="button"
@@ -276,12 +400,28 @@ export default function Dashboard() {
               </div>
             </div>
           ) : null}
-        </div>
-      </aside>
+        </SidebarFooter>
+      </Sidebar>
 
-      <main className="min-h-0 overflow-y-auto">
-        <Outlet />
-      </main>
-    </div>
+      <SidebarInset className="h-svh overflow-hidden bg-background text-foreground">
+        <div className="sticky top-0 z-40 flex items-center justify-between border-b border-border/70 bg-card/95 px-4 py-3 backdrop-blur">
+          <SidebarTrigger className="px-2 py-1" />
+          <div className="flex items-center gap-2">
+            <Link to="/dashboard/overview">
+              <Text size="sm" weight="semibold">
+                SPRCNHS SEMS
+              </Text>
+            </Link>
+            <div className="rounded-lg bg-accent/35 p-1.5">
+              <img src={websiteIconSource} className="size-4" />
+            </div>
+          </div>
+        </div>
+
+        <main className="flex-1 min-h-0 overflow-y-auto">
+          <Outlet />
+        </main>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

@@ -41,50 +41,59 @@ type ServiceLinkContent = {
 };
 
 const heroContent: HeroContent = {
-  eyebrow: "About Us",
-  title: "SPRCNHS School Employee Management System",
+  eyebrow: "The School",
+  title: "San Pedro Relocation Center National High School",
   description:
-    "We help schools organize employee information with a secure, searchable, and role-based system built for daily operations.",
+    "San Pedro Relocation Center National High School (SPRCNHS) is a public secondary school in San Pedro City, Laguna, serving learners in the local community.",
 };
 
 const heroMetrics: HeroMetric[] = [
-  { label: "Core Focus", value: "Staff Records" },
-  { label: "Security", value: "Role-Based Access" },
-  { label: "Workflow", value: "Faster Filtering" },
-  { label: "Audience", value: "School Admin Teams" },
+  { label: "School Type", value: "Public Secondary" },
+  { label: "City", value: "San Pedro" },
+  { label: "Province", value: "Laguna" },
+  { label: "Region", value: "CALABARZON (IV-A)" },
 ];
 
 const valueCards: ValueCardContent[] = [
   {
     icon: Building2,
-    title: "Purpose-Built for Schools",
+    title: "School Profile",
     description:
-      "Built around real administrative needs, not generic HR screens.",
+      "SPRCNHS is listed under the Schools Division Office of San Pedro City as a recognized public high school.",
   },
   {
     icon: ShieldCheck,
-    title: "Safer Data Handling",
-    description: "Sensitive information visibility is controlled by user role.",
+    title: "DepEd Recognition",
+    description:
+      "The school appears in DepEd references, including ALS-EST implementing school listings for Region IV-A.",
   },
   {
     icon: Sparkles,
-    title: "Practical UX",
-    description: "Simple flows for filtering, reviewing, and updating records.",
+    title: "Historical Note",
+    description:
+      "A known Cuyab annex of SPRCNHS was legislatively referenced and later established as Cuyab National High School.",
   },
 ];
 
 const audienceBlocks: AudienceContent[] = [
   {
     icon: Users,
-    title: "Who We Serve",
+    title: "Who The School Serves",
     description:
-      "School leaders, HR personnel, and admin staff who need a reliable and maintainable source of truth for employee data.",
+      "The school supports learners and families in the relocation communities of San Pedro through public secondary education services.",
   },
 ];
 
 const serviceLinks: ServiceLinkContent[] = [
   {
-    title: "Customer Service",
+    title: "Meet The Team",
+    description:
+      "Learn more about the people behind this platform and the contributors who built it.",
+    ctaLabel: "Go to The Team",
+    to: "/dashboard/about/the-team",
+  },
+  {
+    title: "Need Assistance?",
     description:
       "For support and assistance, contact our customer service representative Noriel T. (Tud) Panis.",
     ctaLabel: "Go to Customer Service",
@@ -160,7 +169,7 @@ function ServiceLinkCard({
   );
 }
 
-export default function AboutUsPage() {
+export default function TheSchoolPage() {
   return (
     <main className="relative min-h-full overflow-hidden p-4 md:p-8">
       <div className="pointer-events-none absolute inset-0">

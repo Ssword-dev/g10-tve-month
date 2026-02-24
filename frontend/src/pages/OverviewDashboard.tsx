@@ -116,7 +116,7 @@ export default function OverviewDashboard() {
               weight="bold"
               className="px-2 py-1 leading-tight sm:text-2xl"
             >
-              SPRCNHS School Employee Management Overview
+              Overview
             </Text>
           </CardTitle>
           <CardAction>

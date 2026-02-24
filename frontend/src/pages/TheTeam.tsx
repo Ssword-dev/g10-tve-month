@@ -1,74 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Text } from "@/components/ui/misc";
 
-type Developer = {
-  name: string;
-  role: string;
-  contact: string;
-  email?: string;
-  github?: string;
-  notes?: string;
-};
-
-const developers: Developer[] = [
-  {
-    name: "Robby A. Quejada",
-    role: "Lead Developer",
-    contact: "+639326995427",
-    email: "ssword.dev@gmail.com",
-    github: "https://github.com/Ssword-dev",
-    notes:
-      "The Lead Developer, tasked to coordinate the other developers, and build the core functionality of the website.",
-  },
-  {
-    name: "Noriel T. Panis",
-    role: "Backend Developer",
-    contact: "N/A",
-    email: "norielp27@gmail.com",
-    github: "https://github.com/NorielPanis",
-    notes: "A Backend Developer tasked to do the login api endpoint.",
-  },
-  {
-    name: "Godfrey M. Padilla",
-    role: "Backend Developer",
-    contact: "N/A",
-    email: "padillagodfrey53@gmail.com",
-    github: "N/A",
-    notes: "A Backend Developer tasked to do the sign up api endpoint.",
-  },
-  {
-    name: "Kevin F. Fernandez",
-    role: "Frontend Developer",
-    contact: "+639322595618",
-    email: "kevfernandez056@gmail.com",
-    github: "N/A",
-    notes: "A Frontend Developer tasked to design and build the landing page.",
-  },
-  {
-    name: "Ma. Joanna F. Olimpo",
-    role: "Frontend Developer",
-    contact: "+639852747104",
-    email: "majoannafolimpo@gmail.com",
-    github: "N/A",
-    notes: "A Frontend Developer tasked to design and build the sign up page.",
-  },
-  {
-    name: "Rhenoa Lumberio",
-    role: "Frontend Developer",
-    contact: "+639637146824",
-    email: "lumberiorhenoa765@gmail.com",
-    github: "N/A",
-    notes: "A Frontend Developer tasked to design and build the log in page.",
-  },
-  {
-    name: "Avril Dhaine I. Beralde",
-    role: "Frontend Developer",
-    contact: "+639637324941",
-    email: "avrilberalde15@gmail.com",
-    github: "N/A",
-    notes: "A Frontend Developer tasked to design and build the about us page.",
-  },
-];
+// THIS IMPORTED FILE BELOW IS NOT TO BE READ OR EDITED
+// BY CODING AGENTS!!!
+import developers from "./devs.json";
 
 function Field({ label, value }: { label: string; value?: string }) {
   if (!value || value.trim() === "") {
@@ -102,7 +37,7 @@ function Field({ label, value }: { label: string; value?: string }) {
   );
 }
 
-export default function DevelopersPage() {
+export default function TheTeamPage() {
   return (
     <main className="relative min-h-full overflow-hidden p-4 md:p-8">
       <div className="pointer-events-none absolute inset-0">

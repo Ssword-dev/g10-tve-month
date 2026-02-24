@@ -35,7 +35,7 @@ function ThemeOption({
       }`}
       aria-pressed={active}
     >
-      <div className="space-y-1 gap-2">
+      <div className="space-y-1 flex flex-row items-center gap-2">
         <Text weight="semibold">{label}</Text>
         <Text size="sm" className="text-muted-foreground">
           {description}

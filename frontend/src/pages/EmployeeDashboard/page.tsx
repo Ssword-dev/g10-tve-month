@@ -210,8 +210,8 @@ export default function EmployeeDashboard() {
           </div>
         </CardContent>
       </Card>
-      <Card className="min-h-0 w-full flex-1 gap-0 overflow-hidden border-border px-0 py-0">
-        <CardContent className="min-h-0 w-full flex-1 px-0 py-0">
+      <Card className="h-full min-h-0 w-full flex-1 gap-0 overflow-hidden border-border px-0 py-0">
+        <CardContent className="flex h-full min-h-0 w-full flex-col px-0 py-0">
           <EmployeeTableShell
             canManageEmployees={canManage}
             allowedFilterFields={allowedFilterFields}

@@ -15,8 +15,11 @@ import LandingPage from "@/pages/Landing";
 const LoginPage = React.lazy(() => import("@/pages/Login"));
 const SignupPage = React.lazy(() => import("@/pages/Signup"));
 const DashboardLayout = React.lazy(() => import("@/layouts/Dashboard"));
-const AboutUsPage = React.lazy(() => import("@/pages/AboutUs"));
-const DevelopersPage = React.lazy(() => import("@/pages/Developers"));
+const TheSchoolPage = React.lazy(() => import("@/pages/TheSchool"));
+const TheTeamPage = React.lazy(() => import("@/pages/TheTeam"));
+const TermsAndConditionsPage = React.lazy(
+  () => import("@/pages/TermsAndConditions"),
+);
 const SettingsPage = React.lazy(() => import("@/pages/Settings"));
 const SettingsAppearancePage = React.lazy(
   () => import("@/pages/SettingsAppearance"),
@@ -147,8 +150,14 @@ function App() {
               path="settings/appearance"
               element={<SettingsAppearancePage />}
             />
-            <Route path="about-us" element={<AboutUsPage />} />
-            <Route path="developers" element={<DevelopersPage />} />
+            <Route path="about">
+              <Route path="the-school" element={<TheSchoolPage />} />
+              <Route path="the-team" element={<TheTeamPage />} />
+            </Route>
+            <Route
+              path="terms-and-conditions"
+              element={<TermsAndConditionsPage />}
+            />
             <Route path="customer-service" element={<CustomerServicePage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
