@@ -352,11 +352,11 @@ function HeroSection() {
         </motion.div>
 
         <motion.div
-          className="hidden h-full w-full bg-transparent lg:block"
+          className="hidden h-full w-full bg-transparent lg:flex lg:flex-col lg:justify-center lg:items-center"
           {...animationPresets.fadeUp({ delay: 0.15 })}
         >
           <img
-            className="h-full min-h-[260px] w-full object-cover"
+            className="h-full max-h-80 w-full aspect-square object-contain"
             src={landingPageHeroBannerImageSource}
             alt="School staff management dashboard preview"
           />

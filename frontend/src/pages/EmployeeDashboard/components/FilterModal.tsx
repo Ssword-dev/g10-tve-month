@@ -592,7 +592,7 @@ export function FilterModal({
                                 };
                               });
                             }}
-                            className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm sm:w-auto"
+                            className="w-full rounded-md border border-border bg-card px-3 py-1.5 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30 sm:w-auto"
                           >
                             {availableFields.map((field) => {
                               const usedByOther =
@@ -621,7 +621,7 @@ export function FilterModal({
                                 }),
                               )
                             }
-                            className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm sm:w-auto"
+                            className="w-full rounded-md border border-border bg-card px-3 py-1.5 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30 sm:w-auto"
                           >
                             <option value="is_not_null">
                               is not null (default)
@@ -673,7 +673,7 @@ export function FilterModal({
                                   }),
                                 )
                               }
-                              className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm sm:w-auto"
+                              className="w-full rounded-md border border-border bg-card px-3 py-1.5 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30 sm:w-auto"
                             >
                               {operators.map((operator) => (
                                 <option
@@ -775,7 +775,7 @@ export function FilterModal({
                                     }),
                                   )
                                 }
-                                className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm sm:w-auto"
+                                className="w-full rounded-md border border-border bg-card px-3 py-1.5 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30 sm:w-auto"
                               >
                                 <option value="true">true</option>
                                 <option value="false">false</option>

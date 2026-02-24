@@ -8,6 +8,7 @@ const defaultEmployeeFilter: FilterEmployeesPayload = {
     include: [
       "employee_number",
       "full_name",
+      "age",
       "deped_email",
       "designation",
       "employment_status",

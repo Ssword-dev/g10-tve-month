@@ -5,6 +5,14 @@ import Button from "@/components/Button";
 import Text from "@/components/Text";
 import { employeeFields } from "./filterBuilderShared";
 
+const tableFields = [
+  ...employeeFields,
+  {
+    value: "courses" as keyof Employee,
+    label: "Courses",
+  },
+];
+
 interface EmployeeTableProps {
   employees: Employee[];
   isLoading: boolean;
@@ -39,14 +47,77 @@ export function EmployeeTable({
       </div>
     );
 
+  const getComputedValue = (employee: Employee, field: keyof Employee) => {
+    if (field === "full_name") {
+      if (
+        typeof employee.full_name === "string" &&
+        employee.full_name.trim() !== ""
+      ) {
+        return employee.full_name;
+      }
+
+      const fallbackName = [
+        employee.first_name,
+        employee.middle_name,
+        employee.last_name,
+      ]
+        .filter((part) => typeof part === "string" && part.trim() !== "")
+        .join(" ")
+        .trim();
+
+      return fallbackName === "" ? null : fallbackName;
+    }
+
+    if (field === "age") {
+      if (typeof employee.age === "number") {
+        return employee.age;
+      }
+
+      if (
+        typeof employee.date_of_birth === "string" &&
+        employee.date_of_birth !== ""
+      ) {
+        const birthDate = new Date(employee.date_of_birth);
+        if (!Number.isNaN(birthDate.getTime())) {
+          const now = new Date();
+          let years = now.getFullYear() - birthDate.getFullYear();
+          const beforeBirthday =
+            now.getMonth() < birthDate.getMonth() ||
+            (now.getMonth() === birthDate.getMonth() &&
+              now.getDate() < birthDate.getDate());
+          if (beforeBirthday) {
+            years -= 1;
+          }
+
+          return years >= 0 ? years : null;
+        }
+      }
+
+      return null;
+    }
+
+    if (field === "courses") {
+      return Array.isArray(employee.courses) ? employee.courses.length : null;
+    }
+
+    return employee[field];
+  };
+
+  const isVisibleField = (employee: Employee, field: keyof Employee) => {
+    const computedValue = getComputedValue(employee, field);
+    return computedValue != null && computedValue !== "";
+  };
+
   const presentFields = new Set<keyof Employee>();
   for (const employee of employees) {
-    for (const key of Object.keys(employee) as Array<keyof Employee>) {
-      presentFields.add(key);
+    for (const field of tableFields) {
+      if (isVisibleField(employee, field.value)) {
+        presentFields.add(field.value);
+      }
     }
   }
 
-  const defaultVisibleFields = employeeFields.filter((field) => {
+  const defaultVisibleFields = tableFields.filter((field) => {
     if (!presentFields.has(field.value)) {
       return false;
     }
@@ -62,9 +133,9 @@ export function EmployeeTable({
     includeOrder && includeOrder !== "ALL"
       ? includeOrder
           .map((field) =>
-            employeeFields.find((meta) => meta.value === field),
+            tableFields.find((meta) => meta.value === field),
           )
-          .filter((field): field is (typeof employeeFields)[number] => {
+          .filter((field): field is (typeof tableFields)[number] => {
             if (!field) {
               return false;
             }
@@ -84,7 +155,7 @@ export function EmployeeTable({
   const visibleColumns = Math.max(visibleFields.length, 1);
 
   const renderCell = (employee: Employee, field: keyof Employee) => {
-    const value = employee[field];
+    const value = getComputedValue(employee, field);
 
     if (field === "employee_number") {
       if (typeof value === "number") {
@@ -107,7 +178,7 @@ export function EmployeeTable({
     }
 
     if (field === "courses") {
-      return Array.isArray(value) ? value.length : "N/A";
+      return typeof value === "number" ? value : "N/A";
     }
 
     return value == null || value === "" ? "N/A" : String(value);

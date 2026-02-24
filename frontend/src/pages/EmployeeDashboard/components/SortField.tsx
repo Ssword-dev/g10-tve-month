@@ -30,7 +30,7 @@ export function SortField({
       <select
         value={basis}
         onChange={(e) => onChange(e.target.value as keyof Employee, direction)}
-        className="bg-transparent border-none text-sm focus:outline-none"
+        className="rounded-md border border-border bg-card px-2 py-1 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
       >
         {selectableFields.map((field) => (
           <option key={field.value} value={field.value}>
@@ -41,7 +41,7 @@ export function SortField({
       <select
         value={direction}
         onChange={(e) => onChange(basis, e.target.value as "asc" | "desc")}
-        className="bg-transparent border-none text-sm focus:outline-none"
+        className="rounded-md border border-border bg-card px-2 py-1 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
       >
         <option value="asc">Ascending</option>
         <option value="desc">Descending</option>

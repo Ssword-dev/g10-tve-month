@@ -258,9 +258,14 @@ export function AddEmployeeForm({ closeModal }: { closeModal: () => void }) {
   };
 
   const isFirstPage = currentPage === 0;
-  const isCoursesPage = currentPage === fieldCategories.length;
-  const isFinalPage = currentPage === fieldCategories.length;
+  const lastPageIndex = fieldCategories.length;
+  const isCoursesPage = currentPage === lastPageIndex;
+  const isFinalPage = currentPage === lastPageIndex;
   const currentFieldCategory = fieldCategories[Math.min(currentPage, fieldCategories.length - 1)];
+  const goToNextPage = () => setCurrentPage((page) => Math.min(page + 1, lastPageIndex));
+  const onSaveEmployee = handleSubmit((data) => {
+    void submitEmployeePayload(data);
+  });
 
   const addInitialCourse = () => {
     const courseName = courseDraft.course_name.trim();
@@ -298,7 +303,7 @@ export function AddEmployeeForm({ closeModal }: { closeModal: () => void }) {
       asChild
       className="w-full h-full border-border bg-card shadow-lg overflow-hidden"
     >
-      <form onSubmit={handleSubmit(submitEmployeePayload)}>
+      <form onSubmit={(event) => event.preventDefault()}>
         <CardHeader className="border-b border-border bg-muted/30 px-6 py-4">
           <CardTitle className="text-xl font-semibold text-foreground">
             Add New Employee
@@ -348,7 +353,7 @@ export function AddEmployeeForm({ closeModal }: { closeModal: () => void }) {
                 <Field className="grid gap-1.5">
                   <FieldLabel>Degree Level</FieldLabel>
                   <select
-                    className="bg-card border-border rounded-md border px-3 py-2 text-sm"
+                    className="rounded-md border border-border bg-card px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
                     value={courseDraft.degree_level}
                     onChange={(event) =>
                       setCourseDraft((current) => ({
@@ -463,14 +468,15 @@ export function AddEmployeeForm({ closeModal }: { closeModal: () => void }) {
           {!isFinalPage ? (
             <Button
               type="button"
-              onClick={() => setCurrentPage((p) => p + 1)}
+              onClick={goToNextPage}
               className="bg-primary text-primary-foreground hover:bg-primary/90 px-2 py-1"
             >
               Next
             </Button>
           ) : (
             <Button
-              type="submit"
+              type="button"
+              onClick={onSaveEmployee}
               disabled={isSubmitting}
               className="bg-primary text-primary-foreground hover:bg-primary/90 px-2 py-1"
             >

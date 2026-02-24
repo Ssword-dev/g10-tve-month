@@ -20,6 +20,44 @@ export function EmployeeDetailsCard({
   employee,
   showSensitiveFields,
 }: EmployeeDetailsCardProps) {
+  const fullName =
+    typeof employee.full_name === "string" && employee.full_name.trim() !== ""
+      ? employee.full_name.trim()
+      : [employee.first_name, employee.middle_name, employee.last_name]
+          .map((part) => (typeof part === "string" ? part.trim() : ""))
+          .filter((part) => part !== "")
+          .join(" ");
+
+  const resolvedAge = (() => {
+    if (typeof employee.age === "number") {
+      return employee.age;
+    }
+
+    const dob = typeof employee.date_of_birth === "string" ? employee.date_of_birth : "";
+    if (dob.trim() === "") {
+      return null;
+    }
+
+    const birthDate = new Date(dob);
+    if (Number.isNaN(birthDate.getTime())) {
+      return null;
+    }
+
+    const now = new Date();
+    let years = now.getFullYear() - birthDate.getFullYear();
+    const beforeBirthday =
+      now.getMonth() < birthDate.getMonth() ||
+      (now.getMonth() === birthDate.getMonth() && now.getDate() < birthDate.getDate());
+
+    if (beforeBirthday) {
+      years -= 1;
+    }
+
+    return years >= 0 ? years : null;
+  })();
+
+  const coursesCount = Array.isArray(employee.courses) ? employee.courses.length : 0;
+
   return (
     <div className="space-y-3 text-xs leading-relaxed">
       <section className="space-y-1.5">
@@ -28,9 +66,14 @@ export function EmployeeDetailsCard({
         </Text>
         <div className="space-y-1">
           <p>
-            <span className="font-semibold">Full Name:</span>{" "}
-            {displayValue(employee.last_name)}, {displayValue(employee.first_name)}{" "}
-            {displayValue(employee.middle_name)}
+            <span className="font-semibold">Employee #:</span>{" "}
+            {displayValue(employee.employee_number)}
+          </p>
+          <p>
+            <span className="font-semibold">Full Name:</span> {displayValue(fullName)}
+          </p>
+          <p>
+            <span className="font-semibold">Age:</span> {displayValue(resolvedAge)}
           </p>
           {showSensitiveFields ? (
             <>
@@ -86,6 +129,10 @@ export function EmployeeDetailsCard({
             {displayValue(employee.date_joined)} /{" "}
             {displayValue(employee.date_of_latest_promotion)} /{" "}
             {displayValue(employee.date_of_original_appointment)}
+          </p>
+          <p>
+            <span className="font-semibold">Courses Count:</span>{" "}
+            {displayValue(coursesCount)}
           </p>
         </div>
       </section>

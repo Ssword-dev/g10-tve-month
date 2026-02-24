@@ -66,7 +66,7 @@ export function CourseManagementSection({
           <div className="space-y-1">
             <Label>Degree Level</Label>
             <select
-              className="w-full rounded-lg border border-border bg-card px-2.5 py-1 text-sm"
+              className="w-full rounded-lg border border-border bg-card px-2.5 py-1 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
               value={newCourse.degree_level}
               onChange={(event) =>
                 setNewCourse((s) => ({
@@ -178,7 +178,7 @@ export function CourseManagementSection({
                       <div className="space-y-1">
                         <Label>Degree Level</Label>
                         <select
-                          className="w-full rounded-lg border border-border bg-card px-2.5 py-1 text-sm"
+                          className="w-full rounded-lg border border-border bg-card px-2.5 py-1 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
                           value={editForm.degree_level}
                           onChange={(event) =>
                             setEditForm((s) => ({

@@ -36,7 +36,7 @@ function ThemeOption({
       }`}
       aria-pressed={active}
     >
-      <div className="space-y-1">
+      <div className="space-y-1 gap-2">
         <Text weight="semibold">{label}</Text>
         <Text size="sm" className="text-muted-foreground">
           {description}
@@ -101,7 +101,7 @@ export default function SettingsAppearancePage() {
         </Card>
 
         <div className="flex justify-end">
-          <Button asChild variant="outline">
+          <Button className="px-2 py-1" asChild variant="outline">
             <Link to="/dashboard/settings">Back to Settings</Link>
           </Button>
         </div>

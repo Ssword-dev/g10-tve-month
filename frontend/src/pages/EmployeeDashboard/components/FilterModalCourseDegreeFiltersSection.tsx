@@ -67,7 +67,7 @@ export function FilterModalCourseDegreeFiltersSection({
                       event.target.value as CourseFilterMode,
                     )
                   }
-                  className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm sm:w-auto"
+                  className="w-full rounded-md border border-border bg-card px-3 py-1.5 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30 sm:w-auto"
                 >
                   <option value="has_specific">has specific</option>
                   <option value="has_any">has any</option>
@@ -82,7 +82,7 @@ export function FilterModalCourseDegreeFiltersSection({
                       event.target.value as DegreeLevel,
                     )
                   }
-                  className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm sm:w-auto"
+                  className="w-full rounded-md border border-border bg-card px-3 py-1.5 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30 sm:w-auto"
                 >
                   {degreeLevelOptions.map((degreeLevel) => (
                     <option key={degreeLevel} value={degreeLevel}>
