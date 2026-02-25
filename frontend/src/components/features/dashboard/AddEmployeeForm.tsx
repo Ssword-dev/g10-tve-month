@@ -14,10 +14,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { Props } from "@/components/ui/types";
 
-import { filterEmployeesQuery } from "../queries";
-import { createEmployeeSchema } from "../schemas";
-import type { EmployeeFormState } from "../types";
-import { toAddEmployeePayload } from "../utils";
+import { filterEmployeesQuery } from "@/pages/EmployeeDashboard/queries";
+import { createEmployeeSchema } from "@/pages/EmployeeDashboard/schemas";
+import type { EmployeeFormState } from "@/pages/EmployeeDashboard/types";
+import { toAddEmployeePayload } from "@/pages/EmployeeDashboard/utils";
 
 interface FieldDefinition<TKey extends string> extends Props<typeof Input> {
   name: TKey;

@@ -95,7 +95,7 @@ const serviceLinks: ServiceLinkContent[] = [
   {
     title: "Need Assistance?",
     description:
-      "For support and assistance, contact our customer service representative Noriel T. (Tud) Panis.",
+      "For support and assistance, contact our customer service representative Noriel T. Panis.",
     ctaLabel: "Go to Customer Service",
     to: "/dashboard/customer-service",
   },

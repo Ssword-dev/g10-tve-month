@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/misc";
 
-import { courseKey } from "../utils";
+import { courseKey } from "@/pages/EmployeeDashboard/utils";
 import { DeleteEmployeeConfirmModal } from "./DeleteEmployeeConfirmModal";
 import { EmployeeDetailsCard } from "./EmployeeDetailsCard";
 import { ModalShell } from "./ModalShell";

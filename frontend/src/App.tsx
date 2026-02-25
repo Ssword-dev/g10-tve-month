@@ -14,7 +14,7 @@ import LandingPage from "@/pages/Landing";
 
 const LoginPage = React.lazy(() => import("@/pages/Login"));
 const SignupPage = React.lazy(() => import("@/pages/Signup"));
-const DashboardLayout = React.lazy(() => import("@/layouts/Dashboard"));
+const DashboardLayout = React.lazy(() => import("@/components/layout/Dashboard"));
 const TheSchoolPage = React.lazy(() => import("@/pages/TheSchool"));
 const TheTeamPage = React.lazy(() => import("@/pages/TheTeam"));
 const TermsAndConditionsPage = React.lazy(

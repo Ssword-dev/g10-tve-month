@@ -8,8 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Text } from "@/components/ui/misc";
 
-import type { CourseFormState, FieldErrorMap } from "../types";
-import { courseKey } from "../utils";
+import type { CourseFormState, FieldErrorMap } from "@/pages/EmployeeDashboard/types";
+import { courseKey } from "@/pages/EmployeeDashboard/utils";
 import { EmployeeField } from "./EmployeeField";
 
 interface CourseManagementSectionProps {

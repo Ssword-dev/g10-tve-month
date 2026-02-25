@@ -31,6 +31,7 @@ import {
   LogOut,
   PaletteIcon,
   RocketIcon,
+  ScrollTextIcon,
   Settings,
   SettingsIcon,
   SlidersHorizontalIcon,
@@ -45,13 +46,14 @@ import React, {
   useState,
 } from "react";
 import { cn } from "@_ssword/classes";
-import websiteIconSource from "../assets/website_icon.png";
+import websiteIconSource from "@/assets/website_icon.png";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { DashboardFooter } from "@/components/features/dashboard/DashboardFooter";
 
 const ParentRouteContext = React.createContext(false);
 
@@ -313,12 +315,20 @@ export default function Dashboard() {
     <SidebarProvider>
       <Sidebar
         variant="sidebar"
-        className="border-r border-border/70 bg-card/95 lg:bg-card/90"
+        className="border-r border-border/70 bg-card lg:bg-card/90"
       >
         <SidebarHeader className="mb-6 gap-0 px-5 pt-5 md:px-6 md:pt-6">
           <div className="flex items-center gap-3">
-            <Link to="/dashboard/overview">
-              <img className="w-5 aspect-square" src={websiteIconSource} />
+            <Link to="/dashboard/overview" className="shrink-0">
+              <img className="w-6 aspect-square" src={websiteIconSource} />
+            </Link>
+            <Link
+              to="/dashboard/overview"
+              className="min-w-0 group-data-[collapsible=icon]:hidden"
+            >
+              <Text size="sm" weight="semibold" className="truncate leading-5">
+                SPRCNHS SEMS
+              </Text>
             </Link>
           </div>
         </SidebarHeader>
@@ -380,6 +390,17 @@ export default function Dashboard() {
                         <Settings className="size-4 text-muted-foreground" />
                         Settings
                       </button>
+                      <button
+                        type="button"
+                        className="flex w-full items-center gap-2 rounded-md px-2 py-1 text-left hover:bg-muted"
+                        onClick={() => {
+                          setSettingsOpen(false);
+                          handleNavigate("terms-and-conditions");
+                        }}
+                      >
+                        <ScrollTextIcon className="size-4 text-muted-foreground" />
+                        Terms & Conditions
+                      </button>
                       {role === "admin" ? (
                         <button
                           type="button"
@@ -406,21 +427,13 @@ export default function Dashboard() {
       <SidebarInset className="h-svh overflow-hidden bg-background text-foreground">
         <div className="sticky top-0 z-40 flex items-center justify-between border-b border-border/70 bg-card/95 px-4 py-3 backdrop-blur">
           <SidebarTrigger className="px-2 py-1" />
-          <div className="flex items-center gap-2">
-            <Link to="/dashboard/overview">
-              <Text size="sm" weight="semibold">
-                SPRCNHS SEMS
-              </Text>
-            </Link>
-            <div className="rounded-lg bg-accent/35 p-1.5">
-              <img src={websiteIconSource} className="size-4" />
-            </div>
-          </div>
         </div>
 
         <main className="flex-1 min-h-0 overflow-y-auto">
           <Outlet />
         </main>
+
+        <DashboardFooter />
       </SidebarInset>
     </SidebarProvider>
   );

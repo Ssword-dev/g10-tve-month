@@ -857,6 +857,13 @@ function TopRightNavigation() {
                   >
                     Sign up
                   </Button>
+                  <Button
+                    variant="ghost"
+                    className={navButtonClass}
+                    onClick={() => navigate("/dashboard/terms-and-conditions")}
+                  >
+                    Terms
+                  </Button>
                 </div>
               </motion.div>
             )}
@@ -907,6 +914,13 @@ function TopRightNavigation() {
                   onClick={() => navigate("/signup")}
                 >
                   Sign up
+                </Button>
+                <Button
+                  variant="ghost"
+                  className={navButtonClass}
+                  onClick={() => navigate("/dashboard/terms-and-conditions")}
+                >
+                  Terms
                 </Button>
               </div>
             </motion.div>

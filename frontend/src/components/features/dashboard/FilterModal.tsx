@@ -37,7 +37,7 @@ import {
   stringOperators,
   type EmployeeFieldType,
 } from "./filterBuilderShared";
-import { defaultEmployeeFilter } from "../queries";
+import { defaultEmployeeFilter } from "@/pages/EmployeeDashboard/queries";
 import { SortField } from "./SortField";
 import { SortableItem } from "./SortableItem";
 import { FilterModalIncludeColumnsSection } from "./FilterModalIncludeColumnsSection";

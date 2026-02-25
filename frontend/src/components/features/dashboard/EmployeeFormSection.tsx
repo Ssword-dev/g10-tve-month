@@ -4,7 +4,7 @@ import { Card, CardAction, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/misc";
 
-import type { EmployeeFormState, FieldErrorMap } from "../types";
+import type { EmployeeFormState, FieldErrorMap } from "@/pages/EmployeeDashboard/types";
 import { EmployeeField } from "./EmployeeField";
 
 interface EmployeeFormSectionProps {

@@ -1,20 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { SignupAvatarUploadPanel } from "@/components/features/auth/SignupAvatarUploadPanel";
+import { SignupFormField } from "@/components/features/auth/SignupFormField";
 import { Text } from "@/components/ui/misc";
 import { signupAction } from "@/domain/signup/actions";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Camera,
-  ChevronLeft,
-  ChevronRight,
-  Plus,
-  UserRound,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, UserRound } from "lucide-react";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
-import { useForm, type FieldPath, type UseFormRegister } from "react-hook-form";
+import { useForm, type FieldPath } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 
@@ -267,97 +260,6 @@ function appendSignupPayload(payload: FormData, values: SignupValues): void {
   entries.forEach(([key, value]) => payload.append(key, value));
 }
 
-function AvatarUploadPanel({
-  previewUrl,
-  onFileChange,
-}: {
-  previewUrl: string | null;
-  onFileChange: (event: ChangeEvent<HTMLInputElement>) => void;
-}) {
-  const hasAvatar = previewUrl !== null;
-
-  return (
-    <section className="rounded-xl border border-border bg-card p-4">
-      <div className="mb-3 flex items-center justify-between">
-        <Text weight="semibold">Profile Photo</Text>
-        <Badge className="rounded-full bg-accent/20">Optional</Badge>
-      </div>
-
-      <label
-        htmlFor="avatar"
-        className="group relative flex aspect-square w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl border border-border bg-muted/35"
-      >
-        {hasAvatar ? (
-          <img
-            src={previewUrl}
-            alt="Avatar preview"
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <div className="flex flex-col items-center gap-2 text-muted-foreground">
-            <div className="rounded-full border border-border bg-card p-3">
-              <Camera className="size-5" />
-            </div>
-            <Text size="sm" className="text-muted-foreground">
-              Add avatar
-            </Text>
-          </div>
-        )}
-
-        <div
-          className={`absolute inset-0 flex items-center justify-center bg-black/30 transition-opacity ${
-            hasAvatar ? "opacity-0 group-hover:opacity-100" : "opacity-100"
-          }`}
-        >
-          <span className="rounded-full bg-card/90 p-3">
-            <Plus className="size-6" />
-          </span>
-        </div>
-      </label>
-
-      <Input
-        id="avatar"
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-        className="hidden"
-        onChange={onFileChange}
-      />
-
-      <Text size="xs" className="mt-3 text-muted-foreground">
-        JPEG, PNG, or WEBP. Max size 5MB.
-      </Text>
-    </section>
-  );
-}
-
-function FormField({
-  id,
-  label,
-  type = "text",
-  placeholder,
-  register,
-  error,
-}: {
-  id: FieldPath<SignupFormInput>;
-  label: string;
-  type?: "text" | "email" | "password" | "date" | "number";
-  placeholder?: string;
-  register: UseFormRegister<SignupFormInput>;
-  error?: string;
-}) {
-  return (
-    <div className="space-y-1">
-      <Label htmlFor={id}>{label}</Label>
-      <Input id={id} type={type} placeholder={placeholder} {...register(id)} />
-      {error ? (
-        <Text size="xs" className="text-destructive">
-          {error}
-        </Text>
-      ) : null}
-    </div>
-  );
-}
-
 export default function SignupPage() {
   // Router + timer ref used for delayed redirect after successful signup.
   const navigate = useNavigate();
@@ -535,7 +437,7 @@ export default function SignupPage() {
 
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 {stepFieldLookup[currentStep.id].map((field) => (
-                  <FormField
+                  <SignupFormField<SignupFormInput>
                     key={field.id}
                     id={field.id}
                     label={field.label}
@@ -607,7 +509,7 @@ export default function SignupPage() {
               </Text>
             </section>
 
-            <AvatarUploadPanel
+            <SignupAvatarUploadPanel
               previewUrl={avatarPreviewUrl}
               onFileChange={onAvatarChange}
             />

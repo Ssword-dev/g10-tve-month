@@ -16,7 +16,7 @@ import type {
   CourseFormState,
   EmployeeFormState,
   FieldErrorMap,
-} from "../types";
+} from "@/pages/EmployeeDashboard/types";
 import {
   courseKey,
   emptyCourseForm,
@@ -25,7 +25,7 @@ import {
   toEmployeePayload,
   validateCourseForm,
   validateEmployeeForm,
-} from "../utils";
+} from "@/pages/EmployeeDashboard/utils";
 import { CourseManagementSection } from "./CourseManagementSection";
 import { DangerousActionSection } from "./DangerousActionSection";
 import { EmployeeFormSection } from "./EmployeeFormSection";
