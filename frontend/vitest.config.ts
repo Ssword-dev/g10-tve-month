@@ -13,9 +13,9 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
+    globalSetup: ["./tests/setup/globalSetup.ts"],
     setupFiles: ["./tests/setup/vitest.setup.ts"],
-    include: ["tests/**/*.test.ts", "tests/**/*.test.tsx"],
-    exclude: ["tests/e2e/**"],
+    include: ["tests/unit/**/*.test.ts", "tests/unit/**/*.test.tsx"],
     testTimeout: 300_000,
     hookTimeout: 300_000,
   },

@@ -8,9 +8,10 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:e2e": "vitest run --config vitest.puppeteer.config.ts --maxWorkers=1",
+    "test": "vitest run --config vitest.config.ts",
+    "test:unit": "vitest run --config vitest.config.ts",
+    "test:watch": "vitest --config vitest.config.ts",
+    "test:e2e": "vitest run --config vitest.puppeteer.config.ts",
     "test:all": "pnpm test && pnpm test:e2e"
   },
   "dependencies": {

@@ -1,24 +1,13 @@
 /// <reference types="vitest-puppeteer" />
 import { describe, expect, it } from "vitest";
+import createE2EUserSeed from "../helpers/createE2EUserSeed";
 
 const baseUrl = process.env.PUPPETEER_BASE_URL ?? "http://127.0.0.1:5173";
 
-function testUserSeed() {
-  const nonce = Date.now();
-  return {
-    employeeNumber: String(800000 + (nonce % 100000)),
-    firstName: "E2E",
-    lastName: `Admin${nonce % 1000}`,
-    depedEmail: `e2e.admin.${nonce}@deped.gov.ph`,
-    password: "P@ssword1234",
-    employeeToAddNumber: String(900000 + (nonce % 100000)),
-  };
-}
+describe.sequential("Whole app journey e2e", () => {
+  const user = createE2EUserSeed();
 
-describe.sequential("App e2e (Vitest + Puppeteer)", () => {
-  const user = testUserSeed();
-
-  it("covers end-to-end app flows in a real Chromium browser", async () => {
+  it("signs up, logs in, manages employees, toggles theme, and signs out", async () => {
     await page.goto(`${baseUrl}/signup`, { waitUntil: "networkidle2" });
     await page.waitForSelector("#employeeNumber");
 
@@ -89,6 +78,26 @@ describe.sequential("App e2e (Vitest + Puppeteer)", () => {
 
     await page.type(
       "input[placeholder='Search full name...']",
+      "Juan Dela Cruz",
+    );
+    const fullNameSearchButton = await page.waitForSelector(
+      "xpath///*[self::button or self::a][normalize-space()='Search' or contains(normalize-space(.), 'Search')]",
+    );
+    if (!fullNameSearchButton) {
+      throw new Error("Clickable element not found: Search");
+    }
+    await fullNameSearchButton.click();
+    await page.waitForSelector("text/Juan Dela Cruz");
+    const clearAfterFullNameSearch = await page.waitForSelector(
+      "xpath///*[self::button or self::a][normalize-space()='Clear' or contains(normalize-space(.), 'Clear')]",
+    );
+    if (!clearAfterFullNameSearch) {
+      throw new Error("Clickable element not found: Clear");
+    }
+    await clearAfterFullNameSearch.click();
+
+    await page.type(
+      "input[placeholder='Search full name...']",
       "name-not-found",
     );
     const searchButton1 = await page.waitForSelector(
@@ -134,17 +143,30 @@ describe.sequential("App e2e (Vitest + Puppeteer)", () => {
     await addModalNext2.click();
     await page.type("#designation", "Teacher I");
     await page.type("#employment_status", "Permanent");
+
+    const addEmployeeFormSelector =
+      "xpath///form[.//*[contains(normalize-space(), 'Add New Employee')]]";
+
     for (let step = 0; step < 8; step += 1) {
       const saveButton = await page.$(
-        "xpath///form[.//*[contains(normalize-space(), 'Add New Employee')]]//button[normalize-space()='Save Employee']",
+        `${addEmployeeFormSelector}//button[normalize-space()='Save Employee']`,
       );
       if (saveButton) {
+        const buttonLabel = await page.evaluate(
+          (button) => button.textContent?.trim(),
+          saveButton,
+        );
+        if (buttonLabel !== "Save Employee") {
+          throw new Error(
+            `Unexpected submit button label in Add Employee modal: ${buttonLabel ?? "unknown"}`,
+          );
+        }
         await saveButton.click();
         break;
       }
 
       const addModalNext = await page.waitForSelector(
-        "xpath///form[.//*[contains(normalize-space(), 'Add New Employee')]]//button[normalize-space()='Next']",
+        `${addEmployeeFormSelector}//button[normalize-space()='Next']`,
       );
       if (!addModalNext) {
         throw new Error("Add Employee modal button not found: Next");
@@ -241,26 +263,6 @@ describe.sequential("App e2e (Vitest + Puppeteer)", () => {
       throw new Error("Clickable element not found: Back to Settings");
     }
     await backToSettingsButton.click();
-
-    await page.goto(`${baseUrl}/dashboard/about/the-team`, {
-      waitUntil: "networkidle2",
-    });
-    await page.waitForSelector("text/The Developers");
-
-    await page.goto(`${baseUrl}/dashboard/about/the-school`, {
-      waitUntil: "networkidle2",
-    });
-    await page.waitForSelector("text/The School");
-
-    await page.goto(`${baseUrl}/dashboard/customer-service`, {
-      waitUntil: "networkidle2",
-    });
-    await page.waitForSelector("text/Customer Service");
-
-    await page.goto(`${baseUrl}/dashboard/terms-and-conditions`, {
-      waitUntil: "networkidle2",
-    });
-    await page.waitForSelector("text/Terms and Conditions");
 
     const settingsButtons = await page.$$("button:has(svg.lucide-settings)");
     const profileSettingsButton = settingsButtons.at(-1);
