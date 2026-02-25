@@ -4,7 +4,6 @@ import unsafeCast from "@/utils/unsafeCast";
 import {
   addCourseAction,
   deleteCourseAction,
-  deleteEmployeeAction,
   updateCourseAction,
   updateEmployeeAction,
 } from "@/domain/employees/actions";
@@ -27,7 +26,6 @@ import {
   validateEmployeeForm,
 } from "@/pages/EmployeeDashboard/utils";
 import { CourseManagementSection } from "./CourseManagementSection";
-import { DangerousActionSection } from "./DangerousActionSection";
 import { EmployeeFormSection } from "./EmployeeFormSection";
 import { ModalShell } from "./ModalShell";
 
@@ -190,26 +188,6 @@ export function UpdateActionsModal({
     }
   };
 
-  const deleteEmployee = async () => {
-    if (!window.confirm("Delete this employee record permanently?")) return;
-
-    try {
-      setBusyAction("deleteEmployee");
-      setFeedback("");
-      setErrorText("");
-      const result = await deleteEmployeeAction({
-        employee_number: employee.employee_number,
-      });
-      result.unwrap();
-      await onSaved();
-      onClose();
-    } catch (error) {
-      setErrorText((error as Error).message);
-    } finally {
-      setBusyAction(null);
-    }
-  };
-
   return (
     <ModalShell
       open={open}
@@ -262,13 +240,6 @@ export function UpdateActionsModal({
             : null
         }
       />
-
-      <div className="border-t border-border pt-4">
-        <DangerousActionSection
-          onDeleteEmployee={deleteEmployee}
-          isDeleting={busyAction === "deleteEmployee"}
-        />
-      </div>
     </ModalShell>
   );
 }

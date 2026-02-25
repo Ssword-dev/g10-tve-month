@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Text } from "@/components/ui/misc";
 import { LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
-
+import websiteIconSource from "@/assets/website_icon.png";
 interface LoginFormCardProps {
   depedEmail: string;
   password: string;
@@ -27,12 +27,13 @@ export function LoginFormCard({
 }: LoginFormCardProps) {
   return (
     <Card className="w-full max-w-md border-border">
-      <CardHeader>
-        <CardTitle>
-          <Text size="2xl" weight="bold">
-            Admin Login
-          </Text>
-        </CardTitle>
+      <CardHeader className="gap-2">
+        <div className="w-full flex flex-row justify-center px-2 py-1">
+          <div className="aspect-square p-2 bg-background/80 rounded-xl">
+            <img src={websiteIconSource} className="aspect-square w-5 select-none" />
+          </div>
+        </div>
+        <CardTitle size="2xl" weight="bold" align="center">Login with DepEd Email</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <form

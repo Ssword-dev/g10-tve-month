@@ -320,7 +320,7 @@ export default function Dashboard() {
         <SidebarHeader className="mb-6 gap-0 px-5 pt-5 md:px-6 md:pt-6">
           <div className="flex items-center gap-3">
             <Link to="/dashboard/overview" className="shrink-0">
-              <img className="w-6 aspect-square" src={websiteIconSource} />
+              <img className="w-6 aspect-square select-none" src={websiteIconSource} />
             </Link>
             <Link
               to="/dashboard/overview"
@@ -429,7 +429,7 @@ export default function Dashboard() {
           <SidebarTrigger className="px-2 py-1" />
         </div>
 
-        <main className="flex-1 min-h-0 overflow-y-auto">
+        <main className="flex-1 min-h-0 overflow-y-auto no-scrollbar">
           <Outlet />
         </main>
 

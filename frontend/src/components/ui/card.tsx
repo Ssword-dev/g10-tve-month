@@ -190,13 +190,13 @@ interface CardTitleProps
     ClassProps,
     VariantProps<typeof cardTitleVM> {}
 const CardTitle = forwardRef<RefType<CardTitleBaseComponent>, CardTitleProps>(
-  ({ className, color, size, asChild, ...intrinsicProps }, forwardedRef) => {
+  ({ className, asChild, ...intrinsicProps }, forwardedRef) => {
     const Comp = asChild ? Slot : cardTitleBase;
     return (
       <Comp
         {...intrinsicProps}
         ref={forwardedRef}
-        className={cn(cardTitleVM({ color, size }), className)}
+        className={cn(cardTitleVM({}), className)}
       />
     );
   },

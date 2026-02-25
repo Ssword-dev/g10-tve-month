@@ -30,7 +30,7 @@ export function SignupAvatarUploadPanel({
           <img
             src={previewUrl}
             alt="Avatar preview"
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover select-none"
           />
         ) : (
           <div className="flex flex-col items-center gap-2 text-muted-foreground">

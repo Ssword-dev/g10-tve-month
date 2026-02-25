@@ -128,7 +128,7 @@ export function CourseManagementSection({
               <div key={currentKey} className="rounded-md border border-border p-3">
                 {!isEditing && (
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div>
+                    <div className="flex flex-row gap-2 text-center">
                       <Text weight="semibold">{course.course_name}</Text>
                       <Text size="sm" className="text-muted-foreground">
                         {course.degree_level} | Units: {course.units_completed ?? "N/A"} |

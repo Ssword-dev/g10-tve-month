@@ -10,6 +10,7 @@ import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { useForm, type FieldPath } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
+import websiteIconSource from "@/assets/website_icon.png";
 
 const optionalDate = z
   // Optional date: empty string is allowed, otherwise must match YYYY-MM-DD.
@@ -32,7 +33,10 @@ const optionalBpNumber = z
   .string()
   .trim()
   .default("")
-  .refine((value) => value.length <= 30, "BP number must be at most 30 characters.");
+  .refine(
+    (value) => value.length <= 30,
+    "BP number must be at most 30 characters.",
+  );
 
 const signupSchema = z
   // Main form validation schema for the multi-step signup flow.
@@ -395,12 +399,18 @@ export default function SignupPage() {
 
   return (
     <main className="flex min-h-screen w-screen items-center justify-center bg-background p-4 md:p-8">
-      <Card className="w-full max-w-6xl border-border p-0">
-        <CardHeader className="border-border flex flex-row items-center justify-between border-b px-6 py-4">
-          <CardTitle>
-            <Text size="2xl" weight="bold" leading="none">
-              Signup
-            </Text>
+      <Card className="w-full max-w-6xl border-border p-2">
+        <CardHeader className="gap-2">
+          <div className="w-full flex flex-row justify-center px-2 py-1">
+            <div className="aspect-square p-2 bg-background/80 rounded-xl">
+              <img
+                src={websiteIconSource}
+                className="aspect-square w-5 select-none"
+              />
+            </div>
+          </div>
+          <CardTitle size="2xl" weight="bold" align="center">
+            Create an Account
           </CardTitle>
         </CardHeader>
 
@@ -411,18 +421,6 @@ export default function SignupPage() {
           >
             <section className="space-y-5 rounded-xl border border-border bg-card p-4 md:p-5">
               <div className="flex flex-col">
-                {/* <div className="flex flex-row justify-between items-center">
-                  <Text size="sm" className="text-muted-foreground">
-                    {stepProgressText}
-                  </Text>
-                  <Text size="xl" weight="semibold">
-                    {currentStep.title}
-                  </Text>
-                  <Text size="sm" className="text-muted-foreground">
-                    {currentStep.subtitle}
-                  </Text>
-                </div> */}
-
                 <div className="flex items-center gap-1">
                   {steps.map((step, idx) => (
                     <span
@@ -450,7 +448,10 @@ export default function SignupPage() {
               </div>
 
               {errorText ? (
-                <Text size="sm" className="whitespace-pre-line text-destructive">
+                <Text
+                  size="sm"
+                  className="whitespace-pre-line text-destructive"
+                >
                   {errorText}
                 </Text>
               ) : null}

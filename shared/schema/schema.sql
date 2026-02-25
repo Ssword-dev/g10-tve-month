@@ -43,14 +43,14 @@ CREATE TABLE `courses_table` (
     `units_completed` INT NULL, -- Null for post-graduate courses.
     `is_finished` BOOLEAN NOT NULL, -- did the employee finish the course?
     `achiever_employee_number` INT, -- FK to employees_table
-    FOREIGN KEY (`achiever_employee_number`) REFERENCES `employees_table`(`employee_number`)
+    FOREIGN KEY (`achiever_employee_number`) REFERENCES `employees_table`(`employee_number`) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `admin_users_table`;
 CREATE TABLE `admin_users_table` (
     `employee_number` INT, -- FK, extends employee
     `password_hash` VARCHAR(60), -- php password hash.
-    FOREIGN KEY (`employee_number`) REFERENCES `employees_table`(`employee_number`)
+    FOREIGN KEY (`employee_number`) REFERENCES `employees_table`(`employee_number`) ON DELETE CASCADE
 );
 
 -- Admin users view.

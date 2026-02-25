@@ -352,9 +352,9 @@ function HeroSection() {
           {...animationPresets.fadeUp({ delay: 0.15 })}
         >
           <img
-            className="h-full max-h-80 w-full aspect-square object-contain"
+            className="h-full max-h-80 w-full aspect-square object-contain select-none"
             src={landingPageHeroBannerImageSource}
-            alt="School staff management dashboard preview"
+            alt="Website Icon"
           />
         </motion.div>
       </div>

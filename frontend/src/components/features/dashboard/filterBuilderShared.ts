@@ -27,7 +27,7 @@ export const employeeFields: EmployeeFieldMeta[] = [
   },
   {
     value: "employee_number",
-    label: "Employee #",
+    label: "Employee Number",
     type: "number",
     nullable: false,
   },
@@ -52,7 +52,7 @@ export const employeeFields: EmployeeFieldMeta[] = [
   },
   {
     value: "plantilla_number",
-    label: "Plantilla #",
+    label: "Plantilla Number",
     type: "string",
     nullable: true,
   },
@@ -62,7 +62,7 @@ export const employeeFields: EmployeeFieldMeta[] = [
     type: "date",
     nullable: true,
   },
-  { value: "bp_number", label: "BP #", type: "string", nullable: true },
+  { value: "bp_number", label: "BP Number", type: "string", nullable: true },
   { value: "address", label: "Address", type: "string", nullable: true },
   {
     value: "civil_status",

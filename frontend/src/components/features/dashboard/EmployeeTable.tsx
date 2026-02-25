@@ -117,6 +117,8 @@ export function EmployeeTable({
     }
   }
 
+  console.log(presentFields.size);
+
   const defaultVisibleFields = tableFields.filter((field) => {
     if (!presentFields.has(field.value)) {
       return false;

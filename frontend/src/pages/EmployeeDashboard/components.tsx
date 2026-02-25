@@ -5,7 +5,6 @@ export { EmployeeInfoModal } from "@/components/features/dashboard/EmployeeInfoM
 export { DeleteEmployeeConfirmModal } from "@/components/features/dashboard/DeleteEmployeeConfirmModal";
 export { EmployeeFormSection } from "@/components/features/dashboard/EmployeeFormSection";
 export { CourseManagementSection } from "@/components/features/dashboard/CourseManagementSection";
-export { DangerousActionSection } from "@/components/features/dashboard/DangerousActionSection";
 export { UpdateActionsModal } from "@/components/features/dashboard/UpdateActionsModal";
 export { AddEmployeeForm } from "@/components/features/dashboard/AddEmployeeForm";
 export { TableToolButton } from "@/components/features/dashboard/TableToolButton";
