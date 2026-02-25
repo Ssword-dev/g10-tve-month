@@ -32,7 +32,12 @@ const employeeFormSchema = z.object({
   first_name: z.string().min(1, "First name is required."),
   middle_name: z.string().optional().default(""),
   last_name: z.string().min(1, "Last name is required."),
-  deped_email: z.string().email("Invalid email format").optional().default(""),
+  deped_email: z
+    .string()
+    .trim()
+    .email("Invalid email format")
+    .or(z.literal(""))
+    .default(""),
   designation: z.string().min(1, "Designation is required."),
   date_joined: dateSchema.optional().default(""),
   date_of_latest_promotion: dateSchema.optional().default(""),

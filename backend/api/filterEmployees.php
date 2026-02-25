@@ -63,7 +63,7 @@ final class FilterParser
 
     private array $fieldSqlMap = [
         'age' => 'TIMESTAMPDIFF(YEAR, date_of_birth, CURDATE())',
-        'full_name' => 'full_name',
+        'full_name' => "TRIM(CONCAT_WS(' ', first_name, NULLIF(TRIM(middle_name), ''), last_name))",
     ];
 
     public function __construct(array $allowedFields)
@@ -168,7 +168,7 @@ final class FilterParser
                     continue;
                 }
 
-                $parsed = $this->buildComparison($sqlField, $fieldType, $comparison);
+                $parsed = $this->buildComparison($field, $sqlField, $fieldType, $comparison);
                 if (!$parsed) {
                     continue;
                 }
@@ -190,7 +190,7 @@ final class FilterParser
         ];
     }
 
-    private function buildComparison(string $sqlField, string $fieldType, array $comparison): ?array
+    private function buildComparison(string $field, string $sqlField, string $fieldType, array $comparison): ?array
     {
         $type = $comparison['type'] ?? null;
         if (!is_string($type)) {
@@ -290,6 +290,16 @@ final class FilterParser
                 'endsWith' => "%$text",
                 default => $text,
             };
+
+            if ($field === 'full_name') {
+                $firstAndLastNameSql = "TRIM(CONCAT_WS(' ', first_name, last_name))";
+
+                return [
+                    'sql' => "($sqlField $sqlOperator ? OR $firstAndLastNameSql $sqlOperator ?)",
+                    'params' => [$pattern, $pattern],
+                    'types' => 'ss',
+                ];
+            }
 
             return [
                 'sql' => "$sqlField $sqlOperator ?",

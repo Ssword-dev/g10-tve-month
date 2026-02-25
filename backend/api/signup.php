@@ -199,7 +199,7 @@ try {
 
     bind_params(
         $stmt,
-        'ssssisssssssisssiisss',
+        'ssssissssssssssiisss',
         [
             $form_data['first_name'],
             $form_data['middle_name'],

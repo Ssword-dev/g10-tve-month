@@ -8,10 +8,11 @@ if (!is_callable('config')) {
     throw new Exception('Cannot set configuration variables, as `config()` is not found.');
 }
 
-config('mysql_host', '127.0.0.1');
-config('mysql_user', 'root');
-config('mysql_password', '');
-config('mysql_database', 'tve_month_db');
+config('mysql_host', getenv('MYSQL_HOST') ?: '127.0.0.1');
+config('mysql_port', (int)(getenv('MYSQL_PORT') ?: '3306'));
+config('mysql_user', getenv('MYSQL_USER') ?: 'root');
+config('mysql_password', getenv('MYSQL_PASSWORD') ?: '');
+config('mysql_database', getenv('MYSQL_DATABASE') ?: 'tve_month_db');
 
 function db(): mysqli {
     $connection = config('mysql_database_connection');
@@ -24,7 +25,8 @@ function db(): mysqli {
         config('mysql_host'),
         config('mysql_user'),
         config('mysql_password'),
-        config('mysql_database')
+        config('mysql_database'),
+        (int) config('mysql_port')
     );
 
     if (!$connection) {
