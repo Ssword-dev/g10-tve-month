@@ -17,19 +17,4 @@ describe("Dashboard support pages smoke e2e", () => {
       await browserContext.close();
     }
   }, 180_000);
-
-  it("opens terms and conditions page", async () => {
-    const browserContext = await browser.createBrowserContext();
-    const browserPage = await browserContext.newPage();
-
-    try {
-      await signUpAndLoginAsAdmin(browserPage);
-      await browserPage.goto(`${baseUrl}/dashboard/terms-and-conditions`, {
-        waitUntil: "networkidle2",
-      });
-      await browserPage.waitForSelector("text/Terms and Conditions");
-    } finally {
-      await browserContext.close();
-    }
-  }, 180_000);
 });

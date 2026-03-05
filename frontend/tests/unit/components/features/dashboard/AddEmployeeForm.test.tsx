@@ -1,4 +1,5 @@
 import { AddEmployeeForm } from "@/components/features/dashboard/AddEmployeeForm";
+import unsafeCast from "@/utils/unsafeCast";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -88,7 +89,9 @@ describe("AddEmployeeForm", () => {
       expect(addEmployeeActionMock).toHaveBeenCalledTimes(1);
     });
 
-    const payload = addEmployeeActionMock.mock.calls[0][0] as Record<string, unknown>;
+    const payload = unsafeCast<Record<string, unknown>[]>(
+      addEmployeeActionMock.mock.calls[0],
+    )[0];
     expect(payload.employee_number).toBe(945001);
     expect(payload.first_name).toBe("E2E");
     expect(payload.last_name).toBe("NewEmployee");

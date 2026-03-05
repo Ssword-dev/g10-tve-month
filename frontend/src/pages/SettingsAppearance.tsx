@@ -35,7 +35,7 @@ function ThemeOption({
       }`}
       aria-pressed={active}
     >
-      <div className="space-y-1 flex flex-row items-center gap-2">
+      <div className="flex flex-row items-center gap-2">
         <Text weight="semibold">{label}</Text>
         <Text size="sm" className="text-muted-foreground">
           {description}
@@ -49,7 +49,9 @@ function ThemeOption({
 }
 
 export default function SettingsAppearancePage() {
-  const [themeMode, setThemeMode] = useState<ThemeMode>(() => resolveThemeMode());
+  const [themeMode, setThemeMode] = useState<ThemeMode>(() =>
+    resolveThemeMode(),
+  );
 
   const setTheme = (nextMode: ThemeMode) => {
     setThemeMode(nextMode);
@@ -59,11 +61,6 @@ export default function SettingsAppearancePage() {
 
   return (
     <main className="relative min-h-full overflow-hidden p-4 md:p-8">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-24 left-14 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute -bottom-16 right-10 h-56 w-56 rounded-full bg-accent/20 blur-3xl" />
-      </div>
-
       <section className="relative mx-auto w-full max-w-5xl space-y-5">
         <Card className="border-border bg-card/95">
           <CardContent className="space-y-2 p-6 md:p-8">

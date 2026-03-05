@@ -1,7 +1,15 @@
 /// <reference types="vitest-puppeteer" />
 import { describe, it } from "vitest";
-import { baseUrl, clickByText, signUpAndLoginAsAdmin } from "../helpers/e2eAuthSession";
-import { addEmployeeViaModal, searchEmployeeByName } from "../helpers/e2eEmployeeFlows";
+import {
+  baseUrl,
+  clickByText,
+  signUpAndLoginAsAdmin,
+} from "../helpers/e2eAuthSession";
+import {
+  addEmployeeViaModal,
+  searchEmployeeByName,
+} from "../helpers/e2eEmployeeFlows";
+import waitForTimeout from "../helpers/waitForTimeout";
 
 describe("Employees CRUD e2e", () => {
   it("adds, updates, and deletes an employee", async () => {
@@ -10,7 +18,9 @@ describe("Employees CRUD e2e", () => {
 
     try {
       await signUpAndLoginAsAdmin(browserPage);
-      await browserPage.goto(`${baseUrl}/dashboard/employees`, { waitUntil: "networkidle2" });
+      await browserPage.goto(`${baseUrl}/dashboard/employees`, {
+        waitUntil: "networkidle2",
+      });
 
       const added = await addEmployeeViaModal(browserPage, "E2E Employee");
 
@@ -44,7 +54,7 @@ describe("Employees CRUD e2e", () => {
         throw new Error("Save Employee button not found in update modal");
       }
       await saveEmployeeButton.click();
-      await browserPage.waitForTimeout(1_500);
+      await waitForTimeout(1_500);
 
       await browserPage.click("button[aria-label='close modal']");
 

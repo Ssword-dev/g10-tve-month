@@ -117,8 +117,6 @@ export function EmployeeTable({
     }
   }
 
-  console.log(presentFields.size);
-
   const defaultVisibleFields = tableFields.filter((field) => {
     if (!presentFields.has(field.value)) {
       return false;
@@ -134,9 +132,7 @@ export function EmployeeTable({
   const visibleFields =
     includeOrder && includeOrder !== "ALL"
       ? includeOrder
-          .map((field) =>
-            tableFields.find((meta) => meta.value === field),
-          )
+          .map((field) => tableFields.find((meta) => meta.value === field))
           .filter((field): field is (typeof tableFields)[number] => {
             if (!field) {
               return false;
@@ -211,7 +207,10 @@ export function EmployeeTable({
           )}
           {employees.map((employee, index) => (
             <tr
-              key={employee.employee_number ?? `${index}-${employee.last_name ?? "employee"}`}
+              key={
+                employee.employee_number ??
+                `${index}-${employee.last_name ?? "employee"}`
+              }
               className="border-border/70 cursor-pointer border-b align-top hover:bg-muted/30 last:border-b-0"
               onClick={() => {
                 if (typeof employee.employee_number === "number") {

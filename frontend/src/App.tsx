@@ -10,20 +10,20 @@ import { Text } from "@/components/ui/misc";
 import Loading from "@/Loading";
 import { currentAdminSessionQuery } from "@/domain/auth/actions";
 import useServerQuery from "@/hooks/useServerQuery";
-import LandingPage from "@/pages/Landing";
 
 const LoginPage = React.lazy(() => import("@/pages/Login"));
 const SignupPage = React.lazy(() => import("@/pages/Signup"));
 const DashboardLayout = React.lazy(() => import("@/components/layout/Dashboard"));
 const TheSchoolPage = React.lazy(() => import("@/pages/TheSchool"));
 const TheTeamPage = React.lazy(() => import("@/pages/TheTeam"));
-const TermsAndConditionsPage = React.lazy(
-  () => import("@/pages/TermsAndConditions"),
-);
 const SettingsPage = React.lazy(() => import("@/pages/Settings"));
 const SettingsAppearancePage = React.lazy(
   () => import("@/pages/SettingsAppearance"),
 );
+const SettingsAccessibilityPage = React.lazy(
+  () => import("@/pages/SettingsAccessibility"),
+);
+const ContactUsPage = React.lazy(() => import("@/pages/ContactUs"));
 const CustomerServicePage = React.lazy(() => import("@/pages/CustomerService"));
 const OverviewDashboardPage = React.lazy(
   () => import("@/pages/OverviewDashboard"),
@@ -31,6 +31,7 @@ const OverviewDashboardPage = React.lazy(
 const EmployeeDashboardPage = React.lazy(
   () => import("@/pages/EmployeeDashboard/page"),
 );
+const HomePage = React.lazy(() => import("@/pages/Home"));
 
 function RequireAdminRoute({ children }: { children: React.ReactNode }) {
   const { data, isLoading, error, refresh } = useServerQuery(
@@ -81,13 +82,13 @@ function RequireDashboardRoute({ children }: { children: React.ReactNode }) {
 }
 
 function DashboardIndexRedirect() {
-  const { data, isLoading } = useServerQuery(currentAdminSessionQuery);
+  const { isLoading } = useServerQuery(currentAdminSessionQuery);
 
   if (isLoading) {
     return <Loading />;
   }
 
-  return <Navigate to={data?.authenticated ? "overview" : "employees"} replace />;
+  return <Navigate to="home" replace />;
 }
 
 function GuestOnlyRoute({ children }: { children: React.ReactNode }) {
@@ -104,12 +105,23 @@ function GuestOnlyRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function HomeRouteRedirect() {
+  const { isLoading } = useServerQuery(currentAdminSessionQuery);
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  return <Navigate to="/dashboard/home" replace />;
+}
+
 function App() {
   return (
     <Router>
       <React.Suspense fallback={<Loading />}>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<HomeRouteRedirect />} />
+          <Route path="/home" element={<HomeRouteRedirect />} />
           <Route
             path="/login"
             element={
@@ -136,6 +148,7 @@ function App() {
             }
           >
             <Route index element={<DashboardIndexRedirect />} />
+            <Route path="home" element={<HomePage />} />
             <Route
               path="overview"
               element={
@@ -150,14 +163,15 @@ function App() {
               path="settings/appearance"
               element={<SettingsAppearancePage />}
             />
+            <Route
+              path="settings/accessibility"
+              element={<SettingsAccessibilityPage />}
+            />
             <Route path="about">
               <Route path="the-school" element={<TheSchoolPage />} />
               <Route path="the-team" element={<TheTeamPage />} />
             </Route>
-            <Route
-              path="terms-and-conditions"
-              element={<TermsAndConditionsPage />}
-            />
+            <Route path="contact-us" element={<ContactUsPage />} />
             <Route path="customer-service" element={<CustomerServicePage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

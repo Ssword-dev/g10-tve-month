@@ -40,11 +40,6 @@ function Field({ label, value }: { label: string; value?: string }) {
 export default function TheTeamPage() {
   return (
     <main className="relative min-h-full overflow-hidden p-4 md:p-8">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-24 left-14 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute -bottom-16 right-10 h-56 w-56 rounded-full bg-accent/20 blur-3xl" />
-      </div>
-
       <section className="relative mx-auto w-full max-w-5xl space-y-5">
         <Card className="border-border bg-card/95">
           <CardContent className="space-y-2 p-6 md:p-8">

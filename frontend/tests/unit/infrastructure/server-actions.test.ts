@@ -1,4 +1,5 @@
 import { createServerAction, unwrap } from "@/infrastructure/ServerAction";
+import unsafeCast from "@/utils/unsafeCast";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 let actionNameCounter = 0;
@@ -19,7 +20,10 @@ describe("ServerAction", () => {
     }));
     vi.stubGlobal("fetch", fetchMock);
 
-    const action = createServerAction<{ employee_number: number; name: string }, { ok: boolean }>({
+    const action = createServerAction<
+      { employee_number: number; name: string },
+      { ok: boolean }
+    >({
       name: nextActionName(),
       apiUrl: "/api/getEmployee",
       method: "GET",
@@ -28,7 +32,9 @@ describe("ServerAction", () => {
     const result = await action({ employee_number: 123, name: "Juan" });
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const [url, init] = unsafeCast<[string, RequestInit]>(
+      fetchMock.mock.calls[0],
+    );
     expect(url).toContain("/api/getEmployee?");
     expect(url).toContain("employee_number=123");
     expect(url).toContain("name=Juan");
@@ -43,7 +49,10 @@ describe("ServerAction", () => {
     }));
     vi.stubGlobal("fetch", fetchMock);
 
-    const action = createServerAction<{ first_name: string; last_name: string }, { id: number }>({
+    const action = createServerAction<
+      { first_name: string; last_name: string },
+      { id: number }
+    >({
       name: nextActionName(),
       apiUrl: "/api/addEmployee",
       method: "POST",
@@ -51,10 +60,12 @@ describe("ServerAction", () => {
 
     await action({ first_name: "E2E", last_name: "Employee" });
 
-    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const [, init] = unsafeCast<[string, RequestInit]>(fetchMock.mock.calls[0]);
     expect(init.method).toBe("POST");
     expect(init.headers).toMatchObject({ "Content-Type": "application/json" });
-    expect(init.body).toBe(JSON.stringify({ first_name: "E2E", last_name: "Employee" }));
+    expect(init.body).toBe(
+      JSON.stringify({ first_name: "E2E", last_name: "Employee" }),
+    );
   });
 
   it("sends FormData body without forcing JSON content type", async () => {
@@ -70,23 +81,37 @@ describe("ServerAction", () => {
     });
 
     const formData = new FormData();
-    formData.append("avatar", new Blob(["avatar"], { type: "image/png" }), "avatar.png");
+    formData.append(
+      "avatar",
+      new Blob(["avatar"], { type: "image/png" }),
+      "avatar.png",
+    );
 
     await action(formData);
 
-    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    const [, init] = unsafeCast<[string, RequestInit]>(fetchMock.mock.calls[0]);
     expect(init.body).toBe(formData);
     const headers = (init.headers ?? {}) as Record<string, string>;
     expect(headers["Content-Type"]).toBeUndefined();
   });
 
   it("unwrap handles data, success and error response variants", () => {
-    expect(unwrap({ type: "data", data: { foo: "bar" }, unwrap: () => ({ foo: "bar" }) })).toEqual({ foo: "bar" });
+    expect(
+      unwrap({
+        type: "data",
+        data: { foo: "bar" },
+        unwrap: () => ({ foo: "bar" }),
+      }),
+    ).toEqual({ foo: "bar" });
     expect(unwrap({ type: "success", data: 42, unwrap: () => 42 })).toBe(42);
     expect(() =>
-      unwrap({ type: "error", message: "boom", unwrap: () => {
-        throw new Error("boom");
-      } }),
+      unwrap({
+        type: "error",
+        message: "boom",
+        unwrap: () => {
+          throw new Error("boom");
+        },
+      }),
     ).toThrow("boom");
   });
 

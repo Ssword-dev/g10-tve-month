@@ -12,7 +12,7 @@ DROP TABLE IF EXISTS `employees_table`;
 CREATE TABLE `employees_table` (
     -- Name fields
     `first_name` VARCHAR(50) NOT NULL, -- some first names are long.
-    `middle_name` VARCHAR(40) NOT NULL, -- middle names should not be too long.
+    `middle_name` VARCHAR(40), -- middle names should not be too long.
     `last_name` VARCHAR(50) NOT NULL, -- some last names are long.
 
     -- Other fields.

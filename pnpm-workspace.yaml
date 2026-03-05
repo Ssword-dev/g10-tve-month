@@ -1,5 +1,13 @@
 packages:
   - frontend
+  - backend
+  - runtime
+  - standalone/app
+
+ignoredBuiltDependencies:
+  - puppeteer
 
 onlyBuiltDependencies:
+  - electron
   - esbuild
+  - puppeteer

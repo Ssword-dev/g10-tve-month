@@ -1,4 +1,5 @@
 import { createServerQuery } from "@/infrastructure/ServerQuery";
+import unsafeCast from "@/utils/unsafeCast";
 import { describe, expect, it, vi } from "vitest";
 
 type DataResponse<T> = { type: "data"; data: T };
@@ -9,8 +10,10 @@ function dataResponse<T>(data: T): DataResponse<T> {
 
 describe("ServerQuery", () => {
   it("runs initial auto-refresh and populates successful state", async () => {
-    const queryFn = vi.fn(async (id: number) => dataResponse({ id, value: "ready" }));
-    const query = createServerQuery("User:get", queryFn, [7]);
+    const queryFn = vi.fn(async (id: number) =>
+      dataResponse({ id, value: "ready" }),
+    );
+    const query = createServerQuery("User:get", unsafeCast(queryFn), [7]);
 
     await vi.waitFor(() => {
       expect(queryFn).toHaveBeenCalledTimes(1);
@@ -26,7 +29,8 @@ describe("ServerQuery", () => {
   });
 
   it("refresh uses cache and still performs fetch", async () => {
-    let resolver: ((value: DataResponse<{ count: number }>) => void) | null = null;
+    let resolver: ((value: DataResponse<{ count: number }>) => void) | null =
+      null;
     let calls = 0;
 
     const queryFn = vi.fn(() => {
@@ -40,13 +44,19 @@ describe("ServerQuery", () => {
       });
     });
 
-    const query = createServerQuery("Counter:get", queryFn, []);
+    const query = createServerQuery("Counter:get", unsafeCast(queryFn), []);
     await vi.waitFor(() => expect(query.getState().isSuccess).toBe(true));
 
-    const updates: Array<{ isLoading: boolean; data: { count: number } | null }> = [];
+    const updates: Array<{
+      isLoading: boolean;
+      data: { count: number } | null;
+    }> = [];
     const unsubscribe = query.subscribe(() => {
       const state = query.getState();
-      updates.push({ isLoading: state.isLoading, data: state.data });
+      updates.push({
+        isLoading: state.isLoading,
+        data: unsafeCast(state.data),
+      });
     });
 
     const refreshPromise = query.refresh();
@@ -55,12 +65,14 @@ describe("ServerQuery", () => {
     expect(query.getState().data).toEqual({ count: 1 });
     expect(query.getState().isLoading).toBe(true);
 
-    resolver?.(dataResponse({ count: 2 }));
+    unsafeCast(resolver)?.(dataResponse({ count: 2 }));
     await refreshPromise;
 
     expect(query.getState().data).toEqual({ count: 2 });
     expect(query.getState().isLoading).toBe(false);
-    expect(updates.some((update) => update.isLoading && update.data?.count === 1)).toBe(true);
+    expect(
+      updates.some((update) => update.isLoading && update.data?.count === 1),
+    ).toBe(true);
 
     unsubscribe();
   });
@@ -71,7 +83,7 @@ describe("ServerQuery", () => {
       .mockResolvedValueOnce(dataResponse({ value: 1 }))
       .mockResolvedValueOnce(dataResponse({ value: 2 }));
 
-    const query = createServerQuery("Refetch:test", queryFn, []);
+    const query = createServerQuery("Refetch:test", unsafeCast(queryFn), []);
     await vi.waitFor(() => expect(query.getState().isSuccess).toBe(true));
 
     await query.refetch();
@@ -81,8 +93,12 @@ describe("ServerQuery", () => {
   });
 
   it("invalidate removes only targeted args cache and invalidateAll clears all", async () => {
-    const queryFn = vi.fn(async (name: string) => dataResponse({ name, nonce: Math.random() }));
-    const query = createServerQuery("Invalidate:test", queryFn, ["first"]);
+    const queryFn = vi.fn(async (name: string) =>
+      dataResponse({ name, nonce: Math.random() }),
+    );
+    const query = createServerQuery("Invalidate:test", unsafeCast(queryFn), [
+      "first",
+    ]);
 
     await vi.waitFor(() => expect(queryFn).toHaveBeenCalledTimes(1));
     await query.refresh("second");
@@ -99,7 +115,7 @@ describe("ServerQuery", () => {
 
   it("supports subscription and unsubscribe", async () => {
     const queryFn = vi.fn(async () => dataResponse({ ok: true }));
-    const query = createServerQuery("Subscribe:test", queryFn, []);
+    const query = createServerQuery("Subscribe:test", unsafeCast(queryFn), []);
 
     const subscriber = vi.fn();
     const unsubscribe = query.subscribe(subscriber);
@@ -120,7 +136,7 @@ describe("ServerQuery", () => {
       .mockResolvedValueOnce(dataResponse({ ok: true }))
       .mockRejectedValueOnce(new Error("broken"));
 
-    const query = createServerQuery("Error:test", queryFn, []);
+    const query = createServerQuery("Error:test", unsafeCast(queryFn), []);
     await vi.waitFor(() => expect(query.getState().isSuccess).toBe(true));
 
     await query.refetch();

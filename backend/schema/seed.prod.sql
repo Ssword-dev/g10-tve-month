@@ -1,3 +1,5 @@
+USE `tve_month_db`;
+
 INSERT INTO `employees_table` (
   `first_name`,
   `middle_name`,

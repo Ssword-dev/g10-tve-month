@@ -1,4 +1,5 @@
 import useRequest from "@/hooks/useRequest";
+import unsafeCast from "@/utils/unsafeCast";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -28,7 +29,7 @@ describe("useRequest", () => {
 
     expect(result.current.isLoading).toBe(true);
 
-    resolveFetch?.({
+    unsafeCast(resolveFetch)?.({
       ok: true,
       status: 200,
       statusText: "OK",
@@ -77,28 +78,35 @@ describe("useRequest", () => {
     const { result } = renderHook(() => useRequest());
 
     await act(async () => {
-      const jsonPayload = await result.current.execute({ url: "/api/json", parser: "json" });
+      const jsonPayload = await result.current.execute({
+        url: "/api/json",
+        parser: "json",
+      });
       expect(jsonPayload).toEqual({ foo: "bar" });
 
-      const textPayload = await result.current.execute({ url: "/api/text", parser: "text" });
+      const textPayload = await result.current.execute({
+        url: "/api/text",
+        parser: "text",
+      });
       expect(textPayload).toBe("plain-text");
 
-      const nonePayload = await result.current.execute({ url: "/api/none", parser: "none" });
+      const nonePayload = await result.current.execute({
+        url: "/api/none",
+        parser: "none",
+      });
       expect(nonePayload).toBeNull();
     });
   });
 
   it("applies JSON content type only for object bodies", async () => {
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValue({
-        ok: true,
-        status: 200,
-        statusText: "OK",
-        headers: new Headers(),
-        json: async () => ({ ok: true }),
-        text: async () => "",
-      });
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: "OK",
+      headers: new Headers(),
+      json: async () => ({ ok: true }),
+      text: async () => "",
+    });
     vi.stubGlobal("fetch", fetchMock);
 
     const { result } = renderHook(() => useRequest());
@@ -129,13 +137,19 @@ describe("useRequest", () => {
     const formInit = fetchMock.mock.calls[1][1] as RequestInit;
     const textInit = fetchMock.mock.calls[2][1] as RequestInit;
 
-    expect(objectInit.headers).toMatchObject({ "Content-Type": "application/json" });
+    expect(objectInit.headers).toMatchObject({
+      "Content-Type": "application/json",
+    });
     expect(objectInit.body).toBe(JSON.stringify({ name: "Ana" }));
 
-    expect((formInit.headers as Record<string, string>)["Content-Type"]).toBeUndefined();
+    expect(
+      (formInit.headers as Record<string, string>)["Content-Type"],
+    ).toBeUndefined();
     expect(formInit.body).toBeInstanceOf(FormData);
 
-    expect((textInit.headers as Record<string, string>)["Content-Type"]).toBeUndefined();
+    expect(
+      (textInit.headers as Record<string, string>)["Content-Type"],
+    ).toBeUndefined();
     expect(textInit.body).toBe("raw");
   });
 
@@ -165,7 +179,7 @@ describe("useRequest", () => {
       result.current.abort();
     });
 
-    expect(capturedSignal?.aborted).toBe(true);
+    expect(unsafeCast<AbortSignal>(capturedSignal)?.aborted).toBe(true);
 
     act(() => {
       result.current.reset();
@@ -190,9 +204,9 @@ describe("useRequest", () => {
     const { result } = renderHook(() => useRequest());
 
     await act(async () => {
-      await expect(result.current.execute({ url: "/api/fail" })).rejects.toThrow(
-        "Request failed with status 500",
-      );
+      await expect(
+        result.current.execute({ url: "/api/fail" }),
+      ).rejects.toThrow("Request failed with status 500");
     });
 
     await waitFor(() => {

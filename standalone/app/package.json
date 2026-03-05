@@ -1,0 +1,45 @@
+{
+  "private": true,
+  "name": "@project/app",
+  "version": "1.0.0",
+  "description": "Minimal Electron application",
+  "main": "main.js",
+  "productName": "SPRCNHS SEMS",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win dir"
+  },
+  "devDependencies": {
+    "electron": "^26.0.0",
+    "electron-builder": "^23.6.0"
+  },
+  "build": {
+    "appId": "com.example.standaloneapp",
+    "directories": {
+      "output": "../../artifacts/standalone/app"
+    },
+    "win": {
+      "target": "dir"
+    },
+    "files": [
+      "**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "../../runtime",
+        "to": "runtime",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "../../backend",
+        "to": "backend",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "../../artifacts/frontend",
+        "to": "frontend",
+        "filter": ["**/*"]
+      }
+    ]
+  }
+}

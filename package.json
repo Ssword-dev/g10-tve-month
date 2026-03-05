@@ -1,8 +1,19 @@
 {
-	"dependencies": {
-		"@dnd-kit/core": "^6.3.1",
-		"@dnd-kit/sortable": "^10.0.0",
-		"@dnd-kit/utilities": "^3.2.2",
-		"@hookform/resolvers": "^5.2.2"
-	}
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend",
+    "runtime",
+    "standalone/app"
+  ],
+  "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
+    "@hookform/resolvers": "^5.2.2"
+  },
+  "scripts": {
+    "build:standalone": "pnpm -C standalone/app install && pnpm -C standalone/app run build",
+    "build": "node scripts/build.cjs"
+  }
 }

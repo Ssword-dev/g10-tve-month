@@ -58,7 +58,7 @@ describe("Employees courses e2e", () => {
       await browserPage.waitForSelector("text/Edit Mode");
 
       const editUnitsInput = await browserPage.waitForSelector(
-        "xpath///div[.//*[normalize-space()='Edit Mode']]//label[normalize-space()='Units Completed']/following::input[1]",
+        "xpath///div[.//*[normalize-space()='Edit Mode']]//label[normalize-space()='Units Completed']/following::input[2]",
       );
       if (!editUnitsInput) {
         throw new Error("Edit course units input not found");

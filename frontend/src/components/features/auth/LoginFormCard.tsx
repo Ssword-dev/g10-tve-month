@@ -27,13 +27,21 @@ export function LoginFormCard({
 }: LoginFormCardProps) {
   return (
     <Card className="w-full max-w-md border-border">
-      <CardHeader className="gap-2">
-        <div className="w-full flex flex-row justify-center px-2 py-1">
-          <div className="aspect-square p-2 bg-background/80 rounded-xl">
-            <img src={websiteIconSource} className="aspect-square w-5 select-none" />
-          </div>
-        </div>
-        <CardTitle size="2xl" weight="bold" align="center">Login with DepEd Email</CardTitle>
+      <CardHeader className="flex flex-col items-center justify-center gap-3 pb-3 pt-4">
+        <Link
+          to="/dashboard/home"
+          className="rounded-xl border border-border/70 bg-background/70 p-2 transition-colors hover:bg-accent/40"
+          aria-label="Go to Home"
+        >
+            <img
+              src={websiteIconSource}
+              className="aspect-square w-10 select-none"
+              alt="SPRCNHS SEMS"
+            />
+        </Link>
+        <CardTitle size="2xl" weight="bold" align="center">
+          Login with DepEd Email
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <form

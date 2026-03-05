@@ -1,5 +1,5 @@
 /// <reference types="vitest-puppeteer" />
-import { describe, expect, it } from "vitest";
+import { describe, it } from "vitest";
 import { baseUrl, signUpAndLoginAsAdmin } from "../helpers/e2eAuthSession";
 import { searchEmployeeByName } from "../helpers/e2eEmployeeFlows";
 
@@ -10,8 +10,12 @@ describe("Employees filters e2e", () => {
 
     try {
       await signUpAndLoginAsAdmin(browserPage);
-      await browserPage.goto(`${baseUrl}/dashboard/employees`, { waitUntil: "networkidle2" });
-      await browserPage.waitForSelector("input[placeholder='Search full name...']");
+      await browserPage.goto(`${baseUrl}/dashboard/employees`, {
+        waitUntil: "networkidle2",
+      });
+      await browserPage.waitForSelector(
+        "input[placeholder='Search full name...']",
+      );
 
       await searchEmployeeByName(browserPage, "Juan Dela Cruz");
       await browserPage.waitForSelector("text/Juan Dela Cruz");
@@ -19,9 +23,13 @@ describe("Employees filters e2e", () => {
       await searchEmployeeByName(browserPage, "name-not-found-xyz");
       await browserPage.waitForSelector("text/No employees found.");
 
-      await browserPage.click("input[placeholder='Search full name...']", { clickCount: 3 });
+      await browserPage.click("input[placeholder='Search full name...']", {
+        clickCount: 3,
+      });
       await browserPage.click("xpath///button[normalize-space()='Clear']");
-      await browserPage.waitForSelector("xpath///tr[.//td[contains(normalize-space(), 'Juan')]]");
+      await browserPage.waitForSelector(
+        "xpath///tr[.//td[contains(normalize-space(), 'Juan')]]",
+      );
 
       const toolButtons = await browserPage.$$(".pointer-events-auto button");
       const filterButton = toolButtons.at(-1);
@@ -36,7 +44,9 @@ describe("Employees filters e2e", () => {
         "xpath//section[.//*[contains(normalize-space(), 'Column Filters')]]//input",
         "Dela Cruz",
       );
-      await browserPage.click("xpath///button[normalize-space()='Apply Filters']");
+      await browserPage.click(
+        "xpath///button[normalize-space()='Apply Filters']",
+      );
 
       await browserPage.waitForSelector("text/Juan Dela Cruz");
     } finally {

@@ -2,13 +2,19 @@
 import type { Page } from "puppeteer";
 import createE2EUserSeed from "./createE2EUserSeed";
 import { clickByText } from "./e2eAuthSession";
+import waitForTimeout from "./waitForTimeout";
 
-export async function addEmployeeViaModal(browserPage: Page, fullName = "E2E Employee") {
+export async function addEmployeeViaModal(
+  browserPage: Page,
+  fullName = "E2E Employee",
+) {
   const seed = createE2EUserSeed();
   const [firstName, ...rest] = fullName.split(" ");
   const lastName = rest.join(" ") || "Employee";
 
-  const addButton = await browserPage.waitForSelector("button:has(svg.lucide-plus)");
+  const addButton = await browserPage.waitForSelector(
+    "button:has(svg.lucide-plus)",
+  );
   if (!addButton) {
     throw new Error("Add employee button not found");
   }
@@ -31,7 +37,10 @@ export async function addEmployeeViaModal(browserPage: Page, fullName = "E2E Emp
   }
   await addModalNext1.click();
 
-  await browserPage.type("#deped_email", `e2e.added.${Date.now()}@deped.gov.ph`);
+  await browserPage.type(
+    "#deped_email",
+    `e2e.added.${Date.now()}@deped.gov.ph`,
+  );
 
   const addModalNext2 = await browserPage.waitForSelector(
     `${addEmployeeFormSelector}//button[normalize-space()='Next']`,
@@ -63,7 +72,9 @@ export async function addEmployeeViaModal(browserPage: Page, fullName = "E2E Emp
     await addModalNext.click();
 
     if (step === 7) {
-      throw new Error("Could not reach Save Employee button in Add Employee modal.");
+      throw new Error(
+        "Could not reach Save Employee button in Add Employee modal.",
+      );
     }
   }
 
@@ -112,17 +123,20 @@ export async function openProfileMenuAndSignOut(browserPage: Page) {
     if (opened) {
       break;
     }
-    await browserPage.waitForTimeout(300);
+    await waitForTimeout(300);
   }
   if (!opened) {
     throw new Error("Profile settings menu did not open");
   }
 
   await clickByText(browserPage, "Sign out");
-  await browserPage.waitForFunction(() => {
-    const pathname = window.location.pathname;
-    return pathname === "/login" || pathname.startsWith("/dashboard/");
-  }, {
-    timeout: 15_000,
-  });
+  await browserPage.waitForFunction(
+    () => {
+      const pathname = window.location.pathname;
+      return pathname === "/login" || pathname.startsWith("/dashboard/");
+    },
+    {
+      timeout: 15_000,
+    },
+  );
 }

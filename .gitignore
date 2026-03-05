@@ -1,8 +1,6 @@
 
 /node_modules/
 
-# Cache (archive caches, etc)
-/cache/
+/artifacts/
 
-# Production Runtime (mysql, php, nginx, apache)
 /runtime/

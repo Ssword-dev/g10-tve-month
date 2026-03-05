@@ -1,7 +1,12 @@
 {
-    "editor.formatOnSave": true,
-    "editor.formatOnPaste": true,
-    "[php]": {
-        "editor.defaultFormatter": 
-    }
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/*.code-search": true,
+    "**/vendor": true,
+    "artifacts": true
+  },
+  "[php]": {}
 }

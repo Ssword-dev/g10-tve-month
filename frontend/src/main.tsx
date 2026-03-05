@@ -3,9 +3,15 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import './tailwind.css';
 import App from './App.tsx';
-import { initializeThemeMode } from './domain/theme/settings.ts';
+import {
+  initializeContrastLevel,
+  initializeFontSize,
+  initializeThemeMode,
+} from './domain/theme/settings.ts';
 
 initializeThemeMode();
+initializeFontSize();
+initializeContrastLevel();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

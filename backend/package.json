@@ -1,0 +1,9 @@
+{
+  "name": "@project/backend",
+  "version": "1.0.0",
+  "description": "Backend API service",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.cjs"
+  }
+}

@@ -14,13 +14,13 @@
             "pestphp/pest-plugin": true
         }
     },
-    "require": {
-        "pestphp/pest": "^4.3"
-    },
     "autoload": {
         "psr-4": {
             "Core\\": "core"
         },
         "files": ["./helpers/body.php", "./helpers/config.php", "./helpers/db.php", "./helpers/respond.php"]
+    },
+    "require-dev": {
+        "pestphp/pest": "^4.3"
     }
 }

@@ -24,14 +24,16 @@ import {
 import { getAuthRole } from "@/domain/auth/session";
 import useServerQuery from "@/hooks/useServerQuery";
 import {
+  AccessibilityIcon,
   ChevronRightIcon,
   CircleQuestionMarkIcon,
   Code2Icon,
+  ContactRoundIcon,
   GraduationCapIcon,
+  HouseIcon,
   LogOut,
   PaletteIcon,
   RocketIcon,
-  ScrollTextIcon,
   Settings,
   SettingsIcon,
   SlidersHorizontalIcon,
@@ -135,9 +137,7 @@ function ParentRoute({
       <SidebarMenuItem>
         <TooltipProvider>
           <CollapsibleTrigger asChild>
-            <SidebarMenuButton
-              tooltip={label}
-            >
+            <SidebarMenuButton tooltip={label}>
               <Icon />
               <Text
                 size="sm"
@@ -176,10 +176,19 @@ function DashboardSubroutes({
 
   const isAboutActive =
     currentPath.startsWith("/dashboard/about/the-team") ||
-    currentPath.startsWith("/dashboard/about/the-school");
+    currentPath.startsWith("/dashboard/about/the-school") ||
+    currentPath.startsWith("/dashboard/contact-us");
 
   return (
     <SidebarMenu className="flex flex-col gap-2">
+      <Route
+        name="home"
+        label="Home"
+        icon={HouseIcon}
+        isActive={currentPath.startsWith("/dashboard/home")}
+        onNavigate={onNavigate}
+      />
+
       {role === "admin" ? (
         <Route
           name="overview"
@@ -198,7 +207,11 @@ function DashboardSubroutes({
         onNavigate={onNavigate}
       />
 
-      <ParentRoute label="Settings" icon={SettingsIcon} isActive={isSettingsActive}>
+      <ParentRoute
+        label="Settings"
+        icon={SettingsIcon}
+        isActive={isSettingsActive}
+      >
         <Route
           name="settings"
           label="General"
@@ -216,6 +229,13 @@ function DashboardSubroutes({
           isActive={currentPath.startsWith("/dashboard/settings/appearance")}
           onNavigate={onNavigate}
         />
+        <Route
+          name="settings/accessibility"
+          label="Accessibility"
+          icon={AccessibilityIcon}
+          isActive={currentPath.startsWith("/dashboard/settings/accessibility")}
+          onNavigate={onNavigate}
+        />
       </ParentRoute>
 
       <ParentRoute
@@ -224,18 +244,25 @@ function DashboardSubroutes({
         isActive={isAboutActive}
       >
         <Route
+          name="about/the-school"
+          label="The School"
+          isActive={currentPath.startsWith("/dashboard/about/the-school")}
+          icon={GraduationCapIcon}
+          onNavigate={onNavigate}
+        />
+
+        <Route
           name="about/the-team"
           label="The Developers"
           isActive={currentPath.startsWith("/dashboard/about/the-team")}
           icon={Code2Icon}
           onNavigate={onNavigate}
         />
-
         <Route
-          name="about/the-school"
-          label="The School"
-          isActive={currentPath.startsWith("/dashboard/about/the-school")}
-          icon={GraduationCapIcon}
+          name="contact-us"
+          label="Contact Us"
+          isActive={currentPath.startsWith("/dashboard/contact-us")}
+          icon={ContactRoundIcon}
           onNavigate={onNavigate}
         />
       </ParentRoute>
@@ -319,11 +346,14 @@ export default function Dashboard() {
       >
         <SidebarHeader className="mb-6 gap-0 px-5 pt-5 md:px-6 md:pt-6">
           <div className="flex items-center gap-3">
-            <Link to="/dashboard/overview" className="shrink-0">
-              <img className="w-6 aspect-square select-none" src={websiteIconSource} />
+            <Link to="/dashboard/home" className="shrink-0">
+              <img
+                className="w-6 aspect-square select-none"
+                src={websiteIconSource}
+              />
             </Link>
             <Link
-              to="/dashboard/overview"
+              to="/dashboard/home"
               className="min-w-0 group-data-[collapsible=icon]:hidden"
             >
               <Text size="sm" weight="semibold" className="truncate leading-5">
@@ -390,17 +420,6 @@ export default function Dashboard() {
                         <Settings className="size-4 text-muted-foreground" />
                         Settings
                       </button>
-                      <button
-                        type="button"
-                        className="flex w-full items-center gap-2 rounded-md px-2 py-1 text-left hover:bg-muted"
-                        onClick={() => {
-                          setSettingsOpen(false);
-                          handleNavigate("terms-and-conditions");
-                        }}
-                      >
-                        <ScrollTextIcon className="size-4 text-muted-foreground" />
-                        Terms & Conditions
-                      </button>
                       {role === "admin" ? (
                         <button
                           type="button"
@@ -424,16 +443,37 @@ export default function Dashboard() {
         </SidebarFooter>
       </Sidebar>
 
-      <SidebarInset className="h-svh overflow-hidden bg-background text-foreground">
+      <SidebarInset className="h-svh overflow-y-auto bg-background text-foreground">
         <div className="sticky top-0 z-40 flex items-center justify-between border-b border-border/70 bg-card/95 px-4 py-3 backdrop-blur">
           <SidebarTrigger className="px-2 py-1" />
+          <div className="flex flex-row gap-2">
+            {!sessionData?.authenticated && (
+              <>
+                <Button
+                  className="px-2 py-1"
+                  variant="outline"
+                  onClick={() => navigate("/signup")}
+                >
+                  Sign up
+                </Button>
+                <Button
+                  className="px-2 py-1"
+                  variant="primary"
+                  onClick={() => navigate("/login")}
+                >
+                  Login
+                </Button>
+              </>
+            )}
+          </div>
         </div>
 
-        <main className="flex-1 min-h-0 overflow-y-auto no-scrollbar">
-          <Outlet />
-        </main>
-
-        <DashboardFooter />
+        <div className="flex min-h-full flex-1 flex-col">
+          <main className="flex-1">
+            <Outlet />
+          </main>
+          <DashboardFooter />
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );

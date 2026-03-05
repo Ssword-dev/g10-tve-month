@@ -45,7 +45,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="flex min-h-screen w-screen items-center justify-center bg-background p-4">
+    <main className="flex min-h-screen w-screen items-center justify-center bg-background p-4 md:p-8">
       <LoginFormCard
         depedEmail={depedEmail}
         password={password}
